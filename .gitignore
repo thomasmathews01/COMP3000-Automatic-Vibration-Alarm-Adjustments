@@ -1,0 +1,7 @@
+bin/
+output/
+obj/
+.idea/
+Debug/
+Release/
+packages/
