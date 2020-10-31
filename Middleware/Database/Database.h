@@ -4,14 +4,17 @@
 #include "IDatabase.h"
 #include "Helpers/sqlite3pp.h"
 
+constexpr auto default_database_location = "/Users/thomasmathews/Documents/VibrationData.db";
+
 class Database : IDatabase {
 public:
-	virtual std::vector<site> get_site_data() override;
+	std::vector<site> get_site_data() override;
 	std::mutex database_access_mutex;
-	void set_up_database();
+	void set_up_database_connection();
 
 	sqlite3pp::database database;
-	void add_site_with_machines_to_database(const site& s);
+	void populate_sites_machine_information(site& site) override;
+	void populate_channel_information_for_a_machine(machine& machine) override;
 };
 
 
