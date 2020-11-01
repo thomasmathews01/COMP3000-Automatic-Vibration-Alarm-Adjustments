@@ -6,7 +6,7 @@
 
 constexpr auto default_database_location = "/Users/thomasmathews/Documents/VibrationData.db";
 
-class Database : IDatabase {
+class Database : public IDatabase {
 public:
 	std::vector<site> get_site_data() override;
 	std::mutex database_access_mutex;

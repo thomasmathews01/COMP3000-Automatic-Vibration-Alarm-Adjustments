@@ -12,6 +12,8 @@ struct channel {
 };
 
 struct machine {
+	machine(int id) : id(id) {}
+
 	machine(int id, std::string name) : id(id), name(std::move(name)) {}
 
 	int id;
@@ -20,6 +22,8 @@ struct machine {
 };
 
 struct site {
+	site(const int id) : id(id) {}
+
 	site(const int id, std::string name) : id(id), name(std::move(name)) {}
 
 	int id;
