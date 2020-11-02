@@ -12,7 +12,7 @@ public:
 	explicit Server(std::shared_ptr<IDatabase> database) : database(std::move(database)) {}
 
 	~Server();
-	void startServer(const std::string& address);
+	void startServer();
 
 private:
 	std::shared_ptr<IDatabase> database;

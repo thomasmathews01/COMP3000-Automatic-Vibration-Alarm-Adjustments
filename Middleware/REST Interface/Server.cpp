@@ -54,9 +54,9 @@ std::string handle_get_site_info(const std::shared_ptr<IDatabase>& database, con
 	writer.StartArray();
 
 	for (const auto& machine : s.machines) {
+		writer.StartObject();
 		writer.Key("id");
 		writer.Int(machine.id);
-		writer.StartObject();
 		writer.Key("name");
 		writer.String(machine.name.c_str());
 		writer.EndObject();
@@ -96,6 +96,39 @@ std::string handle_get_machine_info(const std::shared_ptr<IDatabase>& database, 
 	return buffer.GetString();
 }
 
+crow::response get_cors_wrapped_response(int response_code, const std::string& body) {
+	crow::response response(response_code, body);
+
+	response.add_header("Access-Control-Allow-Origin", "*");
+	response.add_header("Access-Control-Allow-Headers", "*");
+
+	return response;
+}
+
+crow::response pre_flight_response(const crow::request& req) {
+	crow::response response(200);
+
+	response.add_header("Access-Control-Allow-Origin", "*");
+	response.add_header("Access-Control-Allow-Headers", "*");
+	response.add_header("Access-Control-Allow-Methods", "*");
+	response.add_header("Access-Control-Allow-Credentials", "true");
+
+	return response;
+}
+
+crow::response handle_login(const crow::request& req) {
+	if (req.method == crow::HTTPMethod::OPTIONS)
+		return pre_flight_response(req);
+
+	const auto username = req.url_params.get("username");
+	const auto password = req.url_params.get("password");
+
+	crow::response response;
+	if (username == "admin"s && password == "admin"s)
+		return get_cors_wrapped_response(200, "Accepted");
+	else return get_cors_wrapped_response(401, "Rejected");
+}
+
 void Server::work() {
 	crow::SimpleApp app;
 
@@ -103,11 +136,12 @@ void Server::work() {
 	CROW_ROUTE(app, "/sites")([this]() { return handle_get_sites(this->database); });
 	CROW_ROUTE(app, "/site/id/<int>")([this](const int site_id) { return handle_get_site_info(this->database, site_id); });
 	CROW_ROUTE(app, "/machine/id/<int>")([this](const int machine_id) { return handle_get_machine_info(this->database, machine_id); });
+	CROW_ROUTE(app, "/login").methods("POST"_method, "OPTIONS"_method)([](const crow::request& req) { return handle_login(req); });
 
 	app.port(default_port).multithreaded().run();
 }
 
-void Server::startServer(const std::string& address) {
+void Server::startServer() {
 	if (!started) {
 		worker = std::thread([this]() { this->work(); });
 		started = true;

@@ -1,6 +1,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 
 #include "doctest/doctest.h"
+#include "Database/Database.h"
+#include "REST Interface/Server.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -37,6 +39,14 @@ int main(int argc, char** argv) {
 
 	auto logger2 = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
 	logger2->info("SOMETHING FOR DA FILES");
+
+	std::shared_ptr<Database> db = std::make_shared<Database>();
+	db->set_up_database_connection();
+	Server server(db);
+	server.startServer();
+
+	char x;
+	std::cin >> x;
 
 	return 0;
 }
