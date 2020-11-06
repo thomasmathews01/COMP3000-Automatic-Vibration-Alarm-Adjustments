@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
+using BeranPlantProtech.Client;
 using dataacquisition.Model;
 using DataAcquisitionApplication;
 
@@ -7,15 +10,15 @@ namespace dataacquisition
 {
     public class Database : IDatabase
     {
-        private const string ConnectionString = "Data Source=C:\\temp\\VibrationData.db";
+        private const string ConnectionString = "Data Source=Z:\\VibrationData.db";
 
         private readonly string[] _createTableStatements =
         {
             "CREATE TABLE IF NOT EXISTS sites (site_id INTEGER PRIMARY KEY AUTOINCREMENT, site_name varchar(40));",
             "CREATE TABLE IF NOT EXISTS machines (machine_id INTEGER PRIMARY KEY AUTOINCREMENT, machine_name varchar(40), site_id INTEGER, FOREIGN KEY(site_id) REFERENCES sites(side_id));",
             "CREATE TABLE IF NOT EXISTS channels (channel_id INTEGER PRIMARY KEY AUTOINCREMENT, channel_name VARCHAR(40), channel_units VARCHAR(10), machine_id INTEGER, FOREIGN KEY(machine_id) REFERENCES machines(machine_id));",
-            "CREATE TABLE IF NOT EXISTS data_types (data_type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_value INTEGER, type_name VARCHAR(25));",
-            "CREATE TABLE IF NOT EXISTS data_points (point_time INTEGER, data_type_id INTEGER, channel_id INTEGER, value real, PRIMARY KEY(point_time, data_type_id, channel_id), FOREIGN KEY(data_type_id) REFERENCES data_types(data_type_id),FOREIGN KEY(channel_id) REFERENCES channels(channel_id));"
+            "CREATE TABLE IF NOT EXISTS types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name VARCHAR(30));",
+            "CREATE TABLE IF NOT EXISTS data (type_id INTEGER, channel_id INTEGER, time_since_epoch INTEGER, value REAL, PRIMARY KEY (type_id, time_since_epoch, channel_id));"
         }; // TODO: Refactor all statements into their own namespace/class so they can be changed more easily.
 
         public void RunTableCreationScripts()
@@ -29,6 +32,15 @@ namespace dataacquisition
                     command.CommandText = statement;
                     command.ExecuteNonQuery();
                 }
+
+                var transaction = connection.BeginTransaction();
+                foreach (var type in Enum.GetValues(typeof(DataRequest.AcType)).Cast<DataRequest.AcType>())
+                {
+                    var command = new SQLiteCommand($"INSERT INTO types (type_name) VALUES (\"{type.ToString()}\");", connection);
+                    command.ExecuteNonQuery();
+                }
+
+                transaction.Commit();
             }
         }
 
@@ -96,6 +108,47 @@ namespace dataacquisition
             }
 
             return -1;
+        }
+
+        public void AddDataToDatabase(string machineName, string channelName, int secondsBetweenPoints, DataRequest.AcType type, DateTime requestStartTime, IEnumerable<float> data)
+        {
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Open();
+                var storageTime = (int) requestStartTime.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+
+                var transaction = connection.BeginTransaction();
+
+                foreach (var point in data)
+                {
+                    var channelId = GetChannelIdFromChannelNameAndMachineId(channelName, GetMachineIdFromMachineName(machineName, connection), connection);
+                    var typeId = GetTypeIdFromType(type, connection);
+                    var insert = new SQLiteCommand($"INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES ({typeId}, {channelId}, {storageTime}, {point})", connection);
+                    insert.ExecuteNonQuery();
+
+                    storageTime += secondsBetweenPoints;
+                }
+
+                transaction.Commit();
+            }
+        }
+
+        private static int GetTypeIdFromType(DataRequest.AcType type, SQLiteConnection connection)
+        {
+            var command = new SQLiteCommand($"SELECT type_id FROM types where type_name = \"{type.ToString()}\"", connection);
+            return int.Parse(command.ExecuteScalar().ToString());
+        }
+
+        private static int GetMachineIdFromMachineName(string machineName, SQLiteConnection connection)
+        {
+            var command = new SQLiteCommand($"SELECT machine_id FROM machines where machine_name = \"{machineName}\"", connection);
+            return int.Parse(command.ExecuteScalar().ToString());
+        }
+
+        private static int GetChannelIdFromChannelNameAndMachineId(string channelName, int machineId, SQLiteConnection connection)
+        {
+            var command = new SQLiteCommand($"SELECT channel_id FROM channels where channel_name = \"{channelName}\" AND machine_id = {machineId}", connection);
+            return int.Parse(command.ExecuteScalar().ToString());
         }
     }
 }
