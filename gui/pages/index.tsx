@@ -50,7 +50,7 @@ export default function SignIn() {
     const router = useRouter();
 
     const handleLogin = () => {
-        axios.post(`http://localhost:1234/login?username=${username}&password=${password}`, {})
+        axios.post(`http://localhost:3456/login?username=${username}&password=${password}`, {})
             .then((r) => {
                 if (r.data === "Accepted") {
                     return router.push("sites");

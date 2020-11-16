@@ -1,5 +1,4 @@
 {
-  "name": "Vibration Alarms GUI",
   "version": "1.0.0",
   "scripts": {
     "dev": "next",
@@ -28,6 +27,7 @@
     "eslint-plugin-react": "7.21.3",
     "jsdom": "16.4.0",
     "jsdom-global": "3.0.2",
+    "notistack": "^1.0.1",
     "ts-jest": "26.4.1",
     "ts-node": "9.0.0",
     "typescript": "4.0.3"
