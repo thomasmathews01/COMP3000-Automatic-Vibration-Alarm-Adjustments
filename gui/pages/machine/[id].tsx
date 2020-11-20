@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import OuterPage from "../OuterPage";
-import GridOfAlarmStateItems from "../GridOfAlarmStateItems";
+import OuterPage from "../../Components/OuterPage";
+import GridOfAlarmStateItems from "../../Components/GridOfAlarmStateItems";
 import axios from "axios";
 import {SingleAlarmStateItem} from "../../Types/AlarmStateItem";
 import {useRouter} from "next/router";
@@ -35,7 +35,7 @@ const startChannelRefreshInterval = (siteID: number, updateFn: (x: SingleAlarmSt
     }, 1000); // Replace this with nicer server side rendering to get the props each time from the real server
 }
 
-export default function IndividualSite() {
+export default function IndividualMachine() {
     const [channelsData, setChannelsData] = useState<SingleAlarmStateItem[]>([]);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
     const router = useRouter();
@@ -47,7 +47,7 @@ export default function IndividualSite() {
     return (
         <div>
             <OuterPage/>
-            <GridOfAlarmStateItems items={channelsData} redirectString={"/machine/"}/>
+            <GridOfAlarmStateItems items={channelsData} redirectString={"/channel/"}/>
         </div>
     );
 }

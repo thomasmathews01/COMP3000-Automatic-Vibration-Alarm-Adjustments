@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/node": "14.11.5",
     "@types/react": "16.9.51",
+    "@types/recharts": "^1.8.16",
     "@typescript-eslint/eslint-plugin": "4.4.0",
     "@typescript-eslint/parser": "4.4.0",
     "eslint": "7.10.0",
@@ -28,6 +29,7 @@
     "jsdom": "16.4.0",
     "jsdom-global": "3.0.2",
     "notistack": "^1.0.1",
+    "recharts": "^1.8.5",
     "ts-jest": "26.4.1",
     "ts-node": "9.0.0",
     "typescript": "4.0.3"

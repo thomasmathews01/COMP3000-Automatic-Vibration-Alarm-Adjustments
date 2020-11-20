@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import OuterPage from "./OuterPage";
-import GridOfAlarmStateItems from "./GridOfAlarmStateItems";
+import OuterPage from "../Components/OuterPage";
+import GridOfAlarmStateItems from "../Components/GridOfAlarmStateItems";
 import axios from "axios";
 import {SingleAlarmStateItem} from "../Types/AlarmStateItem";
 
@@ -47,5 +47,3 @@ export default function Sites() {
         </div>
     );
 }
-
-//TODO: Replace icon.
