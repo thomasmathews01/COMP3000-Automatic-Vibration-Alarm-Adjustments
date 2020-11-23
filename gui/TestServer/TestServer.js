@@ -143,6 +143,67 @@ app.get('/channels', (req, res) => {
     }
 });
 
+app.get('/dataTypes', (req, res) => {
+    const typeInformation = [
+        {id: 1, name: "SUBSYNC"},
+        {id: 2, name: "SUBSYNC_FREQ"},
+        {id: 3, name: "PK2PK"},
+        {id: 4, name: "NONSYNC"},
+        {id: 5, name: "RMS"},
+        {id: 6, name: "ORDER1"},
+        {id: 7, name: "ORDER2"},
+        {id: 8, name: "ORDER3"},
+        {id: 9, name: "ORDER4"},
+        {id: 10, name: "INTRAHARMONIC"},
+    ];
+
+    if (req.query.channel !== undefined) {
+        res.send(JSON.stringify({types: typeInformation}));
+    }
+});
+
+app.get('/data', (req, res) => {
+    const pointCount = 5000;
+    const data = Array.from({length: pointCount}, (x, y) => Math.abs(200 * Math.sin((y / pointCount) * 5 * 2 * Math.PI)));
+    const StartDate = new Date(2019, 11, 23, 10, 53, 0, 0);
+    const startEpochSeconds = Math.round(StartDate.getTime() / 1000);
+    const time = Array.from({length: pointCount}, (x, index) => (index * 3600) + startEpochSeconds);
+
+    if (req.query.channel !== undefined && req.query.type !== undefined) {
+        res.send(JSON.stringify({
+            data: time.map((timestamp, index) => {
+                return {secondsSinceEpoch: timestamp, value: data[index]}
+            })
+        }));
+    }
+});
+
+app.get('/alarms', (req, res) => {
+    const alarmData = [
+        {secondsSinceEpoch: Math.round(new Date(2019, 11, 23, 10, 53, 0, 0).getTime() / 1000), value: 150},
+        {secondsSinceEpoch: Math.round(new Date(2020, 1, 23, 10, 53, 0, 0).getTime() / 1000), value: 195}
+    ];
+
+    if (req.query.channel !== undefined && req.query.type !== undefined) {
+        res.send(JSON.stringify({
+            data: alarmData
+        }));
+    }
+});
+
+app.get('/alerts', (req, res) => {
+    const alarmData = [
+        {secondsSinceEpoch: Math.round(new Date(2019, 11, 23, 10, 53, 0, 0).getTime() / 1000), value: 130},
+        {secondsSinceEpoch: Math.round(new Date(2020, 1, 23, 10, 53, 0, 0).getTime() / 1000), value: 170}
+    ];
+
+    if (req.query.channel !== undefined && req.query.type !== undefined) {
+        res.send(JSON.stringify({
+            data: alarmData
+        }));
+    }
+});
+
 app.get('/', (req, res) => {
     res.send('Hello World!')
 });

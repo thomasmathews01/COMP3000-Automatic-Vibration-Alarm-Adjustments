@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Graph from "../../Components/Graph";
 import {Card, CardContent, Grid, Typography} from "@material-ui/core";
 import OuterPage from "../../Components/OuterPage";
 import {makeStyles} from "@material-ui/core/styles";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
     titleText: {
@@ -16,24 +17,47 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-interface propsT {
-    title: string;
+interface graphProps {
+    type: type,
+    channelID: number
 }
 
-function IndividualGraph(props: propsT) {
+interface type {
+    id: number,
+    name: string
+}
+
+
+function IndividualGraph(props: graphProps) {
     const classes = useStyles();
     return (
         <Card elevation={3}>
-            <Typography className={classes.titleText}>{props.title}</Typography>
+            <Typography className={classes.titleText}>{props.type.name}</Typography>
             <CardContent>
-                <Graph/>
+                <Graph channelID={props.channelID} typeID={props.type.id}/>
             </CardContent>
         </Card>
     );
 }
 
+const fetchGraphTypes = async (): Promise<type[]> => {
+    try {
+        const resp = await axios.get<{ types: type[] }>(`http://localhost:3456/dataTypes?channel=${1}`);
+
+        return resp.data.types;
+    } catch (exception) {
+        console.log(exception.toString());
+        return [];
+    }
+}
+
 export default function IndividualChannel() {
     const classes = useStyles();
+
+    const [GraphTypes, setGraphTypes] = useState<type[]>([]);
+    if (GraphTypes.length == 0)
+        fetchGraphTypes().then(x => setGraphTypes(x));
+
     return (
         <div className={classes.pageBackground}>
             <OuterPage/>
@@ -45,15 +69,13 @@ export default function IndividualChannel() {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={6}>
-                    <IndividualGraph title={"RMS"}/>
-                </Grid>
-                <Grid item xs={6}>
-                    <IndividualGraph title={"Pk2Pk"}/>
-                </Grid>
-                <Grid item xs={6}>
-                    <IndividualGraph title={"DC"}/>
-                </Grid>
+                {
+                    GraphTypes.map(x => (
+                        <Grid item xs={6}>
+                            <IndividualGraph type={x} channelID={1}/>
+                        </Grid>
+                    ))
+                }
             </Grid>
         </div>
     );
