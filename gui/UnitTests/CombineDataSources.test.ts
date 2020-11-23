@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 import {dataItem} from "../Types/DataTypes";
-import {addAlarmData} from "../Components/CombineDataSources";
+import {addAlarmData} from "../components/CombineDataSources";
 
 describe('DataFetching', () => {
     it('Unit Tests can run', function () {
@@ -41,7 +41,7 @@ describe('DataFetching', () => {
         })
     });
 
-    it('Returns handles multiple alarms', async function () {
+    it('Handles multiple alarms', async function () {
         const data: dataItem[] = [
             {secondsSinceEpoch: 1, value: 100},
             {secondsSinceEpoch: 2, value: 100},
@@ -52,7 +52,7 @@ describe('DataFetching', () => {
         const result = await addAlarmData(data, [{secondsSinceEpoch: 1, level: 100}, {secondsSinceEpoch: 3, level: 1000}], []);
 
         expect(result.length).to.eq(data.length);
-        expect(result.filter(x => x.alarmLevel === 100)).to.eq(2);
-        expect(result.filter(x => x.alarmLevel === 1000)).to.eq(2);
+        expect(result.filter(x => x.alarmLevel === 100).length).to.eq(2);
+        expect(result.filter(x => x.alarmLevel === 1000).length).to.eq(2);
     });
 });
