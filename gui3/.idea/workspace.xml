@@ -16,30 +16,6 @@
       <change afterPath="$PROJECT_DIR$/../gui2/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../gui2/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../gui2/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Components/AlarmStateItem.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Components/GridOfAlarmStateItems.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Components/OuterPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Types/DataTypes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Types/SingleAlarmStateItem.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/theme.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.h" afterDir="false" />
@@ -56,6 +32,12 @@
       <change beforePath="$PROJECT_DIR$/../gui/pages/machine/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/machine/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/pages/site/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/site/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/pages/sites.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/sites.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,11 +147,28 @@
       <updated>1606591966555</updated>
       <workItem from="1606591967683" duration="2551000" />
       <workItem from="1606650935387" duration="1480000" />
-      <workItem from="1606652443633" duration="951000" />
+      <workItem from="1606652443633" duration="3904000" />
     </task>
+    <task id="LOCAL-00001" summary="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions.">
+      <created>1606653703836</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1606653703836</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions." />
+    <option name="LAST_COMMIT_MESSAGE" value="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions." />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>
