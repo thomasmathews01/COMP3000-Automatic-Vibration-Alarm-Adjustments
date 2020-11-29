@@ -2,6 +2,7 @@ import React from 'react';
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem"
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Container} from "@material-ui/core";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     button1: {
@@ -19,9 +20,11 @@ const useStyles = makeStyles((theme) => ({
 
 const AlarmStateItem = (props: { item: SingleAlarmStateItem, redirectString: string }) => {
     const classes = useStyles();
+    const history = useHistory();
 
     const routeToPage = async (redirectString: string, id: number) => {
         console.log(`redirecting to: ${redirectString} for id = ${id}`);
+        history.push(redirectString + id.toString());
     }
 
     return (

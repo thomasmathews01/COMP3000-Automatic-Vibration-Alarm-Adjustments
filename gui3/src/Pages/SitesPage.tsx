@@ -9,36 +9,28 @@ interface serverSite {
     name: string,
 }
 
-const getSites = async () => {
+const getSites = async (updateFn: (x: SingleAlarmStateItem[]) => void) => {
     try {
         const sites = await axios.get<{ sites: serverSite[] }>("http://localhost:3456/sites");
 
-        return sites.data.sites.map((x) => {
+        updateFn(sites.data.sites.map((x) => {
             return {
                 id: x.id,
                 name: x.name,
                 state: 1
             }
-        });
+        }));
     } catch (exception) {
         console.log(exception.toString());
         return [];
     }
 };
 
-const startSiteRefreshInterval = (updateFn: (x: SingleAlarmStateItem[]) => void) => {
-    return setInterval(async () => {
-        const newSites = await getSites();
-        updateFn(newSites);
-    }, 1000); // Replace this with nicer server side rendering to get the props each time from the real server
-}
-
 export default function SitesPage() {
     const [sitesData, setSitesData] = useState<SingleAlarmStateItem[]>([]);
-    const [timer, setTimer] = useState<NodeJS.Timeout>();
 
-    if (timer === undefined)
-        setTimer(startSiteRefreshInterval(setSitesData));
+    if (sitesData.length === 0)
+        getSites(setSitesData).then(() => console.log("Sites fetch completed. "));
 
     return (
         <div>

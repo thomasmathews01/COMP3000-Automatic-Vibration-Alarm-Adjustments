@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="21fb3f8f-dc1c-4d50-a59e-5be2024eb598" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
@@ -16,6 +19,9 @@
       <change afterPath="$PROJECT_DIR$/../gui2/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../gui2/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../gui2/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pages/MachinePage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pages/SitePage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.h" afterDir="false" />
@@ -34,10 +40,9 @@
       <change beforePath="$PROJECT_DIR$/../gui/pages/sites.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/sites.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/AlarmStateItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/AlarmStateItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +152,7 @@
       <updated>1606591966555</updated>
       <workItem from="1606591967683" duration="2551000" />
       <workItem from="1606650935387" duration="1480000" />
-      <workItem from="1606652443633" duration="3904000" />
+      <workItem from="1606652443633" duration="5863000" />
     </task>
     <task id="LOCAL-00001" summary="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions.">
       <created>1606653703836</created>
@@ -156,7 +161,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606653703836</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Adds the ability to route dynamically">
+      <created>1606680143449</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1606680143449</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,7 +178,8 @@
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions." />
-    <option name="LAST_COMMIT_MESSAGE" value="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions." />
+    <MESSAGE value="Adds the ability to route dynamically" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adds the ability to route dynamically" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
