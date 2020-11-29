@@ -3,6 +3,7 @@ import {Card, CardContent, Grid, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import axios from "axios";
 import OuterPage from "../Components/OuterPage";
+import Graph from "../Components/Graph";
 
 const useStyles = makeStyles(() => ({
     titleText: {
@@ -33,6 +34,7 @@ function IndividualGraph(props: graphProps) {
         <Card elevation={3}>
             <Typography className={classes.titleText}>{props.type.name}</Typography>
             <CardContent>
+                <Graph type={props.type.id} channel={props.channelID}/>
             </CardContent>
         </Card>
     );
