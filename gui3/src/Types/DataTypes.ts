@@ -13,5 +13,5 @@ export interface dataItem {
 
 export interface alarmLevelChange {
     secondsSinceEpoch: number,
-    level: number,
+    value: number,
 }

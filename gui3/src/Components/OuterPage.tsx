@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import {Container} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,7 +37,11 @@ export const OuterPage: FunctionComponent = ({children}) => {
                     </Typography>
                 </Toolbar>
             </AppBar>
-            {children}
+            <Container fixed maxWidth="xl">
+                <div>
+                    {children}
+                </div>
+            </Container>
         </div>
     );
 };

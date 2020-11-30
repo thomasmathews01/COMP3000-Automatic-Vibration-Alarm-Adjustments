@@ -163,7 +163,7 @@ app.get('/dataTypes', (req, res) => {
 });
 
 app.get('/data', (req, res) => {
-    const pointCount = 5000;
+    const pointCount = 10000;
     const data = Array.from({length: pointCount}, (x, y) => Math.abs(200 * Math.sin((y / pointCount) * 5 * 2 * Math.PI)));
     const StartDate = new Date(2019, 11, 23, 10, 53, 0, 0);
     const startEpochSeconds = Math.round(StartDate.getTime() / 1000);
@@ -179,33 +179,65 @@ app.get('/data', (req, res) => {
 });
 
 app.get('/alarms', (req, res) => {
+    const StartDate = new Date(2019, 11, 23, 10, 53, 0, 0);
+
     const alarmData = [
         {secondsSinceEpoch: Math.round(new Date(2019, 11, 23, 10, 53, 0, 0).getTime() / 1000), value: 150},
-        {secondsSinceEpoch: Math.round(new Date(2020, 1, 23, 10, 53, 0, 0).getTime() / 1000), value: 195}
+        {secondsSinceEpoch: Math.round(new Date(2020, 1, 23, 10, 53, 0, 0).getTime() / 1000), value: 195},
+        {secondsSinceEpoch: Math.round(StartDate.getTime() / 1000) + 3600000 * 10000, value: 195},
     ];
 
     if (req.query.channel !== undefined && req.query.type !== undefined) {
         res.send(JSON.stringify({
-            data: alarmData
+            alarms: alarmData
         }));
     }
 });
 
 app.get('/alerts', (req, res) => {
+    const StartDate = new Date(2019, 11, 23, 10, 53, 0, 0);
+
     const alarmData = [
         {secondsSinceEpoch: Math.round(new Date(2019, 11, 23, 10, 53, 0, 0).getTime() / 1000), value: 130},
-        {secondsSinceEpoch: Math.round(new Date(2020, 1, 23, 10, 53, 0, 0).getTime() / 1000), value: 170}
+        {secondsSinceEpoch: Math.round(new Date(2020, 1, 23, 10, 53, 0, 0).getTime() / 1000), value: 170},
+        {secondsSinceEpoch: Math.round(StartDate.getTime() / 1000) + 3600000 * 10000, value: 170}
     ];
 
     if (req.query.channel !== undefined && req.query.type !== undefined) {
         res.send(JSON.stringify({
-            data: alarmData
+            alarms: alarmData
         }));
     }
 });
 
+app.get('/states', (req, res) => {
+    res.send(JSON.stringify({
+        states: [
+            {
+                id: 1,
+                name: "Unknown"
+            },
+            {
+                id: 2,
+                name: "LPR"
+            },
+            {
+                id: 3,
+                name: "Melt Down"
+            }
+        ]
+    }));
+});
+
 app.get('/', (req, res) => {
     res.send('Hello World!')
+});
+
+app.post('/stateUpdate', (req, res) => {
+    if (req.query.startTime && req.query.endTime && req.query.stateId && req.query.machine)
+        console.log(`Registering that we entered state: ${(req.query.stateId)} at ${(req.query.startTime)} and exited at ${(req.query.endTime)} on machine ${req.query.machine}`);
+
+    res.status(200);
 });
 
 app.listen(port, () => {

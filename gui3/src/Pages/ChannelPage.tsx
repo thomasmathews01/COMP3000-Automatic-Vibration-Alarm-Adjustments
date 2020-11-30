@@ -69,9 +69,9 @@ export const ChannelPage = () => {
             </Grid>
             {
                 GraphTypes.map(x => (
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                         <IndividualGraph type={x} channelID={1}/>
-                        </Grid>
+                    </Grid>
                     ))
                 }
             </Grid>
