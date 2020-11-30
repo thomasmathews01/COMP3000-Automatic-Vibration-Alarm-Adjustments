@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FunctionComponent} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -21,21 +21,22 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const OuterPage = () => {
+export const OuterPage: FunctionComponent = ({children}) => {
     const classes = useStyles();
 
     return (
-        <AppBar position="static" className={classes.navBar}>
-            <Toolbar>
-                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                    <MenuIcon/>
-                </IconButton>
-                <Typography variant="h6" className={classes.title}>
-                    Home
-                </Typography>
-            </Toolbar>
-        </AppBar>
+        <div>
+            <AppBar position="static" className={classes.navBar}>
+                <Toolbar>
+                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant="h6" className={classes.title}>
+                        Home
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            {children}
+        </div>
     );
 };
-
-export default OuterPage;

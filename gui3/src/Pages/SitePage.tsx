@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
-import OuterPage from "../Components/OuterPage";
 import GridOfAlarmStateItems from "../Components/GridOfAlarmStateItems";
 import {useParams} from "react-router";
 
@@ -34,7 +33,7 @@ const startMachineRefreshInterval = (siteID: number, updateFn: (x: SingleAlarmSt
     }, 1000); // Replace this with nicer server side rendering to get the props each time from the real server
 }
 
-export default function IndividualSite() {
+export const SitePage = () => {
     const [machinesData, setMachinesData] = useState<SingleAlarmStateItem[]>([]);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
     const {id} = useParams<Record<string, string | undefined>>()
@@ -48,9 +47,6 @@ export default function IndividualSite() {
         setTimer(startMachineRefreshInterval(parseInt(id as string), setMachinesData));
 
     return (
-        <div>
-            <OuterPage/>
             <GridOfAlarmStateItems items={machinesData} redirectString={"/machine/"}/>
-        </div>
     );
 }

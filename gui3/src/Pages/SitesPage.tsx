@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import OuterPage from "../Components/OuterPage";
 import GridOfAlarmStateItems from "../Components/GridOfAlarmStateItems";
 import axios from "axios";
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
@@ -26,16 +25,13 @@ const getSites = async (updateFn: (x: SingleAlarmStateItem[]) => void) => {
     }
 };
 
-export default function SitesPage() {
+export const SitesPage = () => {
     const [sitesData, setSitesData] = useState<SingleAlarmStateItem[]>([]);
 
     if (sitesData.length === 0)
         getSites(setSitesData).then(() => console.log("Sites fetch completed. "));
 
     return (
-        <div>
-            <OuterPage/>
-            <GridOfAlarmStateItems items={sitesData} redirectString={"/site/"}/>
-        </div>
+        <GridOfAlarmStateItems items={sitesData} redirectString={"/site/"}/>
     );
 }

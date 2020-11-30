@@ -34,27 +34,27 @@ app.get('/sites', (req, res) => {
         sites: [
             {
                 id: 1,
-                name: "Surrey"
+                name: "Highbury"
             },
             {
                 id: 2,
-                name: "Devon"
-            },
-            {
-                id: 3,
-                name: "Scotland"
-            },
-            {
-                id: 4,
-                name: "Heaven"
-            },
-            {
-                id: 5,
                 name: "Northanger"
             },
             {
+                id: 3,
+                name: "Surrey"
+            },
+            {
+                id: 4,
+                name: "Devon"
+            },
+            {
+                id: 5,
+                name: "Heaven"
+            },
+            {
                 id: 6,
-                name: "Highbury"
+                name: "Scotland"
             },
         ]
     };

@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function LoginPage() {
+export const LoginPage = () => {
     const [username, usernameToggle] = React.useState("admin");
     const [password, passwordToggle] = React.useState("admin");
     const history = useHistory();

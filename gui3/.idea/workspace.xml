@@ -4,57 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21fb3f8f-dc1c-4d50-a59e-5be2024eb598" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/COMP3000-Automatic-Vibration-Alarm-Adjustments.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Middleware/REST Interface/DataRequest.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Middleware/REST Interface/DataRequest.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/.idea/aws.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui2/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui2/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../gui2/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Components/Graph.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/Database/IDatabase.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/IDatabase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/Database/TestDatabase.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/TestDatabase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/Server.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/Server.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Middleware/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/TestServer/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/TestServer/package-lock.json" afterDir="false" />
+    <list default="true" id="34207020-8f60-477d-b746-bffb0a289840" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../gui/pages/zoomy.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/pages/channel/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/channel/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/pages/machine/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/machine/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/pages/site/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/site/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/pages/sites.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/pages/sites.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestServer/TestServer.js" beforeDir="false" afterPath="$PROJECT_DIR$/TestServer/TestServer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/OuterPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/OuterPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/MachinePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/MachinePage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/SitePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/SitePage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ElmWorkspace">
-    <elmProjects />
-    <settings elmCompilerPath="" elmFormatPath="" elmTestPath="" isElmFormatOnSaveEnabled="false" />
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
-        <option value="TypeScript File" />
         <option value="TypeScript JSX File" />
       </list>
     </option>
@@ -66,59 +42,45 @@
     <option name="projectConfigVersion" value="2" />
   </component>
   <component name="MacroExpansionManager">
-    <option name="directoryName" value="5c5wtpyv" />
+    <option name="directoryName" value="o8213xp3" />
   </component>
-  <component name="ProjectId" id="1kvraCISraMyn1dp8gvHPx6kAt9" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectId" id="1l0HHNKSCHgv3eFomAqMrnHUMdS" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/TestServer/TestServer.js" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="org.elm.workspace.PROJECT_DISCOVERY" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="editing.templates" />
-    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+    <property name="ts.external.directory.path" value="C:\unirepos\COMP3000-Automatic-Vibration-Alarm-Adjustments\gui3\node_modules\typescript\lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src" />
-    </key>
-  </component>
-  <component name="RunAnythingCache">
-    <option name="myCommands">
-      <command value="npm install @material-ui/core" />
-      <command value="npm install @material-ui/icons" />
-      <command value="npm install axios" />
-      <command value="npm install react-router-dom" />
-      <command value="npm instal react-router" />
-      <command value="npm install react-rotuer" />
-      <command value="npm install react-router" />
-      <command value="npm install history" />
-      <command value="npm install" />
-      <command value="npm install react-vis" />
-    </option>
-  </component>
-  <component name="RunManager" selected="JavaScript Debug.Debug Application">
-    <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
+  <component name="RunManager" selected="npm.start">
+    <configuration name="Debug" type="JavascriptDebugType" uri="http://localhost:3000" useFirstLineBreakpoints="true">
       <method v="2" />
     </configuration>
-    <configuration name="npm start" type="js.build_tools.npm">
+    <configuration name="Run TestServer" type="NodeJSConfigurationType" path-to-js-file="TestServer/TestServer.js" working-dir="$PROJECT_DIR$">
+      <method v="2">
+        <option name="NpmBeforeRunTask" enabled="true">
+          <package-json value="$PROJECT_DIR$/TestServer/package.json" />
+          <command value="install" />
+          <node-interpreter value="project" />
+          <envs />
+        </option>
+      </method>
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
@@ -136,44 +98,36 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="JavaScript Debug.Debug Application" />
-      <item itemvalue="npm.npm start" />
+      <item itemvalue="JavaScript Debug.Debug" />
+      <item itemvalue="Node.js.Run TestServer" />
+      <item itemvalue="npm.start" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="21fb3f8f-dc1c-4d50-a59e-5be2024eb598" name="Default Changelist" comment="" />
-      <created>1606591966555</created>
+      <changelist id="34207020-8f60-477d-b746-bffb0a289840" name="Default Changelist" comment="" />
+      <created>1606727001322</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1606591966555</updated>
-      <workItem from="1606591967683" duration="2551000" />
-      <workItem from="1606650935387" duration="1480000" />
-      <workItem from="1606652443633" duration="9481000" />
+      <updated>1606727001322</updated>
+      <workItem from="1606727005193" duration="5706000" />
     </task>
-    <task id="LOCAL-00001" summary="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions.">
-      <created>1606653703836</created>
+    <task id="LOCAL-00001" summary="Add test server to the new project">
+      <created>1606727670396</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1606653703836</updated>
+      <updated>1606727670396</updated>
     </task>
-    <task id="LOCAL-00002" summary="Adds the ability to route dynamically">
-      <created>1606680143449</created>
+    <task id="LOCAL-00002" summary="Implements zoom ability">
+      <created>1606735222297</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1606680143449</updated>
+      <updated>1606735222297</updated>
     </task>
-    <task id="LOCAL-00003" summary="Adds channel and machine pages into the new react routed application">
-      <created>1606682139994</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1606682139994</updated>
-    </task>
-    <option name="localTasksCounter" value="4" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,16 +136,11 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Started a GUI replacement using react routing rather than nextjs to get round  the compatibility issues with different DOM versions." />
-    <MESSAGE value="Adds the ability to route dynamically" />
-    <MESSAGE value="Adds channel and machine pages into the new react routed application" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adds channel and machine pages into the new react routed application" />
+    <MESSAGE value="Add test server to the new project" />
+    <MESSAGE value="Implements zoom ability" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implements zoom ability" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

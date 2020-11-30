@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Card, CardContent, Grid, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import axios from "axios";
-import OuterPage from "../Components/OuterPage";
 import Graph from "../Components/Graph";
 
 const useStyles = makeStyles(() => ({
@@ -51,7 +50,7 @@ const fetchGraphTypes = async (): Promise<type[]> => {
     }
 }
 
-export default function IndividualChannel() {
+export const ChannelPage = () => {
     const classes = useStyles();
 
     const [GraphTypes, setGraphTypes] = useState<type[]>([]);
@@ -60,24 +59,21 @@ export default function IndividualChannel() {
         fetchGraphTypes().then(x => setGraphTypes(x));
 
     return (
-        <div className={classes.pageBackground}>
-            <OuterPage/>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Card>
-                        <CardContent>
-                            <Typography className={classes.titleText}>{"TG 7 - Bearing 1 Vibration"}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                {
-                    GraphTypes.map(x => (
-                        <Grid item xs={6}>
-                            <IndividualGraph type={x} channelID={1}/>
+        <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <Card>
+                    <CardContent>
+                        <Typography className={classes.titleText}>{"TG 7 - Bearing 1 Vibration"}</Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            {
+                GraphTypes.map(x => (
+                    <Grid item xs={6}>
+                        <IndividualGraph type={x} channelID={1}/>
                         </Grid>
                     ))
                 }
             </Grid>
-        </div>
     );
 }
