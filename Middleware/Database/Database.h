@@ -13,8 +13,11 @@ public:
 	void set_up_database_connection();
 
 	sqlite3pp::database database;
-	void populate_sites_machine_information(site& site) override;
-	void populate_channel_information_for_a_machine(machine& machine) override;
+	void populate_sites_machine_information(site& site) final;
+	void populate_channel_information_for_a_machine(machine& machine) final;
+	std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final;
+	std::vector<std::pair<int, std::string>> get_data_types_available_for_channel(int channel_id) final;
+	virtual int get_machine_id_from_channel_id(int channel_id) override;
 };
 
 

@@ -40,13 +40,13 @@ int main(int argc, char** argv) {
 	auto logger2 = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
 	logger2->info("SOMETHING FOR DA FILES");
 
-	std::shared_ptr<Database> db = std::make_shared<Database>();
+	/*std::shared_ptr<Database> db = std::make_shared<Database>();
 	db->set_up_database_connection();
-	Server server(db);
+	Server server(db, logger2);
 	server.startServer();
 
 	char x;
-	std::cin >> x;
+	std::cin >> x;*/
 
 	return 0;
 }

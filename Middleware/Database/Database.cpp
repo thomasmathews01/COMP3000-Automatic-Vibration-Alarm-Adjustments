@@ -55,6 +55,21 @@ void Database::set_up_database_connection() {
 	database = sqlite3pp::database(default_database_location);
 }
 
+std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int type, time_point_t start, time_point_t end) {
+	return std::vector<std::pair<time_point_t, float>>();
+}
+
+std::vector<std::pair<int, std::string>> Database::get_data_types_available_for_channel(int channel_id) {
+	return std::vector<std::pair<int, std::string>>();
+}
+
+int Database::get_machine_id_from_channel_id(int channel_id) {
+	std::lock_guard guard(database_access_mutex);
+
+	const auto selection_string = "SELECT machine_id from ";
+	return 0;
+}
+
 TEST_CASE ("Doesn't throw when getting site data from database") {
 	Database db;
 	db.set_up_database_connection(); // TODO: This should be called from the constructor, or otherwise dealt with in a way that makes more sense than this two phase initialisation.
