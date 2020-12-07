@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Database/IDatabase.h"
+#include <memory>
 
 class GetSitesRequest {
 public:

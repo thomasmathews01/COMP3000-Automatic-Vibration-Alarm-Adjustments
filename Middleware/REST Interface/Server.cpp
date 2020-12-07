@@ -1,5 +1,5 @@
 #include "Server.h"
-#include "crow.h"
+#include <crow/crow_all.h>
 #include "NetworkRequestHandlers/HelloWorldRequest.h"
 #include "NetworkRequestHandlers/GetSitesRequest.h"
 #include "NetworkRequestHandlers/SiteInformationRequest.h"
@@ -30,7 +30,7 @@ crow::response pre_flight_response(const crow::request& req) {
 }
 
 crow::response handle_login(const crow::request& req) {
-	if (req.method == crow::HTTPMethod::OPTIONS)
+	if (req.method == crow::HTTPMethod::Options)
 		return pre_flight_response(req);
 
 	const auto username = req.url_params.get("username");

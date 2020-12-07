@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Database/IDatabase.h"
-#include "../crow.h"
+#include <crow/crow_all.h>
 
 class AddStatePeriodRequest {
 public:

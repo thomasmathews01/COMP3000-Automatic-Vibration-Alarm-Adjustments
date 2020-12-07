@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "../../Database/IDatabase.h"
-#include "../crow.h"
+#include <crow/crow_all.h>
 
 class AvailableDataTypesRequest {
 public:

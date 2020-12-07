@@ -1,6 +1,7 @@
 #pragma once
 #include "IDatabase.h"
 #include <map>
+#include <iterator>
 
 struct TestDatabase : public IDatabase {
 

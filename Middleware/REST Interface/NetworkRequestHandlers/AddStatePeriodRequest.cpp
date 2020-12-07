@@ -15,6 +15,8 @@ std::string AddStatePeriodRequest::add_state_period(const crow::request& request
 	const auto new_state_period = parse_new_period_from_request(request);
 
 	const auto existing_states = database->get_machine_id_from_channel_id(channel_id);
+
+	return "";
 }
 
 
