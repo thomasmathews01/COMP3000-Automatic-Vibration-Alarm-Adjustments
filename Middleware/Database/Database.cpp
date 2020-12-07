@@ -66,8 +66,22 @@ std::vector<std::pair<int, std::string>> Database::get_data_types_available_for_
 int Database::get_machine_id_from_channel_id(int channel_id) {
 	std::lock_guard guard(database_access_mutex);
 
-	const auto selection_string = "SELECT machine_id from ";
-	return 0;
+	const auto selection_string = "SELECT machine_id from channels where channel_id = " + std::to_string(channel_id);
+
+	for (const auto& row : sqlite3pp::query(database, selection_string.c_str())) {
+		const auto[machine_id] = row.get_columns<int>(0);
+		return machine_id;
+	}
+
+	return -1;
+}
+
+time_point_t Database::get_earliest_data_point_for_machine(int machine_id) {
+	return time_point_t();
+}
+
+std::vector<state_change_t> Database::get_state_changes_for_machine(int machine_id) {
+	return std::vector<state_change_t>();
 }
 
 TEST_CASE ("Doesn't throw when getting site data from database") {

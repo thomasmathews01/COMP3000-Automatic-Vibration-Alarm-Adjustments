@@ -2,6 +2,10 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
+
+using namespace std::chrono;
+using time_point_t = system_clock::time_point;
 
 struct channel {
 	channel(const int id, std::string name, std::string units) : name(std::move(name)), units(std::move(units)), id(id) {}
