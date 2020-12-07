@@ -7,3 +7,5 @@
 #include "HelloWorldRequest.h"
 #include "MachineInformationRequest.h"
 #include "SiteInformationRequest.h"
+#include "AddStatePeriodRequest.h"
+#include "GetStatePeriodsRequest.h"

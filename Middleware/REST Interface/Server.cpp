@@ -1,13 +1,6 @@
 #include "Server.h"
 #include <crow/crow_all.h>
-#include "NetworkRequestHandlers/HelloWorldRequest.h"
-#include "NetworkRequestHandlers/GetSitesRequest.h"
-#include "NetworkRequestHandlers/SiteInformationRequest.h"
-#include "NetworkRequestHandlers/MachineInformationRequest.h"
-#include "NetworkRequestHandlers/CurrentTimeRequest.h"
-#include "NetworkRequestHandlers/AvailableDataTypesRequest.h"
-#include "NetworkRequestHandlers/GetDataRequest.h"
-#include "NetworkRequestHandlers/GetStatePeriodsRequest.h"
+#include "NetworkRequestHandlers/all.h"
 
 using namespace std::string_literals;
 

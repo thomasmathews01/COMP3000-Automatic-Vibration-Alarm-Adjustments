@@ -28,6 +28,15 @@ struct state_change_t {
 	bool operator>=(const state_change_t& rhs) const {
 		return !(*this < rhs);
 	}
+
+	bool operator==(const state_change_t& rhs) const {
+		return new_state_id == rhs.new_state_id &&
+			   change_time == rhs.change_time;
+	}
+
+	bool operator!=(const state_change_t& rhs) const {
+		return !(rhs == *this);
+	}
 };
 
 struct state_period_t {

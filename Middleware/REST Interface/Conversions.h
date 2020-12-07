@@ -6,6 +6,7 @@
 class Conversions {
 public:
 	static std::vector<state_period_t> convert_state_changes_to_state_periods(std::vector<state_change_t>&& state_changes);
+	static std::vector<state_period_t> convert_state_changes_to_state_periods(const std::vector<state_change_t>& state_changes);
 };
 
 

@@ -14,6 +14,12 @@ std::vector<state_period_t> Conversions::convert_state_changes_to_state_periods(
 	return state_periods;
 }
 
+std::vector<state_period_t> Conversions::convert_state_changes_to_state_periods(const std::vector<state_change_t>& state_changes) {
+	auto cpy = state_changes;
+
+	return Conversions::convert_state_changes_to_state_periods(std::move(cpy));
+}
+
 TEST_CASE ("Simple single continuous state") {
 	std::vector<state_change_t> state_changes;
 	state_changes.emplace_back(1, time_point_t(150s));

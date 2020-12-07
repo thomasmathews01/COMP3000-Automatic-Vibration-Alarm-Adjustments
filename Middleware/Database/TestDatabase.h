@@ -13,6 +13,10 @@ struct TestDatabase : public IDatabase {
 		std::copy(machines.cbegin(), machines.cend(), std::back_inserter(site.machines));
 	}
 
+	virtual void update_state_changes_for_machine(int channel_id) override {
+
+	}
+
 	void populate_channel_information_for_a_machine(machine& machine) final {
 		std::copy(channels.cbegin(), channels.cend(), std::back_inserter(machine.channels));
 	}
