@@ -36,31 +36,26 @@ std::string convert_data_points_to_json(const decimated_points& data) {
 	return buff.GetString();
 }
 
+template<class in_it, class out_it>
+out_it copy_every_n( in_it b, in_it e, out_it r, size_t n) { // TODO: Move to a utils class
+	for (size_t i=distance(b,e)/n; i--; advance (b,n))
+		*r++ = *b;
+	return r;
+}
+
 /**
  * Summary: Provides integer decimation of the input data, to the integer required to fit the points in a maximum 5000 element data structure.
  * If frequently called on data sets only slightly larger than the decimation rate this will result in lots of points lost unnecessarily.
  * This is not done with respect to time, but blindly.
  * @param full_data_set All points representing the range to be decimated
- * @return decimated data and a factor indicating how much decimation occurred. 0 = no decimation, and spare space, factor >= 1 suggests we kept one in every n points.
+ * @return decimation factor, where a factor n indicated we kept 1 in every 1 points from the original set
  */
 decimated_points decimate_data(const std::vector<std::pair<time_point_t, float>>& full_data_set) {
 	decimated_points result;
-	result.first = 1;
+	result.first = (int) std::ceilf(full_data_set.size() / (float) maximum_number_of_points); // This represents the integer gap between valid points.
+
 	std::fill(result.second.begin(), result.second.end(), std::make_pair(time_point_t(), -1 * std::numeric_limits<float>::max()));
-
-	if (full_data_set.size() <= maximum_number_of_points) {
-		result.first = full_data_set.size() == maximum_number_of_points ? 1 : 0;
-		std::copy(full_data_set.cbegin(), full_data_set.cend(), result.second.begin());
-
-		return result;
-	}
-
-	const auto decimation_factor = (int) std::ceilf(full_data_set.size() / (float) maximum_number_of_points); // This represents the integer gap between valid points.
-	result.first = decimation_factor;
-	auto it = result.second.begin();
-	for (int i = 0; i < full_data_set.size(); i += decimation_factor)
-		*it++ = full_data_set.at(i);
-
+	copy_every_n(full_data_set.cbegin(), full_data_set.cend(), result.second.begin(), result.first);
 
 	return result;
 }
@@ -124,12 +119,7 @@ namespace testing
 			const auto match = std::equal(data.cbegin(), data.cend(), decimation_result.second.cbegin());
 				CHECK(match);
 		}
-			SUBCASE("Small set has a zero decimation factor") {
-			const auto data = get_test_collection(maximum_number_of_points / 10);
 
-			const auto decimation_result = decimate_data(data);
-				CHECK_EQ(0, decimation_result.first);
-		}
 			SUBCASE("Handles 2x decimation as expected") {
 			const auto data = get_test_collection(2 * maximum_number_of_points);
 
@@ -144,6 +134,12 @@ namespace testing
 				CHECK_EQ(decimation_factor, 2);
 				CHECK(std::all_of(decimated_data.cbegin(), decimated_data.cend(), [](const std::pair<time_point_t, float>& pair) { return (int) pair.second % 2 == 0; }));
 				CHECK_EQ(0.75 * maximum_number_of_points, std::count_if(decimated_data.cbegin(), decimated_data.cend(), [](const auto& pair) { return pair.second != -1 * std::numeric_limits<float>::max(); }));
+		}
+			SUBCASE("Handles Realistically sized problem") {
+			const auto data = get_test_collection(30 * maximum_number_of_points);
+
+			const auto[decimation_factor, decimated_data] = decimate_data(data);
+				CHECK_EQ(decimation_factor, 30);
 		}
 	}
 }
