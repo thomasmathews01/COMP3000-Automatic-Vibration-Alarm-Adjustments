@@ -87,6 +87,23 @@ std::vector<state_change_t> Database::get_state_changes_for_machine(int machine_
 void Database::update_state_changes_for_machine(int channel_id) {
 
 }
+
+std::vector<alarm_activation_t> Database::get_activations_for_machine(int machine_id) {
+	return std::vector<alarm_activation_t>();
+}
+
+std::vector<alarm_settings_t> Database::get_alarm_settings_for_machine(int machine_id) {
+	return std::vector<alarm_settings_t>();
+}
+
+bool Database::add_alarm_setting(const alarm_settings_t& new_setting) {
+	return false;
+}
+
+std::vector<automatic_alarm_level_history_point_t> Database::get_alarm_level_history(int channel_id, int type_id) {
+	return std::vector<automatic_alarm_level_history_point_t>();
+}
+
 /*
 
 TEST_CASE ("Doesn't throw when getting site data from database") {

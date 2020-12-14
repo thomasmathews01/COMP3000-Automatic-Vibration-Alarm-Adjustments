@@ -45,7 +45,7 @@ std::vector<state_change_t> insert_new_state(std::vector<state_change_t>&& state
 	states.emplace_back(new_state.state_id, new_state.start);
 	states.emplace_back(get_state_id_at_time(states, new_state.end), new_state.end);
 
-	std::sort(states.begin(), states.end());
+	std::sort(states.begin(), states.end()); // Something about this transform can cause the incorrect numbers to end up in the final closing state.
 	std::transform(states.cbegin() + 1, states.cend(), states.begin(), states.begin(), [](const auto& second, auto& first) {
 		if (first.new_state_id == second.new_state_id)
 			first.change_time = std::max(first.change_time, second.change_time);

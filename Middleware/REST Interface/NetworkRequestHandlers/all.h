@@ -9,3 +9,7 @@
 #include "SiteInformationRequest.h"
 #include "AddStatePeriodRequest.h"
 #include "GetStatePeriodsRequest.h"
+#include "AlarmActivationsRequest.h"
+#include "CurrentAlarmStateRequest.h"
+#include "AlarmSettingsRequest.h"
+#include "GetAlarmLevelHistory.h"

@@ -4,6 +4,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <doctest/doctest.h>
 
+
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
 

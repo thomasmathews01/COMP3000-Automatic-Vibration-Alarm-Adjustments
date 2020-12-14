@@ -1,8 +1,10 @@
 #pragma once
 
 #include <memory>
-#include "../../Database/IDatabase.h"
+#include <string>
+
 #include <crow/crow_all.h>
+#include "../../Database/IDatabase.h"
 
 class AvailableDataTypesRequest {
 public:

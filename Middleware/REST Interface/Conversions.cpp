@@ -1,5 +1,7 @@
 #include "Conversions.h"
 #include <doctest/doctest.h>
+#include <algorithm>
+#include <iterator>
 
 std::vector<state_period_t> Conversions::convert_state_changes_to_state_periods(std::vector<state_change_t>&& state_changes) {
 	std::sort(state_changes.begin(), state_changes.end());
