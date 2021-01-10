@@ -13,7 +13,7 @@ struct TestDatabase : public IDatabase {
 		std::copy(machines.cbegin(), machines.cend(), std::back_inserter(site.machines));
 	}
 
-	virtual void update_state_changes_for_machine(int channel_id) override {
+	virtual void add_new_state_period(int machine_id, state_period_t state_period) final {
 
 	}
 

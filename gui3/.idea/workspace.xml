@@ -5,28 +5,49 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34207020-8f60-477d-b746-bffb0a289840" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gui/pages/zoomy.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../gui/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/AlarmCalculatorFactory.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/AlarmCalculatorFactory.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/AlarmHandler.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/AlarmHandler.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/BasicAlarm.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/BasicAlarm.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/IAlarmCalculator.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/SOM.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Alarming/SOM.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Utils/crow.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Middleware/Utils/include_crow.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/Database/Database.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/Database.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/Database/IDatabase.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/IDatabase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/Database/TestDatabase.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/Database/TestDatabase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AddStatePeriodRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AddStatePeriodRequest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AddStatePeriodRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AddStatePeriodRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AlarmActivationsRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AlarmActivationsRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AlarmSettingsRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AlarmSettingsRequest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AlarmSettingsRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AlarmSettingsRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AvailableDataTypesRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/AvailableDataTypesRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/CurrentAlarmStateRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/CurrentAlarmStateRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetAlarmLevelHistory.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetAlarmLevelHistory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetDataRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetDataRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetSitesRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetSitesRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetStatePeriodsRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/GetStatePeriodsRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/MachineInformationRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/MachineInformationRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/SiteInformationRequest.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/NetworkRequestHandlers/SiteInformationRequest.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/Server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Middleware/REST Interface/Utils/CrowExtractionHelpers.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Middleware/REST Interface/Utils/CrowExtractionHelpers.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestServer/TestServer.js" beforeDir="false" afterPath="$PROJECT_DIR$/TestServer/TestServer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/OuterPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/OuterPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/LoginPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/MachinePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/MachinePage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/SitePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/SitePage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/SitesPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/Graph.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Graph.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ElmWorkspace">
+    <elmProjects />
+    <settings elmCompilerPath="" elmFormatPath="" elmTestPath="" isElmFormatOnSaveEnabled="false" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -62,8 +83,9 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="org.elm.workspace.PROJECT_DISCOVERY" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="ts.external.directory.path" value="C:\unirepos\COMP3000-Automatic-Vibration-Alarm-Adjustments\gui3\node_modules\typescript\lib" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager" selected="npm.start">
@@ -112,6 +134,7 @@
       <option name="presentableId" value="Default" />
       <updated>1606727001322</updated>
       <workItem from="1606727005193" duration="5706000" />
+      <workItem from="1609678459983" duration="526000" />
     </task>
     <task id="LOCAL-00001" summary="Add test server to the new project">
       <created>1606727670396</created>

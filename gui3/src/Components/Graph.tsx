@@ -110,6 +110,8 @@ const Graph = (props: PropsT) => {
 
     const getFullRange = (points: LineSeriesPoint[]) => {
         // TODO: This should take into the account the alarm and alert levels when calculating the maximum and minimum
+        // Not that, theoretically, the alarm or alert levels should ever be substantially higher that the real level
+        // given that they are being calculated as n sigma against the average level.
         return {
             left: points[0].x, right: points[points.length - 1].x,
             bottom: Math.min.apply(null, points.map(p => p.y)),

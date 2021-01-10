@@ -1,6 +1,6 @@
 #pragma once
 #include "../../Database/IDatabase.h"
-#include <crow/crow_all.h>
+#include "../../Utils/include_crow.h"
 #include <memory>
 
 class GetAlarmLevelHistory {

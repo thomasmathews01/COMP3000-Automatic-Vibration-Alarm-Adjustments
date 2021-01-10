@@ -1,7 +1,7 @@
 #include "AlarmSettingsRequest.h"
 #include "../Utils/CrowExtractionHelpers.h"
 #include "../../Utils/STLExtensions.h"
-#include "rapidjson/document.h"
+#include <rapidjson/document.h>
 
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
@@ -55,7 +55,7 @@ std::string set_alarm_settings(const crow::request& request, alarmSeverity sever
 	document.Parse(request.body.c_str());
 
 	if (document.HasMember("alarm_setting") && document["alarm_setting"].IsObject()) {
-		const auto& new_setting = document["alarm_setting"];
+		const auto& new_setting = document["alarm_setting"].GetObject();
 		const auto channel_id = new_setting["channel_id"].GetInt();
 		const auto type_id = new_setting["type_id"].GetInt();
 		const auto state_id = new_setting["state_id"].GetInt();

@@ -1,5 +1,6 @@
 #include "Database.h"
 #include "doctest/doctest.h"
+#include "DatabaseInitialiser.h"
 
 using namespace std::string_literals;
 
@@ -53,6 +54,8 @@ void Database::populate_channel_information_for_a_machine(machine& machine) {
 void Database::set_up_database_connection() {
 	std::lock_guard<std::mutex> guard(database_access_mutex);
 	database = sqlite3pp::database(default_database_location);
+	DatabaseInitialiser initialiser;
+	initialiser.intialise_database(database);
 }
 
 std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int type, time_point_t start, time_point_t end) {
@@ -77,6 +80,7 @@ int Database::get_machine_id_from_channel_id(int channel_id) {
 }
 
 time_point_t Database::get_earliest_data_point_for_machine(int machine_id) {
+	//const auto selection_string = "SELECT "
 	return time_point_t();
 }
 
@@ -84,7 +88,7 @@ std::vector<state_change_t> Database::get_state_changes_for_machine(int machine_
 	return std::vector<state_change_t>();
 }
 
-void Database::update_state_changes_for_machine(int channel_id) {
+void Database::add_new_state_period(int machine_id, state_period_t state_period) {
 
 }
 

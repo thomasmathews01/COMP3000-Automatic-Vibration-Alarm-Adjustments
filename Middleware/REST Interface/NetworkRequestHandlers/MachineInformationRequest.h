@@ -2,8 +2,8 @@
 
 #include <memory>
 #include <string>
+#include "../../Utils/include_crow.h"
 
-#include <crow/crow_all.h>
 #include "../../Database/IDatabase.h"
 
 class MachineInformationRequest {

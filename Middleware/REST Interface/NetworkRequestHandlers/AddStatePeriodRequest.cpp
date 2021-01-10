@@ -19,7 +19,8 @@ std::string AddStatePeriodRequest::add_state_period(const crow::request& request
 	auto existing_states = database->get_state_changes_for_machine(machine_id);
 	const auto new_states = insert_new_state(std::move(existing_states), new_state_period);
 
-	database->update_state_changes_for_machine(machine_id);
+	//database->update_state_changes_for_machine(machine_id); // TODO: This is absolute nonsense and we need some proper logic to fold in the news states in the database.
+	// ORM might have solved this...
 
 	return ""; // TODO: Determine return for a failure case
 }

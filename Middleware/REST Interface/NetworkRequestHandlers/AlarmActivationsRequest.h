@@ -2,7 +2,7 @@
 
 #include "../Model/alarmTypes.h"
 #include <memory>
-#include <crow/crow_all.h>
+#include "../../Utils/include_crow.h"
 #include "../../Database/IDatabase.h"
 
 class AlarmActivationsRequest {

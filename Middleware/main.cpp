@@ -10,7 +10,7 @@
 using namespace std::string_literals;
 
 int main(int argc, char** argv) {
-	doctest::Context context;
+	/*doctest::Context context;
 	context.applyCommandLine(argc, argv);
 	context.setOption("no-breaks", true);             // don't break in the debugger when assertions fail
 	int res = context.run(); // run
@@ -21,16 +21,16 @@ int main(int argc, char** argv) {
 	auto log_file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logfile");
 	auto server_logger = std::make_shared<spdlog::logger>("REST-SERVER", log_file_sink);
 	server_logger->set_level(spdlog::level::info);
-	spdlog::register_logger(server_logger);
+	spdlog::register_logger(server_logger);*/
 
 
-	/*std::shared_ptr<Database> db = std::make_shared<Database>();
+	std::shared_ptr<Database> db = std::make_shared<Database>();
 	db->set_up_database_connection();
-	Server server(db, logger2);
-	server.startServer();
+	//Server server(db, logger2);
+	//server.startServer();
 
-	char x;
-	std::cin >> x;*/
+	//char x;
+	//std::cin >> x;
 
 	return 0;
 }
