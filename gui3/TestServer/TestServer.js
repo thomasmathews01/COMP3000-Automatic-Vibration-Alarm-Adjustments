@@ -229,6 +229,20 @@ app.get('/states', (req, res) => {
     }));
 });
 
+app.post('/states', (req, res) => {
+    if (req.query.name)
+        console.log(`Registering the creation of a new State with the name: ${req.query.name}`);
+
+    res.status(200);
+});
+
+app.post('/deleteState', (req, res) => {
+    if (req.query.name)
+        console.log(`Registering the deletion of a state with the name: ${req.query.name}`);
+
+    res.status(200);
+});
+
 app.get('/', (req, res) => {
     res.send('Hello World!')
 });

@@ -48,6 +48,7 @@ const fetchStatePeriods = async (channel: number) => {
     const maxStateId = Math.max(...states.map(x => x.id));
     const output = Array<LineSeriesPoint[]>(maxStateId - 1);
 
+    return output;
 }
 
 interface PropsT {
