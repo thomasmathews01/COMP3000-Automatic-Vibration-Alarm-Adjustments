@@ -9,7 +9,7 @@ const addNewState = async (newStateName: string) => {
         if (response.status !== 200)
             console.log("Error whilst adding a new state");
     } catch (exception) {
-        console.log(`Exceptino whilst adding new state: ${exception.toString()}`);
+        console.log(`Exception whilst adding new state: ${exception.toString()}`);
     }
 }
 
