@@ -1,6 +1,7 @@
 import {Site} from "../Types/SiteTypes";
 import {Machine} from "../Types/MachineTypes";
 import {AlarmMode, AlarmSettings} from "../Types/AlarmSettingsTypes";
+import {AlarmLogEntry, AlarmLogEventType} from "../Types/AlarmLogEntryType";
 
 export class NetworkAccess {
     serverAddress: string;
@@ -43,5 +44,14 @@ export class NetworkAccess {
 
     UpdateAlarmSettingsForMachine(machine: Machine, updatedSettings: AlarmSettings): void {
 
+    }
+
+    GetAllAlarmLogEntries(): AlarmLogEntry[] {
+        return [
+            {siteName: 'Highbury', machineName: 'Machine 1', channelName: 'Channel 1', typeName: 'RMS', time: new Date(Date.now()), eventType: AlarmLogEventType.Activated},
+            {siteName: 'Highbury', machineName: 'Machine 2', channelName: 'Channel 2', typeName: 'PkPk', time: new Date(Date.now()), eventType: AlarmLogEventType.Activated},
+            {siteName: 'Northanger', machineName: 'Machine 1', channelName: 'Channel 1', typeName: 'Order 1', time: new Date(Date.now()), eventType: AlarmLogEventType.Deactivated},
+            {siteName: 'Northanger', machineName: 'Machine 2', channelName: 'Channel 2', typeName: 'Subsync ', time: new Date(Date.now()), eventType: AlarmLogEventType.Deactivated}
+        ];
     }
 }
