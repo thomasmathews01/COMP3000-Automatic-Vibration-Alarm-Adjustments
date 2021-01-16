@@ -2,26 +2,20 @@ import React, {useState} from 'react';
 import {ColDef, DataGrid} from '@material-ui/data-grid';
 import {State} from "../Types/StateTypes";
 import {Button, Grid} from "@material-ui/core";
-import axios from "axios";
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 const columns: ColDef[] = [
     {field: 'id', headerName: 'State ID', width: 150},
     {field: 'name', headerName: 'State Name', width: 150}
 ];
 
-const deleteStateName = async (name: string) => {
-    const response = await axios.post(`http://localhost:3456/deleteState?name=${name}`);
-
-    if (response.status !== 200)
-        console.log("Failed to issue state deletion request");
-}
-
 export const StatesGrid = (props: { states: State[] }) => {
     const [selectedRows, updateSelectedRows] = useState<number[]>([]);
+    const networkAccess = new NetworkAccess("http://localhost:3456")
 
     const deleteSelectedRows = async () => {
         if (!selectedRows.includes(0))
-            selectedRows.map(x => props.states[x].name).forEach(stateName => deleteStateName(stateName));
+            selectedRows.map(x => props.states[x].name).forEach(stateName => networkAccess.deleteStateName(stateName));
         else console.log("Cannot remove the original unknown state, must always be present.");
     }
 

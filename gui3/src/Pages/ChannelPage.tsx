@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {Card, CardContent, Grid, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import axios from "axios";
 import Graph from "../Components/Graph";
+import {NetworkAccess} from '../APIAccess/NetworkAccess'
+import {type} from '../APIAccess/ServerTypes'
 
 const useStyles = makeStyles(() => ({
     titleText: {
@@ -21,12 +22,6 @@ interface graphProps {
     channelID: number
 }
 
-interface type {
-    id: number,
-    name: string
-}
-
-
 function IndividualGraph(props: graphProps) {
     const classes = useStyles();
     return (
@@ -39,24 +34,14 @@ function IndividualGraph(props: graphProps) {
     );
 }
 
-const fetchGraphTypes = async (): Promise<type[]> => {
-    try {
-        const resp = await axios.get<{ types: type[] }>(`http://localhost:3456/dataTypes?channel=${1}`);
-
-        return resp.data.types;
-    } catch (exception) {
-        console.log(exception.toString());
-        return [];
-    }
-}
-
 export const ChannelPage = () => {
     const classes = useStyles();
+    const networkAccess = new NetworkAccess("http://localhost:3456");
 
     const [GraphTypes, setGraphTypes] = useState<type[]>([]);
 
     if (GraphTypes.length === 0)
-        fetchGraphTypes().then(x => setGraphTypes(x));
+        networkAccess.fetchGraphTypes().then(x => setGraphTypes(x));
 
     return (
         <Grid container spacing={2}>

@@ -1,34 +1,14 @@
 import React, {useState} from 'react';
-import axios from "axios";
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
 import GridOfAlarmStateItems from "../Components/GridOfAlarmStateItems";
 import {useParams} from "react-router";
-
-interface serverMachine {
-    id: number,
-    name: string,
-}
-
-const getMachines = async (siteID: number) => {
-    try {
-        const resp = await axios.get<{ machines: serverMachine[] }>(`http://localhost:3456/machines?site=${siteID}`);
-
-        return resp.data.machines.map((x) => {
-            return {
-                id: x.id,
-                name: x.name,
-                state: 1
-            }
-        });
-    } catch (exception) {
-        console.log(exception.toString());
-        return [];
-    }
-};
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 const startMachineRefreshInterval = (siteID: number, updateFn: (x: SingleAlarmStateItem[]) => void) => {
+    const networkAccess = new NetworkAccess("http://localhost:3456")
+
     return setInterval(async () => {
-        const newMachines = await getMachines(siteID);
+        const newMachines = await networkAccess.getMachines(siteID);
         updateFn(newMachines);
     }, 1000); // Replace this with nicer server side rendering to get the props each time from the real server
 }

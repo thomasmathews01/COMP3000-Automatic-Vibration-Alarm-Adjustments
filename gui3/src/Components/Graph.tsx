@@ -1,50 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {AreaSeries, FlexibleWidthXYPlot, Highlight, HighlightArea, HorizontalGridLines, LineSeries, LineSeriesPoint, VerticalGridLines, XAxis, YAxis} from 'react-vis'
 import '../../node_modules/react-vis/dist/style.css';
-import {alarmLevelChange, dataItem} from "../Types/DataTypes"; // TODO: Abstract network types into their own file to make API changes easier.
 import axios from "axios";
 import {Grid} from "@material-ui/core";
 import {GraphSettings} from "./GraphSettings";
-import {State, statePeriod} from "../Types/StateTypes";
+import {State} from "../Types/StateTypes";
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
-const fetchAlarmChanges = async (channel: number, type: number, alarmType: string) => {
-    const response = await axios.get<{ alarms: alarmLevelChange[] }>(`http://localhost:3456/${alarmType}s?channel=${channel}&type=${type}`);
+const networkAccess = new NetworkAccess("http://localhost:3456");
 
-    if (response.data.alarms) {
-        console.log(`Retrieved ${response.data.alarms} alarm levels of type: ${alarmType}`);
-        return response.data.alarms.map(item => {
-            return {x: item.secondsSinceEpoch * 1000, y: item.value}
-        });
-    }
+const fetchAlarmLevels = async (channel: number, type: number) => networkAccess.fetchAlarmChanges(channel, type, "alarm");
+const fetchAlertLevels = async (channel: number, type: number) => networkAccess.fetchAlarmChanges(channel, type, "alert");
 
-    return [];
-}
-
-const fetchAlarmLevels = async (channel: number, type: number) => fetchAlarmChanges(channel, type, "alarm");
-const fetchAlertLevels = async (channel: number, type: number) => fetchAlarmChanges(channel, type, "alert");
-
-const fetchValueData = async (channel: number, type: number) => {
-    const response = await axios.get<{ data: dataItem[] }>(`http://localhost:3456/data?channel=${channel}&type=${type}`);
-    if (response.data.data)
-        return response.data.data.map(item => {
-            return {x: item.secondsSinceEpoch * 1000, y: item.value}
-        });
-
-    return [];
-}
-
-const fetchStates = async () => {
-    const response = await axios.get<{ states: State[] }>(`http://localhost:3456/states`);
-    return response.data.states ?? [];
-}
-
-const networkFetchStatePeriods = async (channel: number) => {
-    const response = await axios.get<{ states: statePeriod[] }>(`http://localhost:3456/statePeriods?channel=${channel}`);
-    return response.data.states ?? [];
-}
 
 const fetchStatePeriods = async (channel: number) => {
-    const states = await networkFetchStatePeriods(channel);
+    const states = await networkAccess.networkFetchStatePeriods(channel);
     const maxStateId = Math.max(...states.map(x => x.id));
     const output = Array<LineSeriesPoint[]>(maxStateId - 1);
 
@@ -67,9 +37,9 @@ const Graph = (props: PropsT) => {
     const [alertLevels, setAlertLevels] = useState<LineSeriesPoint[]>([]);
 
     useEffect(() => {
-        fetchStates()
+        networkAccess.fetchStates()
             .then(fetchedStates => setStates(fetchedStates)); // TODO: Also pull the actual state periods themselves
-        fetchValueData(props.channel, props.type)
+        networkAccess.fetchValueData(props.channel, props.type)
             .then((result) => {
                 setValuesData(result);
                 displayFullRange(result);

@@ -1,27 +1,16 @@
 import React, {useState} from 'react';
-import axios from "axios";
 import {State} from "../Types/StateTypes";
 import {Grid} from "@material-ui/core";
 import {StatesGrid} from "../Components/StatesGrid";
 import {AddStateForm} from "../Components/AddStatesForm";
-
-const getStates = async (): Promise<State[]> => {
-    try {
-        const response = await axios.get<{ states: State[] }>(`http://localhost:3456/states`);
-
-        return response.data.states;
-    } catch (exception) {
-        console.log(`Error retrieving states: ${exception.toString()}`);
-    }
-
-    return [];
-};
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 export const StateSettingsPage = () => {
     const [states, setStates] = useState<State[]>([]);
+    const networkAccess = new NetworkAccess("http://localhost:3456")
 
     if (states?.length === 0)
-        getStates().then(newStates => setStates(newStates));
+        networkAccess.fetchStates().then(newStates => setStates(newStates));
 
     return (
         <Grid container direction="column">

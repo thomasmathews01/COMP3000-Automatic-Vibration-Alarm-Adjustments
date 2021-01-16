@@ -1,6 +1,6 @@
+import React, {useState} from 'react';
 import {State} from "../Types/StateTypes";
 import {Button, Grid, TextField, Typography} from "@material-ui/core";
-import {useState} from "react";
 import axios from "axios";
 
 const addNewState = async (newStateName: string) => {
