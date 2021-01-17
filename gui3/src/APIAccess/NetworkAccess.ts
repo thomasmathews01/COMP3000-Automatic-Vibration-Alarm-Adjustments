@@ -165,5 +165,17 @@ export class NetworkAccess {
         }
     };
 
+    async addNewState(newStateName: string) {
+        try {
+            const response = await axios.post(`http://localhost:3456/states?name=${newStateName}`, {});
+            if (response.status !== 200)
+                console.log("Error whilst adding a new state");
+        } catch (exception) {
+            console.log(`Exception whilst adding new state: ${exception.toString()}`);
+        }
+    }
 
+    async issueStateUpdate(leftBound: number, rightBound: number, stateID: number) { // TODO: get this to work with multiple states.
+        await axios.post(`http://localhost:3456/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${1}&stateId=${stateID}`)
+    }
 }

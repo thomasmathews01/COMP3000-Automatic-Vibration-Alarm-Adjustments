@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {AreaSeries, FlexibleWidthXYPlot, Highlight, HighlightArea, HorizontalGridLines, LineSeries, LineSeriesPoint, VerticalGridLines, XAxis, YAxis} from 'react-vis'
 import '../../node_modules/react-vis/dist/style.css';
-import axios from "axios";
 import {Grid} from "@material-ui/core";
 import {GraphSettings} from "./GraphSettings";
 import {State} from "../Types/StateTypes";
@@ -16,9 +15,8 @@ const fetchAlertLevels = async (channel: number, type: number) => networkAccess.
 const fetchStatePeriods = async (channel: number) => {
     const states = await networkAccess.networkFetchStatePeriods(channel);
     const maxStateId = Math.max(...states.map(x => x.id));
-    const output = Array<LineSeriesPoint[]>(maxStateId - 1);
 
-    return output;
+    return Array<LineSeriesPoint[]>(maxStateId - 1);
 }
 
 interface PropsT {
@@ -59,7 +57,8 @@ const Graph = (props: PropsT) => {
         const leftBound = (area.left as any).getTime(); // The documentation suggests this should come through as a number. It doesn't, it comes through as a date.
         const rightBound = (area.right as any).getTime(); // The documentation suggests this should come through as a number. It doesn't, it comes through as a date.
 
-        axios.post(`http://localhost:3456/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${1}&stateId=${selectedState.id}`)
+        const networkAccess = new NetworkAccess("http://localhost:3456");
+        networkAccess.issueStateUpdate(leftBound, rightBound, selectedState.id)
             .then(() => console.log("Pushed new state update")); // TODO: Non-static machine address and error handling
     }
 

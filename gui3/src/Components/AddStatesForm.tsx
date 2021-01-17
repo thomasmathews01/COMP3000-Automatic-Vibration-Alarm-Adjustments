@@ -1,20 +1,11 @@
 import React, {useState} from 'react';
 import {State} from "../Types/StateTypes";
 import {Button, Grid, TextField, Typography} from "@material-ui/core";
-import axios from "axios";
-
-const addNewState = async (newStateName: string) => {
-    try {
-        const response = await axios.post(`http://localhost:3456/states?name=${newStateName}`, {});
-        if (response.status !== 200)
-            console.log("Error whilst adding a new state");
-    } catch (exception) {
-        console.log(`Exception whilst adding new state: ${exception.toString()}`);
-    }
-}
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 export const AddStateForm = (props: { states: State[] }) => {
     const [newStateName, updateNewStateName] = useState("");
+    const networkAccess = new NetworkAccess("http://loalhost:3456");
 
     const newNameIsUnique = (): boolean => {
         return props.states.find(state => state.name.toLowerCase() === newStateName.toLowerCase()) === undefined;
@@ -35,8 +26,8 @@ export const AddStateForm = (props: { states: State[] }) => {
                     </Grid>
                     <Grid item>
                         <Button disabled={newStateName === "" || !newNameIsUnique()}
-                                onClick={() => {
-                                    addNewState(newStateName);
+                                onClick={async () => {
+                                    await networkAccess.addNewState(newStateName);
                                     updateNewStateName("");
                                 }}>Add</Button>
                     </Grid>
