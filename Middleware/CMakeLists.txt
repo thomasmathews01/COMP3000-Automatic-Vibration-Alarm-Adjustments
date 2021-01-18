@@ -13,17 +13,21 @@ endif ()
 
 enable_testing()
 add_subdirectory(Alarming)
+add_subdirectory(AlarmingTests)
 add_subdirectory(RESTInterface)
+add_subdirectory(RestInterfaceTests)
 add_subdirectory(Database)
+add_subdirectory(DatabaseTests)
 add_subdirectory(Utils)
 
 add_compile_definitions(NOMINMAX)
 add_definitions(-D_WIN32_WINNT=0x0A00)
-add_executable(Middleware main.cpp)
+add_executable(Middleware main.cpp DatabaseTests/DatabaseTests.cpp RestInterfaceTests/RestInterfaceTests.cpp)
 
 target_link_libraries(Middleware ${CONAN_LIBS} Alarming Database RESTInterface Utils)
 
 target_include_directories(Middleware PRIVATE
+        ${CMAKE_SOURCE_DIR}/Hypodermic
         ${CMAKE_SOURCE_DIR}/Alarming
         ${CMAKE_SOURCE_DIR}/Database
         ${CMAKE_SOURCE_DIR}/RESTInterface

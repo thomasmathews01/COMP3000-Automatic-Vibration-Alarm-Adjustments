@@ -5,7 +5,6 @@
 #include "../Types/stateTypes.h"
 #include "../Types/alarmTypes.h"
 
-
 class IDatabase {
 public:
 	virtual std::vector<site> get_site_data() = 0;

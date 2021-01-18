@@ -5,7 +5,7 @@
 using namespace std::string_literals;
 
 std::vector<site> Database::get_site_data() {
-	std::lock_guard guard(database_access_mutex);
+	//std::lock_guard guard(database_access_mutex);
 
 	std::vector<site> sites;
 
@@ -22,7 +22,7 @@ bool site_contains_machine_with_id(const site& site, int id) {
 }
 
 void Database::populate_sites_machine_information(site& site) {
-	std::lock_guard guard(database_access_mutex);
+	//std::lock_guard guard(database_access_mutex);
 
 	const auto query_string = "SELECT machine_id, machine_name from machines WHERE site_id = "s + std::to_string(site.id);
 
@@ -39,7 +39,7 @@ bool machine_contains_channel_with_id(const machine& machine, int channel_id) {
 }
 
 void Database::populate_channel_information_for_a_machine(machine& machine) {
-	std::lock_guard guard(database_access_mutex);
+	//std::lock_guard guard(database_access_mutex);
 
 	const auto channel_query_string = "SELECT channel_id, channel_name, channel_units FROM channels WHERE machine_id = "s + std::to_string(machine.id);
 
@@ -51,13 +51,6 @@ void Database::populate_channel_information_for_a_machine(machine& machine) {
 	}
 }
 
-void Database::set_up_database_connection() {
-	std::lock_guard<std::mutex> guard(database_access_mutex);
-	database = sqlite3pp::database(default_database_location);
-	DatabaseInitialiser initialiser;
-	initialiser.intialise_database(database);
-}
-
 std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int type, time_point_t start, time_point_t end) {
 	return std::vector<std::pair<time_point_t, float>>();
 }
@@ -67,7 +60,7 @@ std::vector<std::pair<int, std::string>> Database::get_data_types_available_for_
 }
 
 int Database::get_machine_id_from_channel_id(int channel_id) {
-	std::lock_guard guard(database_access_mutex);
+	//std::lock_guard guard(database_access_mutex);
 
 	const auto selection_string = "SELECT machine_id from channels where channel_id = " + std::to_string(channel_id);
 
@@ -101,7 +94,7 @@ std::vector<alarm_settings_t> Database::get_alarm_settings_for_machine(int machi
 }
 
 bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
-	std::lock_guard guard(database_access_mutex);
+	//std::lock_guard guard(database_access_mutex);
 
 	sqlite3pp::command cmd(database, modify_alarm_settings);
 
@@ -121,7 +114,19 @@ std::vector<automatic_alarm_level_history_point_t> Database::get_alarm_level_his
 }
 
 void Database::add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) {
+	//std::lock_guard guard(database_access_mutex);
 
+	sqlite3pp::command cmd(database, modify_alarm_settings);
+
+	//cmd.bind(":type", std::to_string(new_setting.type_id), sqlite3pp::nocopy);
+	cmd.execute();
+}
+
+Database::Database(std::shared_ptr<IDatabaseFactory> db_factory) : factory(std::move(db_factory)) {
+	database = sqlite3pp::database(factory->get_database().c_str());
+
+	/*databaseInitialiser initialiser;
+	initialiser.intialise_database(database);*/
 }
 
 /*
