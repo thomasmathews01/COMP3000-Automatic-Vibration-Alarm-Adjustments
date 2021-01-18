@@ -1,6 +1,6 @@
 #include "AddStatePeriodRequest.h"
 #include "../Conversions.h"
-#include <doctest/doctest.h>
+
 
 using namespace std::chrono;
 using namespace std::chrono_literals;
@@ -70,6 +70,7 @@ std::vector<state_change_t> remove_subsumed_states(std::vector<state_change_t>&&
 
 	return result;
 }
+/*
 
 TEST_CASE ("Removes subsumed states") {
 	const auto new_state = state_period_t(4, time_point_t(150s), time_point_t(350s));
@@ -141,4 +142,4 @@ TEST_CASE ("Can merge state periods when new state removes an old state") {
 		CHECK(true);
 }
 
-// Alternative: Insert states at begin, and at end, then fold the duplicates into each other. Computationally cheaper since we avoid all the unnecessary sorting and should be less steps with less branching for when we have to deal with many requests.
+// Alternative: Insert states at begin, and at end, then fold the duplicates into each other. Computationally cheaper since we avoid all the unnecessary sorting and should be less steps with less branching for when we have to deal with many requests.*/

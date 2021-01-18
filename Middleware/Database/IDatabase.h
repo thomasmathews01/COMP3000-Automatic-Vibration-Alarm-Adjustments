@@ -2,8 +2,8 @@
 
 #include <string>
 #include <vector>
-#include "../REST Interface/Model/stateTypes.h"
-#include "../REST Interface/Model/alarmTypes.h"
+#include "../Types/stateTypes.h"
+#include "../Types/alarmTypes.h"
 
 
 class IDatabase {

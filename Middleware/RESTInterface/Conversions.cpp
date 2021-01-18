@@ -1,5 +1,5 @@
 #include "Conversions.h"
-#include <doctest/doctest.h>
+
 #include <algorithm>
 #include <iterator>
 
@@ -21,6 +21,7 @@ std::vector<state_period_t> Conversions::convert_state_changes_to_state_periods(
 
 	return Conversions::convert_state_changes_to_state_periods(std::move(cpy));
 }
+/*
 
 TEST_CASE ("Simple single continuous state") {
 	std::vector<state_change_t> state_changes;
@@ -43,4 +44,4 @@ TEST_CASE ("Handles multiple states") {
 		CHECK_EQ(time_point_t(300s), state_periods.at(0).end);
 		CHECK_EQ(time_point_t(300s), state_periods.at(1).start);
 		CHECK_EQ(time_point_t::max(), state_periods.at(1).end);
-}
+}*/

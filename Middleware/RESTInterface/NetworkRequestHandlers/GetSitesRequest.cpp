@@ -1,7 +1,6 @@
 #include "GetSitesRequest.h"
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
-#include "doctest/doctest.h"
 #include "../../Database/TestDatabase.h"
 
 using rapidjson::StringBuffer;
@@ -29,6 +28,7 @@ std::string GetSitesRequest::get_sites_info(const std::shared_ptr<IDatabase>& da
 
 	return buff.GetString();
 }
+/*
 
 TEST_CASE ("Return site information") {
 	std::shared_ptr<TestDatabase> test_db = std::make_shared<TestDatabase>();
@@ -44,4 +44,4 @@ TEST_CASE ("Return site information") {
 		CHECK_NE(result.find('1'), std::string::npos);
 		CHECK_NE(result.find('2'), std::string::npos);
 		CHECK_NE(result.find('3'), std::string::npos);
-}
+}*/

@@ -1,7 +1,7 @@
 #include "GetStatePeriodsRequest.h"
 #include "../../Database/TestDatabase.h"
 #include "../Conversions.h"
-#include <doctest/doctest.h>
+
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 

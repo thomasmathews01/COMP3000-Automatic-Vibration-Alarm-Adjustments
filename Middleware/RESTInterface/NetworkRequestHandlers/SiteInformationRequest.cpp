@@ -1,7 +1,7 @@
 #include <rapidjson/prettywriter.h>
 #include "SiteInformationRequest.h"
 #include "../../Database/TestDatabase.h"
-#include <doctest/doctest.h>
+
 
 std::string SiteInformationRequest::get_site_information(const crow::request& request, const std::shared_ptr<IDatabase>& database) {
 	rapidjson::StringBuffer buffer;
@@ -32,6 +32,7 @@ std::string SiteInformationRequest::get_site_information(const crow::request& re
 	return buffer.GetString();
 }
 
+/*
 
 TEST_CASE ("Return machine information") {
 	std::shared_ptr<TestDatabase> test_db = std::make_shared<TestDatabase>();
@@ -51,4 +52,4 @@ TEST_CASE ("Return machine information") {
 		CHECK_NE(result.find('1'), std::string::npos);
 		CHECK_NE(result.find('2'), std::string::npos);
 		CHECK_NE(result.find('3'), std::string::npos);
-}
+}*/

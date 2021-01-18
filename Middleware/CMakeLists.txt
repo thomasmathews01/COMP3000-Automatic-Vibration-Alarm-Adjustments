@@ -2,10 +2,32 @@ cmake_minimum_required(VERSION 3.17)
 project(Cpp_Middleware)
 
 set(CMAKE_CXX_STANDARD 17)
-find_package(spdlog REQUIRED)
-find_package(RapidJSON REQUIRED)
 
-add_executable(Middleware main.cpp "Database/IDatabase.h" "REST Interface/Model/types.h" "Database/Database.cpp" "Database/Database.h" Database/Helpers/sqlite3pp.h Database/Helpers/sqlite3pp.ipp "REST Interface/Server.cpp" "REST Interface/Server.h" Database/TestDatabase.h "REST Interface/NetworkRequestHandlers/HelloWorldRequest.cpp" "REST Interface/NetworkRequestHandlers/HelloWorldRequest.h" "REST Interface/NetworkRequestHandlers/GetSitesRequest.cpp" "REST Interface/NetworkRequestHandlers/GetSitesRequest.h" "REST Interface/NetworkRequestHandlers/SiteInformationRequest.cpp" "REST Interface/NetworkRequestHandlers/SiteInformationRequest.h" "REST Interface/NetworkRequestHandlers/MachineInformationRequest.cpp" "REST Interface/NetworkRequestHandlers/MachineInformationRequest.h" InternalClock.cpp InternalClock.h "REST Interface/NetworkRequestHandlers/CurrentTimeRequest.cpp" "REST Interface/NetworkRequestHandlers/CurrentTimeRequest.h" "REST Interface/NetworkRequestHandlers/AvailableDataTypesRequest.cpp" "REST Interface/NetworkRequestHandlers/AvailableDataTypesRequest.h" "REST Interface/NetworkRequestHandlers/GetDataRequest.cpp" "REST Interface/NetworkRequestHandlers/GetDataRequest.h" "REST Interface/NetworkRequestHandlers/all.h" "REST Interface/NetworkRequestHandlers/GetStatePeriodsRequest.cpp" "REST Interface/NetworkRequestHandlers/GetStatePeriodsRequest.h" "REST Interface/Model/stateTypes.h" "REST Interface/NetworkRequestHandlers/AddStatePeriodRequest.cpp" "REST Interface/NetworkRequestHandlers/AddStatePeriodRequest.h" "REST Interface/Conversions.cpp" "REST Interface/Conversions.h" Utils/include_crow.h Utils/crow.h "REST Interface/Model/AlarmTypes.h" Alarming/SOM.cpp Alarming/SOM.h "REST Interface/NetworkRequestHandlers/AlarmSettingsRequest.cpp" "REST Interface/NetworkRequestHandlers/GetAlarmLevelHistory.cpp" "REST Interface/Utils/CrowExtractionHelpers.cpp" "Utils/STLExtensions.cpp" "REST Interface/NetworkRequestHandlers/AlarmActivationsRequest.cpp" "REST Interface/NetworkRequestHandlers/CurrentAlarmStateRequest.cpp" Database/DatabaseInitialiser.cpp Database/DatabaseInitialiser.h Database/database_statements.h)
+#[[Set up Conan package manager]]
+if (EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+else ()
+    message(WARNING "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first - see README")
+endif ()
 
-target_link_libraries(Middleware PRIVATE libsqlite3.dylib spdlog::spdlog)
-include_directories(/usr/local/Cellar/doctest/2.4.0/include /usr/local/Cellar/range-v3/0.11.0/include /usr/local/Cellar/boost/1.74.0 /usr/local/opt/sqlite/include)
+enable_testing()
+add_subdirectory(Alarming)
+add_subdirectory(RESTInterface)
+add_subdirectory(Database)
+add_subdirectory(Utils)
+
+add_compile_definitions(NOMINMAX)
+add_definitions(-D_WIN32_WINNT=0x0A00)
+add_executable(Middleware main.cpp)
+
+target_link_libraries(Middleware ${CONAN_LIBS} Alarming Database RESTInterface Utils)
+
+target_include_directories(Middleware PRIVATE
+        ${CMAKE_SOURCE_DIR}/Alarming
+        ${CMAKE_SOURCE_DIR}/Database
+        ${CMAKE_SOURCE_DIR}/RESTInterface
+        ${CMAKE_SOURCE_DIR}/Utils
+        ${CMAKE_SOURCE_DIR}/Types)
+
+

@@ -2,8 +2,6 @@
 #include "../../Database/TestDatabase.h"
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
-#include <doctest/doctest.h>
-
 
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
@@ -36,7 +34,7 @@ std::string MachineInformationRequest::get_machine_information(const crow::reque
 
 	return buffer.GetString();
 }
-
+/*
 TEST_CASE ("Return channel information") {
 	std::shared_ptr<TestDatabase> test_db = std::make_shared<TestDatabase>();
 	test_db->channels.emplace_back(1, "firstChannelName", "g");
@@ -58,4 +56,4 @@ TEST_CASE ("Return channel information") {
 		CHECK_NE(result.find('1'), std::string::npos);
 		CHECK_NE(result.find('2'), std::string::npos);
 		CHECK_NE(result.find('3'), std::string::npos);
-}
+}*/

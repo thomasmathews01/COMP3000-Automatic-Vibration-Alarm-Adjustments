@@ -1,5 +1,4 @@
 #include "Database.h"
-#include "doctest/doctest.h"
 #include "DatabaseInitialiser.h"
 #include "database_statements.h"
 

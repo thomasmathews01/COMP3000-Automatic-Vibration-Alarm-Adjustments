@@ -2,7 +2,7 @@
 #include "../Utils/include_crow.h"
 #include <spdlog/spdlog.h>
 #include "NetworkRequestHandlers/all.h"
-#include "Model/alarmTypes.h"
+#include "../Types/alarmTypes.h"
 #include "Utils/CrowExtractionHelpers.h"
 
 using namespace std::string_literals;

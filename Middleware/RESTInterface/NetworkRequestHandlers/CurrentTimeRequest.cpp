@@ -1,5 +1,5 @@
 #include "CurrentTimeRequest.h"
-#include "../../InternalClock.h"
+#include "../../Utils/InternalClock.h"
 
 std::string CurrentTimeRequest::get_current_time_response() {
 	const auto clock = InternalClock::get();

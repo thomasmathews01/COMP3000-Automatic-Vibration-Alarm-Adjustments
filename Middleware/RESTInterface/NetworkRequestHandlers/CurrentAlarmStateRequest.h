@@ -1,5 +1,5 @@
 #pragma once
-#include "../Model/alarmTypes.h"
+#include "../../Types/alarmTypes.h"
 #include <memory>
 #include <string>
 #include "../../Utils/include_crow.h"

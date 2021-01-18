@@ -2,7 +2,7 @@
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 #include <cmath>
-#include <doctest/doctest.h>
+
 
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
@@ -81,6 +81,7 @@ std::string GetDataRequest::get_data_points(const crow::request& request, const 
 
 	return convert_data_points_to_json(decimated_data);
 }
+/*
 
 namespace testing
 {
@@ -143,3 +144,4 @@ namespace testing
 		}
 	}
 }
+*/

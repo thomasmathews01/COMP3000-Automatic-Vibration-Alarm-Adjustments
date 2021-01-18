@@ -1,7 +1,7 @@
 #include <vector>
 #include "DatabaseInitialiser.h"
 #include "database_statements.h"
-#include "../REST Interface/Model/alarmTypes.h"
+#include "../Types/alarmTypes.h"
 
 void DatabaseInitialiser::intialise_database(sqlite3pp::database& database) { // TODO: Make noexcept and encase in a try catch block
 	const auto statements = {setup_alarm_settings, setup_alarm_levels, setup_alarm_activation_changes, setup_state_changes, setup_state_settings};

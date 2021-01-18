@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Model/alarmTypes.h"
+#include "../../Types/alarmTypes.h"
 #include <memory>
 #include "../../Utils/include_crow.h"
 #include "../../Database/IDatabase.h"
