@@ -1,51 +1,52 @@
+#include <vector>
 #include "DatabaseInitialiser.h"
-
-constexpr auto setup_alarm_settings = "CREATE TABLE IF NOT EXISTS alarm_settings (\n"
-									  "\talarm_settings_id INTEGER PRIMARY KEY,\n"
-									  "\tchannel_id INTEGER,\n"
-									  "\ttype_id INTEGER, \n"
-									  "\talarm_severity INTEGER,\n"
-									  "\talarm_threshold_type INTEGER,\n"
-									  "\tcustom_fixed_threshold REAL,\n"
-									  "\tFOREIGN KEY(channel_id) REFERENCES channels(channel_id),\n"
-									  "\tFOREIGN KEY(type_id) REFERENCES types(type_id)\n"
-									  ");";
-
-constexpr auto setup_alarm_levels = "CREATE TABLE IF NOT EXISTS alarm_levels (\n"
-									"\talarm_settings_id INTEGER,\n"
-									"\tlevel REAL,\n"
-									"\ttime_since_epoch INTEGER,\n"
-									"\tPRIMARY KEY(alarm_settings_id, level, time_since_epoch),\n"
-									"\tFOREIGN KEY (alarm_settings_id) REFERENCES alarm_settings(alarm_settings_id)\n"
-									");";
-
-constexpr auto setup_alarm_activation_changes = "CREATE TABLE IF NOT EXISTS alarm_activation_changes (\n"
-												"\talarm_settings_id INTEGER,\n"
-												"\tbecame_active BOOLEAN ,\n"
-												"\ttime_since_epoch INTEGER,\n"
-												"\tPRIMARY KEY(alarm_settings_id, became_active, time_since_epoch),\n"
-												"\tFOREIGN KEY (alarm_settings_id) REFERENCES alarm_settings(alarm_settings_id)\n"
-												");";
-
-constexpr auto setup_state_settings = "CREATE TABLE IF NOT EXISTS state_settings (\n"
-									  "\tstate_id INTEGER PRIMARY KEY,\n"
-									  "\tmachine_id INTEGER,\n"
-									  "\tstate_name TEXT,\n"
-									  "\tFOREIGN KEY(machine_id) REFERENCES machines(machine_id)\n"
-									  ");";
-
-constexpr auto setup_state_changes = "CREATE TABLE IF NOT EXISTS state_changes (\n"
-									 "\tmachine_id INTEGER,\n"
-									 "\tnew_state_id INTEGER,\n"
-									 "\ttime_since_epoch INTEGER,\n"
-									 "\tFOREIGN KEY (new_state_id) REFERENCES state_settings(state_id),\n"
-									 "\tFOREIGN KEY (machine_id) REFERENCES machines(machine_id)\n"
-									 "\n"
-									 ");";
+#include "database_statements.h"
+#include "../REST Interface/Model/alarmTypes.h"
 
 void DatabaseInitialiser::intialise_database(sqlite3pp::database& database) { // TODO: Make noexcept and encase in a try catch block
 	const auto statements = {setup_alarm_settings, setup_alarm_levels, setup_alarm_activation_changes, setup_state_changes, setup_state_settings};
 
 	for (const auto& statement : statements)
 		database.execute(statement); // TODO: We should check the return value, to ensure all the tables were actually created
+
+	add_alarm_settings_entries_for_all_channels(database);
+}
+
+void DatabaseInitialiser::add_alarm_settings_entries_for_all_channels(sqlite3pp::database& database) {
+	// TODO: Should this access also be mutex protected if we have a more complex initialisation sequence?
+
+	std::vector<int> types_with_data = {};
+
+	for (const auto& row : sqlite3pp::query(database, get_all_types_with_data_associated_with_them)) {
+		const auto[type_id] = row.get_columns<int>(0);
+		types_with_data.emplace_back(type_id);
+	}
+
+	std::vector<alarm_settings_t> alarm_settings;
+
+	for (const auto& row : sqlite3pp::query(database, select_all_unique_channels)) {
+		const auto[channel] = row.get_columns<int>(0);
+
+		for (const auto severity : {alarmSeverity::alert, alarmSeverity::alarm})
+			for (const auto type : types_with_data)
+				alarm_settings.emplace_back(channel, type, severity);
+	}
+
+	sqlite3pp::transaction xct(database);
+	{
+		for (const auto settings : alarm_settings)
+			add_alarm_settings_if_not_exists(settings, database);
+	}
+}
+
+void DatabaseInitialiser::add_alarm_settings_if_not_exists(const alarm_settings_t settings, sqlite3pp::database& database) {
+	sqlite3pp::command cmd(database, add_alarm_settings);
+
+	cmd.bind(":type", std::to_string(settings.type_id), sqlite3pp::nocopy);
+	cmd.bind(":channel", std::to_string(settings.channel_id), sqlite3pp::nocopy);
+	cmd.bind(":severity", std::to_string(static_cast<int>(settings.severity)), sqlite3pp::nocopy);
+	cmd.bind(":threshold_type", std::to_string(static_cast<int>(settings.threshold)), sqlite3pp::nocopy);
+	cmd.bind(":custom_threshold", std::to_string(settings.customLevel ? static_cast<int>(*settings.customLevel) : 0), sqlite3pp::nocopy);
+
+	cmd.execute();
 }

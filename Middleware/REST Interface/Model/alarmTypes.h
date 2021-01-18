@@ -37,15 +37,16 @@ inline alarmSeverity parse_severity(const std::string_view severity_string) {
 }
 
 enum class alarmThreshold {
-	automatic,
+	automaticBasic,
+	automaticStateBased,
 	ISOLevel, // TODO: Break this down in the the ISO subcategories with constexpr values, with the user determining the category of each machine
 	Custom
 };
 
 inline std::string toString(const alarmThreshold severity) {
 	switch (severity) {
-		case alarmThreshold::automatic:
-			return "automatic";
+		case alarmThreshold::automaticStateBased:
+			return "automaticStateBased";
 		case alarmThreshold::ISOLevel:
 			return "ISOLevel";
 		case alarmThreshold::Custom:
@@ -56,8 +57,8 @@ inline std::string toString(const alarmThreshold severity) {
 }
 
 inline alarmThreshold parse_threshold(const std::string_view threshold_string) {
-	if (threshold_string == "automatic"sv)
-		return alarmThreshold::automatic;
+	if (threshold_string == "automaticStateBased"sv)
+		return alarmThreshold::automaticStateBased;
 
 	if (threshold_string == "ISOLevel"sv)
 		return alarmThreshold::ISOLevel;
@@ -70,7 +71,6 @@ inline alarmThreshold parse_threshold(const std::string_view threshold_string) {
 
 
 struct alarm_settings_t {
-	int state_id; // TODO: This needs extracting into a typedef somewhere, along with most other IDs
 	int channel_id;
 	int type_id;
 	alarmSeverity severity;
@@ -78,10 +78,12 @@ struct alarm_settings_t {
 	alarmThreshold threshold;
 	std::optional<float> customLevel; // nullopt indicates the threshold type is not custom.
 
-	alarm_settings_t(int state_id, int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold) : state_id(state_id), channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold), customLevel(std::nullopt) {}
+	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(alarmThreshold::automaticStateBased) {}
 
-	alarm_settings_t(int state_id, int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold, float custom_level) : state_id(state_id), channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold),
-																																		customLevel(custom_level) {}
+	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold), customLevel(std::nullopt) {}
+
+	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold, float custom_level) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold),
+																														  customLevel(custom_level) {}
 };
 
 struct automatic_alarm_level_history_point_t {

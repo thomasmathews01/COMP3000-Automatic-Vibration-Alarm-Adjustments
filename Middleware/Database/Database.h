@@ -22,9 +22,10 @@ public:
 	std::vector<state_change_t> get_state_changes_for_machine(int machine_id) final;
 	virtual std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) override;
 	virtual std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) override;
-	virtual bool add_alarm_setting(const alarm_settings_t& new_setting) override;
+	virtual bool update_alarm_setting(const alarm_settings_t& new_setting) override;
 	virtual std::vector<automatic_alarm_level_history_point_t> get_alarm_level_history(int channel_id, int type_id) override;
 	virtual void add_new_state_period(int machine_id, state_period_t state_period) final;
+	virtual void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final;
 };
 
 

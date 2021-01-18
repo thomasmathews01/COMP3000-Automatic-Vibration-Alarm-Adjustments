@@ -58,16 +58,15 @@ std::string set_alarm_settings(const crow::request& request, alarmSeverity sever
 		const auto& new_setting = document["alarm_setting"].GetObject();
 		const auto channel_id = new_setting["channel_id"].GetInt();
 		const auto type_id = new_setting["type_id"].GetInt();
-		const auto state_id = new_setting["state_id"].GetInt();
 		const auto threshold_type = new_setting["threshold_type"].GetString();
 		const auto severity_type = new_setting["severity"].GetString();
 
 		if (parse_threshold(threshold_type) == alarmThreshold::Custom) {
 			const auto custom_level = new_setting["custom_level"].GetFloat(); // TODO: Error case.
-			database->add_alarm_setting(alarm_settings_t(state_id, channel_id, type_id, parse_severity(severity_type), parse_threshold(threshold_type), custom_level));
+			database->update_alarm_setting(alarm_settings_t(channel_id, type_id, parse_severity(severity_type), parse_threshold(threshold_type), custom_level));
 		}
 		else {
-			database->add_alarm_setting(alarm_settings_t(state_id, channel_id, type_id, parse_severity(severity_type), parse_threshold(threshold_type)));
+			database->update_alarm_setting(alarm_settings_t(channel_id, type_id, parse_severity(severity_type), parse_threshold(threshold_type)));
 		}
 
 		return "success"; // TODO: Convert this to a return code when we get the better error messages starting to come through anyway.

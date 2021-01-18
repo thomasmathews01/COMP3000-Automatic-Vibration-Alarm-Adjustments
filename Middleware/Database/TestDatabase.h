@@ -25,7 +25,7 @@ struct TestDatabase : public IDatabase {
 		return std::vector<alarm_settings_t>();
 	}
 
-	virtual bool add_alarm_setting(const alarm_settings_t& new_setting) override {
+	virtual bool update_alarm_setting(const alarm_settings_t& new_setting) override {
 		return false;
 	}
 
@@ -58,6 +58,10 @@ struct TestDatabase : public IDatabase {
 
 	std::vector<state_change_t> get_state_changes_for_machine(int machine_id) final {
 		return state_changes;
+	}
+
+	virtual void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final {
+
 	}
 
 	std::vector<site> sites;

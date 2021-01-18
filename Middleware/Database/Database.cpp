@@ -1,6 +1,7 @@
 #include "Database.h"
 #include "doctest/doctest.h"
 #include "DatabaseInitialiser.h"
+#include "database_statements.h"
 
 using namespace std::string_literals;
 
@@ -100,12 +101,28 @@ std::vector<alarm_settings_t> Database::get_alarm_settings_for_machine(int machi
 	return std::vector<alarm_settings_t>();
 }
 
-bool Database::add_alarm_setting(const alarm_settings_t& new_setting) {
-	return false;
+bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
+	std::lock_guard guard(database_access_mutex);
+
+	sqlite3pp::command cmd(database, modify_alarm_settings);
+
+	cmd.bind(":type", std::to_string(new_setting.type_id), sqlite3pp::nocopy);
+	cmd.bind(":channel", std::to_string(new_setting.channel_id), sqlite3pp::nocopy);
+	cmd.bind(":severity", std::to_string(static_cast<int>(new_setting.severity)), sqlite3pp::nocopy);
+	cmd.bind(":threshold_type", std::to_string(static_cast<int>(new_setting.threshold)), sqlite3pp::nocopy);
+	cmd.bind(":fixed_threshold", std::to_string(new_setting.customLevel ? static_cast<int>(*new_setting.customLevel) : 0), sqlite3pp::nocopy);
+
+	cmd.execute();
+
+	return true;
 }
 
 std::vector<automatic_alarm_level_history_point_t> Database::get_alarm_level_history(int channel_id, int type_id) {
 	return std::vector<automatic_alarm_level_history_point_t>();
+}
+
+void Database::add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) {
+
 }
 
 /*
