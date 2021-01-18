@@ -11,7 +11,7 @@ class Server : public IServer {
 public:
 	explicit Server(std::shared_ptr<IDatabase> database) : database(std::move(database)) {}
 
-	~Server();
+	~Server() override;
 	void startServer() final;
 
 private:

@@ -21,6 +21,7 @@ public:
 	virtual bool update_alarm_setting(const alarm_settings_t& new_setting) = 0;
 	virtual std::vector<automatic_alarm_level_history_point_t> get_alarm_level_history(int channel_id, int type_id) = 0;
 	virtual void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) = 0;
+	virtual ~IDatabase() = default;
 };
 
 

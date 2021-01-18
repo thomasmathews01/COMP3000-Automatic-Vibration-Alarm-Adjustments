@@ -2,6 +2,12 @@
 
 #include <string>
 
+constexpr auto create_types = "CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name VARCHAR(30))";
+constexpr auto create_sites = "CREATE TABLE sites (site_id INTEGER PRIMARY KEY AUTOINCREMENT, site_name varchar(40))";
+constexpr auto create_machines = "CREATE TABLE machines (machine_id INTEGER PRIMARY KEY AUTOINCREMENT, machine_name varchar(40), site_id INTEGER, FOREIGN KEY(site_id) REFERENCES sites(side_id))";
+constexpr auto create_channels = "CREATE TABLE channels (channel_id INTEGER PRIMARY KEY AUTOINCREMENT, channel_name VARCHAR(40), channel_units VARCHAR(10), machine_id INTEGER, FOREIGN KEY(machine_id) REFERENCES machines(machine_id))";
+constexpr auto create_data = "CREATE TABLE data (type_id INTEGER, channel_id INTEGER, time_since_epoch INTEGER, value REAL, PRIMARY KEY (type_id, time_since_epoch, channel_id))";
+
 constexpr auto add_new_alarm_settings = "INSERT into alarm_settings(channel_id, type_id, alarm_severity, alarm_threshold_type, custom_fixed_threshold)";
 
 constexpr auto setup_alarm_settings = "CREATE TABLE IF NOT EXISTS alarm_settings (\n"

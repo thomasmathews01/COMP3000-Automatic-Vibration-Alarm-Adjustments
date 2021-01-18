@@ -6,20 +6,16 @@
 class DatabaseTest : public ::testing::Test {
 protected:
 	void SetUp() override {
-		Hypodermic::ContainerBuilder builder;
-
-		builder.registerType<MockDatabaseFactory>().as<IDatabaseFactory>().singleInstance();
-
-		container = builder.build();
+		std::shared_ptr<IDatabaseFactory> factory = std::make_shared<MockDatabaseFactory>();
+		database = std::make_shared<Database>(factory);
 	}
 
 	void TearDown() override {
 	}
 
-	std::shared_ptr<Hypodermic::Container> container;
+	std::shared_ptr<IDatabase> database;
 };
 
 TEST_F(DatabaseTest, Constructs) {
-	auto database = container->resolve<IDatabase>();
 	EXPECT_TRUE(true);
 }

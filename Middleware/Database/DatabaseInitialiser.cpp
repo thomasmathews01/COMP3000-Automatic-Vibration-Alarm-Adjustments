@@ -4,7 +4,7 @@
 #include "../Types/alarmTypes.h"
 
 void DatabaseInitialiser::intialise_database(sqlite3pp::database& database) { // TODO: Make noexcept and encase in a try catch block
-	const auto statements = {setup_alarm_settings, setup_alarm_levels, setup_alarm_activation_changes, setup_state_changes, setup_state_settings};
+	const auto statements = {setup_alarm_settings, setup_alarm_levels, setup_alarm_activation_changes, setup_state_changes, setup_state_settings, create_types, create_sites, create_machines, create_channels, create_data};
 
 	for (const auto& statement : statements)
 		database.execute(statement); // TODO: We should check the return value, to ensure all the tables were actually created

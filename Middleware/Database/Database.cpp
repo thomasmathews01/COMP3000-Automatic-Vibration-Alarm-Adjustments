@@ -125,8 +125,8 @@ void Database::add_alarm_level_history_item(const time_point_t& occurence, const
 Database::Database(std::shared_ptr<IDatabaseFactory> db_factory) : factory(std::move(db_factory)) {
 	database = sqlite3pp::database(factory->get_database().c_str());
 
-	/*databaseInitialiser initialiser;
-	initialiser.intialise_database(database);*/
+	DatabaseInitialiser initialiser;
+	initialiser.intialise_database(database);
 }
 
 /*
