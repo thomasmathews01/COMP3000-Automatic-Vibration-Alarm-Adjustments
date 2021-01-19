@@ -94,13 +94,15 @@ struct alarm_level_history_point {
 };
 
 struct alarm_activation_t {
-	int state_id;
 	int channel_id;
 	int type_id;
+	alarmSeverity severity;
 
 	time_point_t activation_time;
-	alarmSeverity severity;
-	bool acknowledged;
+	bool became_active;
+
+	alarm_activation_t(int channel_id, int type_id, alarmSeverity severity, const time_point_t& activation_time, bool became_active) : channel_id(channel_id), type_id(type_id), severity(severity), activation_time(activation_time),
+																																	   became_active(became_active) {}
 };
 
 struct alarm_state_t {

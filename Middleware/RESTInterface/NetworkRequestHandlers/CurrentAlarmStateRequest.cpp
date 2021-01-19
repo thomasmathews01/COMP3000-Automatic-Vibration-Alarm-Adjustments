@@ -36,15 +36,12 @@ std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::reques
 
 	// Extract optional filters
 	const auto type_id = CrowExtractionHelpers::extract_int_from_url_params(request, "type_id");
-	const auto state_id = CrowExtractionHelpers::extract_int_from_url_params(request, "state_id");
 
 	const auto all_activations = database->get_activations_for_machine(*machine_id);
 	const auto severities_of_active_alarms = all_activations
 									   | views::filter([&](const auto& activation) { return activation.severity == severity; })
 									   | views::filter([&](const auto& activation) { return !channel_id || activation.channel_id == *channel_id; })
 									   | views::filter([&](const auto& activation) { return !type_id || activation.type_id == *type_id; })
-									   | views::filter([&](const auto& activation) { return !state_id || activation.state_id == *state_id; })
-									   | views::filter([](const auto& activation) { return !activation.acknowledged; })
 									   | views::transform([](const auto& activation) { return activation.severity; })
 									   | views::unique
 									   | to<std::vector>();

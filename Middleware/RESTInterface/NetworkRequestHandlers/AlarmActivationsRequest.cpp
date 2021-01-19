@@ -27,8 +27,6 @@ std::string activations_as_json_string(const std::vector<alarm_activation_t>& ac
 		writer.Int(duration_cast<seconds>(activation.activation_time.time_since_epoch()).count());
 		writer.Key("channel_id");
 		writer.Double(activation.channel_id);
-		writer.Key("state_id");
-		writer.Double(activation.state_id);
 		writer.Key("type_id");
 		writer.Double(activation.type_id);
 		writer.EndObject();
@@ -58,6 +56,5 @@ std::string AlarmActivationsRequest::get_activations(const crow::request& reques
 									  | views::filter([&](const auto& activation) { return activation.severity == severity; })
 									  | views::filter([&](const auto& activation) { return !channel_id || activation.channel_id == *channel_id; })
 									  | views::filter([&](const auto& activation) { return !type_id || activation.type_id == *type_id; })
-									  | views::filter([&](const auto& activation) { return !state_id || activation.state_id == *state_id; })
 									  | to<std::vector>());
 }

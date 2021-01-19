@@ -38,7 +38,7 @@ constexpr auto setup_alarm_activation_changes = "CREATE TABLE IF NOT EXISTS alar
 												"time_since_epoch INTEGER,\n"
 												"FOREIGN KEY(channel_id) REFERENCES channels(channel_id),\n"
 												"FOREIGN KEY(type_id) REFERENCES types(type_id),\n"
-												"PRIMARY KEY(channel_id, type_id, alarm_severity)\n"
+												"PRIMARY KEY(channel_id, type_id, alarm_severity, time_since_epoch)\n"
 												");";
 
 constexpr auto setup_state_settings = "CREATE TABLE IF NOT EXISTS state_settings (\n"
@@ -66,6 +66,9 @@ constexpr auto add_alarm_settings = "INSERT OR IGNORE INTO alarm_settings (chann
 
 constexpr auto add_alarm_level_history_point = "INSERT INTO alarm_levels (channel_id, type_id,  alarm_severity, level,  time_since_epoch)\n"
 											   "VALUES (:channel, :type, :severity, :level, :time_since_epoch)";
+
+constexpr auto add_alarm_activation_change = "INSERT INTO alarm_activation_changes (channel_id, type_id,  alarm_severity, became_active, time_since_epoch)\n"
+											 "VALUES (:channel, :type, :severity, :became_active, :time_since_epoch)";
 
 constexpr auto modify_alarm_settings = "UPDATE alarm_settings SET alarm_threshold_type = :threshold_type, custom_fixed_threshold = :fixed_threshold "
 									   "WHERE channel_id = :channel AND type_id = :type AND alarm_severity = :severity";
