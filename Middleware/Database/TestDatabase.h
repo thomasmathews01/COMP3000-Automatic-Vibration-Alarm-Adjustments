@@ -9,8 +9,8 @@ struct TestDatabase : public IDatabase {
 		return sites;
 	}
 
-	void populate_sites_machine_information(site& site) final {
-		std::copy(machines.cbegin(), machines.cend(), std::back_inserter(site.machines));
+	std::vector<machine> get_machines_for_site(const site& site) final {
+		return machines;
 	}
 
 	virtual void add_new_state_period(int machine_id, state_period_t state_period) final {
@@ -29,12 +29,12 @@ struct TestDatabase : public IDatabase {
 		return false;
 	}
 
-	virtual std::vector<automatic_alarm_level_history_point_t> get_alarm_level_history(int channel_id, int type_id) override {
-		return std::vector<automatic_alarm_level_history_point_t>();
+	virtual std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) override {
+		return std::vector<alarm_level_history_point>();
 	}
 
-	void populate_channel_information_for_a_machine(machine& machine) final {
-		std::copy(channels.cbegin(), channels.cend(), std::back_inserter(machine.channels));
+	std::vector<channel> get_channel_information_for_machine(const machine& machine) final {
+		return channels;
 	}
 
 	std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final {

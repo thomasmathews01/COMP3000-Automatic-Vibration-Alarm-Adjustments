@@ -13,7 +13,7 @@ std::string MachineInformationRequest::get_machine_information(const crow::reque
 
 	const auto machine_id = std::stoi(request.url_params.get("machine"));
 	machine m(machine_id);
-	database->populate_channel_information_for_a_machine(m);
+	database->get_channel_information_for_machine(m);
 
 	writer.Key("channels");
 	writer.StartArray();

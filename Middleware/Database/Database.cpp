@@ -1,66 +1,88 @@
 #include "Database.h"
 #include "DatabaseInitialiser.h"
 #include "database_statements.h"
+#include <range/v3/all.hpp>
 
+using namespace std::chrono;
+using namespace std::chrono_literals;
 using namespace std::string_literals;
+using namespace ranges;
+
+namespace
+{
+	int seconds_since_epoch(const time_point_t t) {
+		return duration_cast<seconds>(t.time_since_epoch()).count();
+	}
+
+	std::string seconds_since_epoch_str(const time_point_t t) {
+		return std::to_string(seconds_since_epoch(t));
+	}
+
+	template<class T, class F>
+	std::vector<T> get_query_results(const char* statement, const std::shared_ptr<sqlite3pp::database>& database, F&& func) {
+		std::vector<T> result;
+
+		auto query_results = sqlite3pp::query(*database, statement);
+		std::transform(query_results.begin(), query_results.end(), std::back_inserter(result), func);
+
+		return result;
+	}
+}
 
 std::vector<site> Database::get_site_data() {
-	//std::lock_guard guard(database_access_mutex);
+	std::lock_guard guard(database_access_mutex);
 
-	std::vector<site> sites;
-
-	for (auto row : sqlite3pp::query(*database, "SELECT site_id, site_name from SITES")) {
+	return get_query_results<site>("SELECT site_id, site_name from SITES", database, [](const auto row)
+	{
 		const auto[id_number, name_string] = row.get_columns<int, const char*>(0, 1);
-		sites.emplace_back(id_number, name_string);
-	}
-
-	return sites;
+		return site(id_number, name_string);
+	});
 }
 
-bool site_contains_machine_with_id(const site& site, int id) {
-	return std::find_if(site.machines.cbegin(), site.machines.cend(), [id](const auto& machine) { return id == machine.id; }) != site.machines.cend();
+std::vector<machine> Database::get_machines_for_site(const site& site) {
+	std::lock_guard guard(database_access_mutex);
+
+	return get_query_results<machine>(find_machine_for_site(site.id).c_str(), database, [](const auto row)
+	{
+		const auto[id, name] = row.get_columns<int, const char*>(0, 1);
+
+		return machine(id, name);
+	});
 }
 
-void Database::populate_sites_machine_information(site& site) {
-	//std::lock_guard guard(database_access_mutex);
+std::vector<channel> Database::get_channel_information_for_machine(const machine& machine) {
+	std::lock_guard guard(database_access_mutex);
 
-	const auto query_string = "SELECT machine_id, machine_name from machines WHERE site_id = "s + std::to_string(site.id);
-
-	for (auto row : sqlite3pp::query(*database, query_string.c_str())) {
-		const auto[machine_id, machine_name] = row.get_columns<int, const char*>(0, 1);
-
-		if (!site_contains_machine_with_id(site, machine_id))
-			site.machines.emplace_back(machine_id, machine_name);
-	}
-}
-
-bool machine_contains_channel_with_id(const machine& machine, int channel_id) {
-	return std::find_if(machine.channels.cbegin(), machine.channels.cend(), [channel_id](const auto& channel) { return channel.id == channel_id; }) != machine.channels.cend();
-}
-
-void Database::populate_channel_information_for_a_machine(machine& machine) {
-	//std::lock_guard guard(database_access_mutex);
-
-	const auto channel_query_string = "SELECT channel_id, channel_name, channel_units FROM channels WHERE machine_id = "s + std::to_string(machine.id);
-
-	for (auto row : sqlite3pp::query(*database, channel_query_string.c_str())) {
+	return get_query_results<channel>(find_channels_for_machine(machine.id).c_str(), database, [](const auto row)
+	{
 		const auto[id, name, units] = row.get_columns<int, const char*, const char*>(0, 1, 2);
 
-		if (!machine_contains_channel_with_id(machine, id))
-			machine.channels.emplace_back(id, name, units);
-	}
+		return channel(id, name, units);
+	});
 }
 
-std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int type, time_point_t start, time_point_t end) {
-	return std::vector<std::pair<time_point_t, float>>();
+std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int type, time_point_t start, time_point_t finish) {
+	std::lock_guard guard(database_access_mutex);
+
+	const auto statement = "SELECT time_since_epoch, value FROM data"s
+							   " WHERE type_id =  " + std::to_string(type) +
+						   " AND time_since_epoch BETWEEN " + seconds_since_epoch_str(start) + " AND " + std::to_string(seconds_since_epoch(finish)) +
+						   " AND channel_id = " + std::to_string(channel) + " ";
+
+	return get_query_results<std::pair<time_point_t, float>>(statement.c_str(), database, [](const auto row)
+	{
+		const auto[epoch_time, value] = row.get_columns<int, float>(0, 1);
+
+		return std::make_pair(time_point_t(seconds(epoch_time)), value);
+	});
 }
 
 std::vector<std::pair<int, std::string>> Database::get_data_types_available_for_channel(int channel_id) {
-	return std::vector<std::pair<int, std::string>>();
+	return {};
 }
 
 int Database::get_machine_id_from_channel_id(int channel_id) {
-	//std::lock_guard guard(database_access_mutex);
+	std::lock_guard guard(database_access_mutex);
 
 	const auto selection_string = "SELECT machine_id from channels where channel_id = " + std::to_string(channel_id);
 
@@ -94,7 +116,7 @@ std::vector<alarm_settings_t> Database::get_alarm_settings_for_machine(int machi
 }
 
 bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
-	//std::lock_guard guard(database_access_mutex);
+	std::lock_guard guard(database_access_mutex);
 
 	sqlite3pp::command cmd(*database, modify_alarm_settings);
 
@@ -104,91 +126,37 @@ bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
 	cmd.bind(":threshold_type", std::to_string(static_cast<int>(new_setting.threshold)), sqlite3pp::nocopy);
 	cmd.bind(":fixed_threshold", std::to_string(new_setting.customLevel ? static_cast<int>(*new_setting.customLevel) : 0), sqlite3pp::nocopy);
 
-	cmd.execute();
-
-	return true;
+	return cmd.execute();
 }
 
-std::vector<automatic_alarm_level_history_point_t> Database::get_alarm_level_history(int channel_id, int type_id) {
-	return std::vector<automatic_alarm_level_history_point_t>();
+std::vector<alarm_level_history_point> Database::get_alarm_level_history(const alarm_settings_t& associated_alarm) {
+	std::lock_guard guard(database_access_mutex);
+
+	const auto statement = "SELECT level, time_since_epoch FROM alarm_levels WHERE channel_id = " + std::to_string(associated_alarm.channel_id) +
+						   " AND type_id = " + std::to_string(associated_alarm.type_id) + " AND alarm_severity = " + std::to_string(static_cast<int>(associated_alarm.severity));
+
+	return get_query_results<alarm_level_history_point>(statement.c_str(), database, [](const auto row)
+	{
+		const auto[level, seconds_since_epoch] = row.get_columns<double, int>(0, 1);
+
+		return alarm_level_history_point(time_point_t(seconds(seconds_since_epoch)), level);
+	});
 }
 
 void Database::add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) {
-	//std::lock_guard guard(database_access_mutex);
+	std::lock_guard guard(database_access_mutex);
 
-	sqlite3pp::command cmd(*database, modify_alarm_settings);
+	sqlite3pp::command cmd(*database, add_alarm_level_history_point);
 
-	//cmd.bind(":type", std::to_string(new_setting.type_id), sqlite3pp::nocopy);
+	cmd.bind(":type", associated_alarm.type_id);
+	cmd.bind(":channel", associated_alarm.channel_id);
+	cmd.bind(":severity", static_cast<int>(associated_alarm.severity));
+	cmd.bind(":level", new_level);
+	cmd.bind(":time_since_epoch", seconds_since_epoch(occurence));
+
 	cmd.execute();
 }
 
 Database::Database(std::shared_ptr<IDatabaseFactory> db_factory) : factory(std::move(db_factory)) {
-	database = factory->get_database();
-
-	DatabaseInitialiser initialiser;
-	initialiser.intialise_database(database);
+	database = DatabaseInitialiser::intialise_database(factory->get_database());
 }
-
-/*
-
-TEST_CASE ("Doesn't throw when getting site data from database") {
-	Database db;
-	db.set_up_database_connection(); // TODO: This should be called from the constructor, or otherwise dealt with in a way that makes more sense than this two phase initialisation.
-
-	const auto sites = db.get_site_data();
-
-		CHECK_EQ(1, sites.size());
-}
-
-TEST_CASE ("Retrieves accurate site information from database") {
-	Database db;
-	db.set_up_database_connection();
-	const auto expected_name = "Hunterston B"s;
-
-	const auto sites = db.get_site_data();
-
-		CHECK_EQ(sites.at(0).id, 1);
-		CHECK(std::equal(sites.at(0).name.cbegin(), sites.at(0).name.cend(), expected_name.cbegin()));
-}
-
-TEST_CASE ("Retrieves machine information for a given site") {
-	Database db;
-	db.set_up_database_connection();
-	const auto expected_name = "Hunterston B"s;
-
-	const auto sites = db.get_site_data();
-
-		CHECK_EQ(sites.at(0).id, 1);
-		CHECK(std::equal(sites.at(0).name.cbegin(), sites.at(0).name.cend(), expected_name.cbegin()));
-}
-
-TEST_CASE ("All machines extracted for a site") {
-	Database db;
-	db.set_up_database_connection();
-
-	site test_site(1, "Hunterston B");
-	db.populate_sites_machine_information(test_site);
-
-		CHECK_EQ(24, test_site.machines.size());
-}
-
-TEST_CASE ("Machine names extracted for a site") {
-	Database db;
-	db.set_up_database_connection();
-
-	site test_site(1, "Hunterston B");
-	db.populate_sites_machine_information(test_site);
-
-		CHECK(std::find_if(test_site.machines.cbegin(), test_site.machines.cend(), [](const machine& machine) { return machine.name == "TG 7"s; }) != test_site.machines.cend());
-		CHECK(std::find_if(test_site.machines.cbegin(), test_site.machines.cend(), [](const machine& machine) { return machine.name == "TG 8"s; }) != test_site.machines.cend());
-}
-
-TEST_CASE ("All channels extracted for a site") {
-	Database db;
-	db.set_up_database_connection();
-
-	machine test_machine(21, "Hunterston B");
-	db.populate_channel_information_for_a_machine(test_machine);
-
-		CHECK_EQ(30, test_machine.channels.size());
-}*/

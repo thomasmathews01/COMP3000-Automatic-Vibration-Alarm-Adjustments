@@ -6,7 +6,7 @@
 
 namespace
 {
-	std::shared_ptr<Hypodermic::Container> get_container() {
+	/*std::shared_ptr<Hypodermic::Container> get_container() {
 		Hypodermic::ContainerBuilder builder;
 
 		builder.registerType<Database>().as<IDatabase>().singleInstance();
@@ -14,12 +14,12 @@ namespace
 		builder.registerType<Server>().as<IServer>().singleInstance();
 
 		return builder.build();
-	}
+	}*/
 }
 
 int main(int argc, char** argv) {
-	const auto container = get_container();
-	const auto server = container->resolve<IServer>();
+	/*const auto container = get_container();
+	const auto server = container->resolve<IServer>();*/
 
 	return 0;
 }

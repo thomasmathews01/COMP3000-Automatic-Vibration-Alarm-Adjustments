@@ -12,7 +12,7 @@ std::string SiteInformationRequest::get_site_information(const crow::request& re
 	const auto site_id = std::stoi(queries.get("site"));
 
 	site s(site_id);
-	database->populate_sites_machine_information(s);
+	database->get_machines_for_site(s);
 
 	writer.Key("machines");
 	writer.StartArray();

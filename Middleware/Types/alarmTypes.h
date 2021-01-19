@@ -86,13 +86,11 @@ struct alarm_settings_t {
 																														  customLevel(custom_level) {}
 };
 
-struct automatic_alarm_level_history_point_t {
-	int state_id;
-	int channel_id;
-	int type_id;
-
-	time_point_t time_became_active;
+struct alarm_level_history_point {
+	time_point_t time_changed;
 	float level;
+
+	alarm_level_history_point(const time_point_t& time_changed, float level) : time_changed(time_changed), level(level) {}
 };
 
 struct alarm_activation_t {

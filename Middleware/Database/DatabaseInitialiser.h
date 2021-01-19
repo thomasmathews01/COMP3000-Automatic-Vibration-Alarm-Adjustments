@@ -6,7 +6,7 @@
 
 class DatabaseInitialiser {
 public:
-	void intialise_database(std::shared_ptr<sqlite3pp::database> database);
-	void add_alarm_settings_entries_for_all_channels(std::shared_ptr<sqlite3pp::database> database);
-	void add_alarm_settings_if_not_exists(const alarm_settings_t settings, std::shared_ptr<sqlite3pp::database> database);
+	static std::shared_ptr<sqlite3pp::database> intialise_database(std::shared_ptr<sqlite3pp::database>&& database);
+	static void add_alarm_settings_entries_for_all_channels(const std::shared_ptr<sqlite3pp::database>& database);
+	static void add_alarm_settings_if_not_exists(const alarm_settings_t& settings, const std::shared_ptr<sqlite3pp::database>& database);
 };
