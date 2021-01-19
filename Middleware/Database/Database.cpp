@@ -9,7 +9,7 @@ std::vector<site> Database::get_site_data() {
 
 	std::vector<site> sites;
 
-	for (auto row : sqlite3pp::query(database, "SELECT site_id, site_name from SITES")) {
+	for (auto row : sqlite3pp::query(*database, "SELECT site_id, site_name from SITES")) {
 		const auto[id_number, name_string] = row.get_columns<int, const char*>(0, 1);
 		sites.emplace_back(id_number, name_string);
 	}
@@ -26,7 +26,7 @@ void Database::populate_sites_machine_information(site& site) {
 
 	const auto query_string = "SELECT machine_id, machine_name from machines WHERE site_id = "s + std::to_string(site.id);
 
-	for (auto row : sqlite3pp::query(database, query_string.c_str())) {
+	for (auto row : sqlite3pp::query(*database, query_string.c_str())) {
 		const auto[machine_id, machine_name] = row.get_columns<int, const char*>(0, 1);
 
 		if (!site_contains_machine_with_id(site, machine_id))
@@ -43,7 +43,7 @@ void Database::populate_channel_information_for_a_machine(machine& machine) {
 
 	const auto channel_query_string = "SELECT channel_id, channel_name, channel_units FROM channels WHERE machine_id = "s + std::to_string(machine.id);
 
-	for (auto row : sqlite3pp::query(database, channel_query_string.c_str())) {
+	for (auto row : sqlite3pp::query(*database, channel_query_string.c_str())) {
 		const auto[id, name, units] = row.get_columns<int, const char*, const char*>(0, 1, 2);
 
 		if (!machine_contains_channel_with_id(machine, id))
@@ -64,7 +64,7 @@ int Database::get_machine_id_from_channel_id(int channel_id) {
 
 	const auto selection_string = "SELECT machine_id from channels where channel_id = " + std::to_string(channel_id);
 
-	for (const auto& row : sqlite3pp::query(database, selection_string.c_str())) {
+	for (const auto& row : sqlite3pp::query(*database, selection_string.c_str())) {
 		const auto[machine_id] = row.get_columns<int>(0);
 		return machine_id;
 	}
@@ -96,7 +96,7 @@ std::vector<alarm_settings_t> Database::get_alarm_settings_for_machine(int machi
 bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
 	//std::lock_guard guard(database_access_mutex);
 
-	sqlite3pp::command cmd(database, modify_alarm_settings);
+	sqlite3pp::command cmd(*database, modify_alarm_settings);
 
 	cmd.bind(":type", std::to_string(new_setting.type_id), sqlite3pp::nocopy);
 	cmd.bind(":channel", std::to_string(new_setting.channel_id), sqlite3pp::nocopy);
@@ -116,14 +116,14 @@ std::vector<automatic_alarm_level_history_point_t> Database::get_alarm_level_his
 void Database::add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) {
 	//std::lock_guard guard(database_access_mutex);
 
-	sqlite3pp::command cmd(database, modify_alarm_settings);
+	sqlite3pp::command cmd(*database, modify_alarm_settings);
 
 	//cmd.bind(":type", std::to_string(new_setting.type_id), sqlite3pp::nocopy);
 	cmd.execute();
 }
 
 Database::Database(std::shared_ptr<IDatabaseFactory> db_factory) : factory(std::move(db_factory)) {
-	database = sqlite3pp::database(factory->get_database().c_str());
+	database = factory->get_database();
 
 	DatabaseInitialiser initialiser;
 	initialiser.intialise_database(database);

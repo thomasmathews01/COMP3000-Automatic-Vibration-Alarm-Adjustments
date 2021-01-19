@@ -4,5 +4,5 @@
 
 class IDatabaseFactory {
 public:
-	virtual std::string get_database() = 0;
+	virtual std::shared_ptr<sqlite3pp::database> get_database() = 0;
 };

@@ -29,7 +29,7 @@ private:
 	std::shared_ptr<IDatabaseFactory> factory;
 
 	//std::mutex database_access_mutex;
-	sqlite3pp::database database;
+	std::shared_ptr<sqlite3pp::database> database;
 };
 
 
