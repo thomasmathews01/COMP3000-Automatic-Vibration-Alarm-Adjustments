@@ -1,11 +1,14 @@
 #include <gtest/gtest.h>
 #include <Hypodermic/Hypodermic.h>
+#include <range/v3/all.hpp>
 #include <Database.h>
 #include <array>
 #include "MockDatabaseFactory.h"
 #include <SQLiteCpp/Transaction.h>
+#include <DatabaseInitialiser.h>
 
 using namespace std::string_view_literals;
+using namespace ranges;
 
 class DatabaseTest : public ::testing::Test {
 protected:
@@ -189,4 +192,47 @@ TEST_F(DatabaseTest, CanGetEarliestDataPointForMachine) {
 								 R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 2, 126, 300))"});
 
 	EXPECT_EQ(time_point_t(124s), database->get_earliest_data_point_for_machine(2));
+}
+
+
+TEST_F(DatabaseTest, CanRetrieveAlarmSettings) {
+	execute_setup_statements<10>({R"(INSERT INTO machines (machine_name, site_id) VALUES ("M1", 1))",
+								  R"(INSERT INTO machines (machine_name, site_id) VALUES ("M2", 1))",
+								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C1", "g", 1))",
+								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C2", "g", 2))",
+								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C3", "g", 2))",
+								  R"(INSERT INTO types (type_name) VALUES ("T1"))",
+								  R"(INSERT INTO types (type_name) VALUES ("T2"))"
+								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 1, 123, 100))",
+								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 2, 124, 200))",
+								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (2, 2, 126, 300))"});
+
+	raw_database = DatabaseInitialiser::intialise_database(std::move(raw_database)); // Re-initialise so it can generate the default alarm settings
+
+	const auto retrieved_alarm_settings = database->get_alarm_settings_for_machine(2);
+	ASSERT_EQ(8, retrieved_alarm_settings.size());
+}
+
+TEST_F(DatabaseTest, CanUpdateAlarmSettings) {
+	execute_setup_statements<10>({R"(INSERT INTO machines (machine_name, site_id) VALUES ("M1", 1))",
+								  R"(INSERT INTO machines (machine_name, site_id) VALUES ("M2", 1))",
+								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C1", "g", 1))",
+								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C2", "g", 2))",
+								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C3", "g", 2))",
+								  R"(INSERT INTO types (type_name) VALUES ("T1"))",
+								  R"(INSERT INTO types (type_name) VALUES ("T2"))"
+								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 1, 123, 100))",
+								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 2, 124, 200))",
+								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (2, 2, 126, 300))"});
+
+	raw_database = DatabaseInitialiser::intialise_database(std::move(raw_database)); // Re-initialise so it can generate the default alarm settings
+
+	const auto x = database->update_alarm_setting(alarm_settings_t(2, 2, alarmSeverity::alarm, alarmThreshold::Custom, 500.f));
+	const auto retrieved_alarm_settings = database->get_alarm_settings_for_machine(2);
+	const auto changed_setting = find_if(retrieved_alarm_settings, [](const auto& settings) { return settings.channel_id == 2 && settings.type_id == 2 && settings.severity == alarmSeverity::alarm; });
+	ASSERT_NE(changed_setting, ranges::end(retrieved_alarm_settings));
+
+	EXPECT_EQ(changed_setting->threshold, alarmThreshold::Custom);
+	EXPECT_TRUE(changed_setting->customLevel.has_value());
+	EXPECT_EQ(500.f, changed_setting->customLevel.value());
 }

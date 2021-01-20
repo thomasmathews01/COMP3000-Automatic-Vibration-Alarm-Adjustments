@@ -53,8 +53,8 @@ constexpr auto setup_state_changes = "CREATE TABLE IF NOT EXISTS state_changes (
 									 "new_state_id INTEGER,\n"
 									 "time_since_epoch INTEGER,\n"
 									 "FOREIGN KEY (new_state_id) REFERENCES state_settings(state_id),\n"
-									 "FOREIGN KEY (machine_id) REFERENCES machines(machine_id)\n"
-									 "\n"
+									 "FOREIGN KEY (machine_id) REFERENCES machines(machine_id),\n"
+									 "PRIMARY KEY (machine_id, new_state_id, time_since_epoch)\n"
 									 ");";
 
 constexpr auto select_all_unique_channels = "SELECT DISTINCT channels.channel_id from channels";
@@ -84,3 +84,5 @@ constexpr auto find_machine_for_site = [](const auto machine)
 {
 	return find_machine_by_site_id + std::to_string(machine);
 };
+
+constexpr auto add_new_state_change = "INSERT INTO state_changes(machine_id, new_state_id, time_since_epoch) VALUES(:machine, :state, :time)";

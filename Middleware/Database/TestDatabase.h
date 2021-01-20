@@ -5,7 +5,7 @@
 
 struct TestDatabase : public IDatabase {
 
-	std::vector<site> get_site_data() override {
+	std::vector<site> get_site_data() final {
 		return sites;
 	}
 
@@ -13,23 +13,23 @@ struct TestDatabase : public IDatabase {
 		return machines;
 	}
 
-	virtual void add_new_state_period(int machine_id, state_period_t state_period) final {
+	void add_new_state_period(int machine_id, state_period_t state_period) final {
 
 	}
 
-	virtual std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) override {
+	std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) final {
 		return std::vector<alarm_activation_t>();
 	}
 
-	virtual std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) override {
+	std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) final {
 		return std::vector<alarm_settings_t>();
 	}
 
-	virtual bool update_alarm_setting(const alarm_settings_t& new_setting) override {
+	bool update_alarm_setting(const alarm_settings_t& new_setting) final {
 		return false;
 	}
 
-	virtual std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) override {
+	std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) final {
 		return std::vector<alarm_level_history_point>();
 	}
 
@@ -60,7 +60,7 @@ struct TestDatabase : public IDatabase {
 		return state_changes;
 	}
 
-	virtual void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final {
+	void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final {
 
 	}
 

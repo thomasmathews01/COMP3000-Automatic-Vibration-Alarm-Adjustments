@@ -32,7 +32,7 @@ namespace
 std::vector<site> Database::get_site_data() {
 	std::lock_guard guard(database_access_mutex);
 
-	return get_query_results<site>("SELECT site_id, site_name from SITES", database, [](const auto row)
+	return get_query_results<site>("SELECT site_id, site_name from SITES", database, [](const auto& row)
 	{
 		const auto[id_number, name_string] = row.template get_columns<int, const char*>(0, 1);
 		return site(id_number, name_string);
@@ -42,7 +42,7 @@ std::vector<site> Database::get_site_data() {
 std::vector<machine> Database::get_machines_for_site(const site& site) {
 	std::lock_guard guard(database_access_mutex);
 
-	return get_query_results<machine>(find_machine_for_site(site.id).c_str(), database, [](const auto row)
+	return get_query_results<machine>(find_machine_for_site(site.id).c_str(), database, [](const auto& row)
 	{
 		const auto[id, name] = row.template get_columns<int, const char*>(0, 1);
 
@@ -53,7 +53,7 @@ std::vector<machine> Database::get_machines_for_site(const site& site) {
 std::vector<channel> Database::get_channel_information_for_machine(const machine& machine) {
 	std::lock_guard guard(database_access_mutex);
 
-	return get_query_results<channel>(find_channels_for_machine(machine.id).c_str(), database, [](const auto row)
+	return get_query_results<channel>(find_channels_for_machine(machine.id).c_str(), database, [](const auto& row)
 	{
 		const auto[id, name, units] = row.template get_columns<int, const char*, const char*>(0, 1, 2);
 
@@ -69,7 +69,7 @@ std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int 
 						   " AND time_since_epoch BETWEEN " + seconds_since_epoch_str(start) + " AND " + std::to_string(seconds_since_epoch(finish)) +
 						   " AND channel_id = " + std::to_string(channel) + " ";
 
-	return get_query_results<std::pair<time_point_t, float>>(statement.c_str(), database, [](const auto row)
+	return get_query_results<std::pair<time_point_t, float>>(statement.c_str(), database, [](const auto& row)
 	{
 		const auto[epoch_time, value] = row.template get_columns<int, float>(0, 1);
 
@@ -80,7 +80,7 @@ std::vector<std::pair<time_point_t, float>> Database::get_data(int channel, int 
 std::vector<std::pair<int, std::string>> Database::get_data_types_available_for_channel(int channel_id) {
 	const auto statement = "SELECT DISTINCT types.type_id, types.type_name FROM data INNER JOIN types on types.type_id = data.type_id WHERE channel_id = " + std::to_string(channel_id);
 
-	return get_query_results<std::pair<int, std::string>>(statement.c_str(), database, [](const auto row)
+	return get_query_results<std::pair<int, std::string>>(statement.c_str(), database, [](const auto& row)
 	{
 		const auto[type_id, type_name] = row.template get_columns<int, const char*>(0, 1);
 		return std::make_pair(type_id, type_name);
@@ -111,16 +111,93 @@ time_point_t Database::get_earliest_data_point_for_machine(int machine_id) {
 	return time_point_t(0s);
 }
 
-std::vector<state_change_t> Database::get_state_changes_for_machine(int machine_id) {
-	return std::vector<state_change_t>();
+std::optional<time_point_t> Database::get_time_of_last_state_change_before(const time_point_t& time, const int machine_id) {
+	const auto statement = "SELECT max(time_since_epoch) from state_changes"
+						   " WHERE machine_id = " + std::to_string(machine_id) +
+						   " AND time_since_epoch < " + seconds_since_epoch_str(time);
+
+	for (const auto& row : sqlite3pp::query(*database, statement.c_str())) {
+		const auto[seconds_since_epoch] = row.template get_columns<int>(0);
+		return time_point_t(seconds(seconds_since_epoch));
+	}
+
+	return std::nullopt;
+}
+
+std::optional<int> Database::get_state_at_time(const time_point_t& time, const int machine_id) {
+	const auto time_of_final_state_change_before_time = get_time_of_last_state_change_before(time, machine_id);
+
+	if (!time_of_final_state_change_before_time.has_value())
+		return std::nullopt;
+
+	const auto final_state_time_seconds = seconds_since_epoch(*time_of_final_state_change_before_time);
+	const auto statement = "SELECT new_state_id from state_changes where time_since_epoch = " + std::to_string(final_state_time_seconds);
+
+	for (const auto& row : sqlite3pp::query(*database, statement.c_str())) {
+		const auto[state_id] = row.template get_columns<int>(0);
+		return state_id;
+	}
+
+	return std::nullopt;
+}
+
+void Database::add_new_state_changes_for_machine(const std::vector<state_change_t>& changes, const int machine_id) {
+	for (const auto& change : changes) {
+		sqlite3pp::command cmd(*database, add_new_state_change);
+
+		cmd.bind(":machine", machine_id);
+		cmd.bind(":state", change.new_state_id);
+		cmd.bind(":time", seconds_since_epoch(change.change_time));
+
+		cmd.execute();
+	}
 }
 
 void Database::add_new_state_period(int machine_id, state_period_t state_period) {
+	std::lock_guard guard(database_access_mutex);
 
+	const auto state_when_period_ends = get_state_at_time(state_period.end, machine_id);
+
+	if (!state_when_period_ends.has_value())
+		return;
+
+	sqlite3pp::command cmd(*database, "DELETE FROM state_changes where time_since_epoch BETWEEN :start AND :end");
+
+	cmd.bind(":start", seconds_since_epoch(state_period.start));
+	cmd.bind(":end", seconds_since_epoch(state_period.end));
+
+	cmd.execute();
+
+	add_new_state_changes_for_machine({state_change_t(state_period.state_id, state_period.start), state_change_t(*state_when_period_ends, state_period.end)}, machine_id);
 }
 
+std::vector<state_change_t> Database::get_state_changes_for_machine(int machine_id) {
+	const auto statement = "SELECT new_state_id,time_since_epoch FROM state_changes WHERE machine_id = " + std::to_string(machine_id);
+
+	return get_query_results<state_change_t>(statement.c_str(), database, [](const auto& row)
+	{
+		const auto[state, time_seconds] = row.template get_columns<int, int>(0, 1);
+
+		return state_change_t(state, time_point_t(seconds(time_seconds)));
+	});
+}
+
+
 std::vector<alarm_settings_t> Database::get_alarm_settings_for_machine(int machine_id) {
-	return std::vector<alarm_settings_t>();
+	std::lock_guard guard(database_access_mutex);
+	const auto statement = "SELECT alarm_settings.channel_id, alarm_settings.type_id, alarm_severity, custom_fixed_threshold, alarm_threshold_type "
+						   "FROM alarm_settings inner join channels on channels.channel_id = alarm_settings.channel_id "
+						   "WHERE channels.machine_id = " + std::to_string(machine_id);
+
+	return get_query_results<alarm_settings_t>(statement.c_str(), database, [](const auto& row)
+	{
+		const auto[channel, type, severity, threshold, threshold_type] = row.template get_columns<int, int, int, float, int>(0, 1, 2, 3, 4);
+		const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
+		const auto severity_enum = static_cast<alarmSeverity>(severity);
+		const auto threshold_value = threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
+
+		return alarm_settings_t(channel, type, severity_enum, threshold_enum, threshold_value);
+	});
 }
 
 bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
@@ -128,11 +205,11 @@ bool Database::update_alarm_setting(const alarm_settings_t& new_setting) {
 
 	sqlite3pp::command cmd(*database, modify_alarm_settings);
 
-	cmd.bind(":type", std::to_string(new_setting.type_id), sqlite3pp::nocopy);
-	cmd.bind(":channel", std::to_string(new_setting.channel_id), sqlite3pp::nocopy);
-	cmd.bind(":severity", std::to_string(static_cast<int>(new_setting.severity)), sqlite3pp::nocopy);
-	cmd.bind(":threshold_type", std::to_string(static_cast<int>(new_setting.threshold)), sqlite3pp::nocopy);
-	cmd.bind(":fixed_threshold", std::to_string(new_setting.customLevel ? static_cast<int>(*new_setting.customLevel) : 0), sqlite3pp::nocopy);
+	cmd.bind(":type", new_setting.type_id);
+	cmd.bind(":channel", new_setting.channel_id);
+	cmd.bind(":severity", static_cast<int>(new_setting.severity));
+	cmd.bind(":threshold_type", static_cast<int>(new_setting.threshold));
+	cmd.bind(":fixed_threshold", new_setting.customLevel ? static_cast<int>(*new_setting.customLevel) : 0);
 
 	return cmd.execute();
 }
@@ -143,7 +220,7 @@ std::vector<alarm_level_history_point> Database::get_alarm_level_history(const a
 	const auto statement = "SELECT level, time_since_epoch FROM alarm_levels WHERE channel_id = " + std::to_string(associated_alarm.channel_id) +
 						   " AND type_id = " + std::to_string(associated_alarm.type_id) + " AND alarm_severity = " + std::to_string(static_cast<int>(associated_alarm.severity));
 
-	return get_query_results<alarm_level_history_point>(statement.c_str(), database, [](const auto row)
+	return get_query_results<alarm_level_history_point>(statement.c_str(), database, [](const auto& row)
 	{
 		const auto[level, seconds_since_epoch] = row.template get_columns<double, int>(0, 1);
 
@@ -192,12 +269,34 @@ std::vector<alarm_activation_t> Database::get_activations_for_machine(int machin
 		"WHERE channels.machine_id = " + std::to_string(machine_id) +
 		" ORDER BY alarm_activation_changes.time_since_epoch";
 
-	//TODO: This can't possibly work, we need to store a separate severity, followed by whether it was active or not, else we shall never be able to unpack it properly.
-
-	return get_query_results<alarm_activation_t>(statement.c_str(), database, [](const auto row)
+	return get_query_results<alarm_activation_t>(statement.c_str(), database, [](const auto& row)
 	{
 		const auto[type, channel, severity, became_active, time_since_epoch] = row.template get_columns<int, int, int, bool, int>(0, 1, 2, 3, 4);
 
 		return alarm_activation_t(channel, type, static_cast<alarmSeverity>(severity), time_point_t(seconds(time_since_epoch)), became_active);
 	});
+}
+
+alarm_state_t Database::get_alarm_state_of_site(const site& site) {
+	return alarm_state_t(std::nullopt);
+}
+
+alarm_state_t Database::get_alarm_state_of_machine(const machine& machine) {
+	return alarm_state_t(std::nullopt);
+}
+
+alarm_state_t Database::get_alarm_state_of_channel(const channel& channel) {
+	return alarm_state_t(std::nullopt);
+}
+
+void Database::add_state(int machine_id, const state_t& state) {
+
+}
+
+void Database::remove_state(int machine_id, int state_id) {
+
+}
+
+std::vector<state_t> Database::get_states_for_machine(int machine_id) {
+	return std::vector<state_t>();
 }

@@ -2,7 +2,7 @@ include(GoogleTest)
 
 file(GLOB DatabaseTests_SRC CONFIGURE_DEPENDS "*.cpp")
 
-add_executable(DatabaseTests ${DatabaseTests_SRC} MockDatabaseFactory.h)
+add_executable(DatabaseTests ${DatabaseTests_SRC})
 
 target_link_libraries(DatabaseTests ${CONAN_LIBS} Database)
 

@@ -82,8 +82,8 @@ struct alarm_settings_t {
 
 	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold), customLevel(std::nullopt) {}
 
-	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold, float custom_level) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold),
-																														  customLevel(custom_level) {}
+	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold, std::optional<float> custom_level) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold),
+																																		 customLevel(custom_level) {}
 };
 
 struct alarm_level_history_point {
@@ -107,4 +107,5 @@ struct alarm_activation_t {
 
 struct alarm_state_t {
 	std::optional<alarmSeverity> severity; // nullopt indicates no alarms are active
+	alarm_state_t(std::optional<alarmSeverity>&& severity) : severity(std::move(severity)) {}
 };
