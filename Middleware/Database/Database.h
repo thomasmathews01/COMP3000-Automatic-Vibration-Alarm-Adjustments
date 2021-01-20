@@ -21,10 +21,11 @@ public:
 	void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final;
 
 	virtual void add_alarm_activation(const alarm_activation_t& activation) override;
-	std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) final; // Tested up to here.
+	std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) final;
 
 	int get_machine_id_from_channel_id(int channel_id) final;
-	time_point_t get_earliest_data_point_for_machine(int machine_id) final;
+	time_point_t get_earliest_data_point_for_machine(int machine_id) final; // Tested up to here.
+
 	std::vector<state_change_t> get_state_changes_for_machine(int machine_id) final;
 	std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) final;
 

@@ -130,7 +130,7 @@ TEST_F(DatabaseTest, CanAddAlarmLevelInformation) {
 }
 
 TEST_F(DatabaseTest, CanAddAlarmFiringInformation) {
-	execute_setup_statements<4>({R"(INSERT INTO channels (channel_units, channel_name, machine_id) VALUES ("g", "C1", 1))"});
+	execute_setup_statements<1>({R"(INSERT INTO channels (channel_units, channel_name, machine_id) VALUES ("g", "C1", 1))"});
 
 	database->add_alarm_activation(alarm_activation_t(1, 1, alarmSeverity::alert, time_point_t(100s), false));
 	database->add_alarm_activation(alarm_activation_t(1, 1, alarmSeverity::alarm, time_point_t(110s), true));
@@ -152,19 +152,41 @@ TEST_F(DatabaseTest, CanAddAlarmFiringInformation) {
 
 TEST_F(DatabaseTest, CanFindAllTypesWithDataOnGivenChannel) {
 	// This exploits a bug, whereby the data table doesn't have a proper foreign key into the channels or types, which it should, meaning less set up is required.
-	execute_setup_statements<18>({R"(INSERT INTO sites (site_name) VALUES ("Highbury"))",
-								  R"(INSERT INTO machines (machine_name, site_id) VALUES ("M1", 1))",
-								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C1", "g", 1))",
-								  R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C2", "g", 1))",
-								  R"(INSERT INTO types (type_name) VALUES ("T1"))", // Type has data and is on the correct channel
-								  R"(INSERT INTO types (type_name) VALUES ("T2"))", // Type has no data but is on the same channel
-								  R"(INSERT INTO types (type_name) VALUES ("T3"))", // Type has data but is on a different channel
-								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 1, 123, 45.5))",
-								  R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (3, 2, 123, 45.5))"});
+	execute_setup_statements<9>({R"(INSERT INTO sites (site_name) VALUES ("Highbury"))",
+								 R"(INSERT INTO machines (machine_name, site_id) VALUES ("M1", 1))",
+								 R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C1", "g", 1))",
+								 R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C2", "g", 1))",
+								 R"(INSERT INTO types (type_name) VALUES ("T1"))", // Type has data and is on the correct channel
+								 R"(INSERT INTO types (type_name) VALUES ("T2"))", // Type has no data but is on the same channel
+								 R"(INSERT INTO types (type_name) VALUES ("T3"))", // Type has data but is on a different channel
+								 R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 1, 123, 45.5))",
+								 R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (3, 2, 123, 45.5))"});
 
 	const auto results = database->get_data_types_available_for_channel(1);
 
 	ASSERT_EQ(1, results.size());
 	EXPECT_EQ(1, results.at(0).first);
 	EXPECT_EQ("T1", results.at(0).second);
+}
+
+TEST_F(DatabaseTest, CanGetMachineIDFromChannelID) {
+	execute_setup_statements<4>({R"(INSERT INTO machines (machine_name, site_id) VALUES ("M1", 1))",
+								 R"(INSERT INTO machines (machine_name, site_id) VALUES ("M2", 1))",
+								 R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C1", "g", 2))",
+								 R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C2", "g", 1))"});
+
+	EXPECT_EQ(1, database->get_machine_id_from_channel_id(2));
+	EXPECT_EQ(2, database->get_machine_id_from_channel_id(1));
+}
+
+TEST_F(DatabaseTest, CanGetEarliestDataPointForMachine) {
+	execute_setup_statements<7>({R"(INSERT INTO machines (machine_name, site_id) VALUES ("M1", 1))",
+								 R"(INSERT INTO machines (machine_name, site_id) VALUES ("M2", 1))",
+								 R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C1", "g", 1))",
+								 R"(INSERT INTO channels (channel_name, channel_units, machine_id) VALUES ("C2", "g", 2))",
+								 R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 1, 123, 100))", // Earliest point, but on machine 1
+								 R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 2, 124, 200))", // Earliest on machine 2
+								 R"(INSERT INTO data (type_id, channel_id, time_since_epoch, value) VALUES (1, 2, 126, 300))"});
+
+	EXPECT_EQ(time_point_t(124s), database->get_earliest_data_point_for_machine(2));
 }

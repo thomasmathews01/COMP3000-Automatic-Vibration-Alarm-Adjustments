@@ -1,13 +1,11 @@
 [requires]
-doctest/2.4.1
 sqlite3/3.33.0
 spdlog/1.8.1
 rapidjson/cci.20200410
-boost/1.69.0
 sqlitecpp/3.1.1
 range-v3/0.11.0
 gtest/1.10.0
-crowcpp-crow/0.2
+boost/1.75.0
 
 [generators]
 cmake

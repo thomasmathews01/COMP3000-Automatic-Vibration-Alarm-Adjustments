@@ -12,3 +12,8 @@ target_include_directories(RestInterfaceTests PRIVATE
         ${CMAKE_SOURCE_DIR}/Types)
 
 gtest_add_tests(TARGET RestInterfaceTests SOURCES RestInterfaceTests.cpp)
+
+if (WIN32)
+    add_compile_definitions(NOMINMAX)
+    add_definitions(-D_WIN32_WINNT=0x0A00)
+endif ()

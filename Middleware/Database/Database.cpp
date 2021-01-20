@@ -101,8 +101,14 @@ int Database::get_machine_id_from_channel_id(int channel_id) {
 }
 
 time_point_t Database::get_earliest_data_point_for_machine(int machine_id) {
-	//const auto selection_string = "SELECT "
-	return time_point_t();
+	const auto selection_string = "SELECT min(data.time_since_epoch) from data inner join channels on data.channel_id = channels.channel_id "
+								  "inner join machines on channels.machine_id = machines.machine_id where machines.machine_id = " + std::to_string(machine_id);
+	for (const auto& row : sqlite3pp::query(*database, selection_string.c_str())) {
+		const auto[seconds_since_epoch] = row.template get_columns<int>(0);
+		return time_point_t(seconds(seconds_since_epoch));
+	}
+
+	return time_point_t(0s);
 }
 
 std::vector<state_change_t> Database::get_state_changes_for_machine(int machine_id) {

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.19)
 project(Cpp_Middleware)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -20,11 +20,14 @@ add_subdirectory(Database)
 add_subdirectory(DatabaseTests)
 add_subdirectory(Utils)
 
-add_compile_definitions(NOMINMAX)
-add_definitions(-D_WIN32_WINNT=0x0A00)
-add_executable(Middleware main.cpp DatabaseTests/DatabaseTests.cpp RestInterfaceTests/RestInterfaceTests.cpp)
+if (WIN32)
+    add_compile_definitions(NOMINMAX)
+    add_definitions(-D_WIN32_WINNT=0x0A00)
+endif ()
 
-target_link_libraries(Middleware ${CONAN_LIBS} Alarming Database RESTInterface Utils)
+add_executable(Middleware main.cpp)
+
+target_link_libraries(Middleware PRIVATE ${CONAN_LIBS} Alarming RESTInterface Database Utils)
 
 target_include_directories(Middleware PRIVATE
         ${CMAKE_SOURCE_DIR}/Hypodermic
@@ -32,6 +35,5 @@ target_include_directories(Middleware PRIVATE
         ${CMAKE_SOURCE_DIR}/Database
         ${CMAKE_SOURCE_DIR}/RESTInterface
         ${CMAKE_SOURCE_DIR}/Utils
-        ${CMAKE_SOURCE_DIR}/Types)
-
-
+        ${CMAKE_SOURCE_DIR}/Types
+        )
