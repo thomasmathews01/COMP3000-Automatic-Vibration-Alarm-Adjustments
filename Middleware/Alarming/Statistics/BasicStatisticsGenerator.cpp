@@ -26,7 +26,6 @@ namespace
 	}
 
 	template<class T>
-	requires ranges::range<T>
 	std::pair<double, double> get_mean_and_standard_deviation(T&& values) {
 		const auto mean = calculate_mean(values);
 		const auto std_deviation = calculate_std_deviation(values, mean);
@@ -41,10 +40,10 @@ void BasicStatisticsGenerator::start() {
 }
 
 void BasicStatisticsGenerator::update() {
-	std::for_each(endpoints.begin(), endpoints.end(), [this](const auto& x) { update_endpoint(x); });
+	std::for_each(endpoints.begin(), endpoints.end(), [this](auto& x) { update_endpoint(x); });
 }
 
-BasicStatisticsGenerator::unique_endpoint BasicStatisticsGenerator::update_endpoint(BasicStatisticsGenerator::unique_endpoint& endpoint) {
+void BasicStatisticsGenerator::update_endpoint(BasicStatisticsGenerator::unique_endpoint& endpoint) {
 	const auto current_time = time_point_t(100s);
 
 	const auto points_since_last_change = database->get_data(endpoint.channel, endpoint.type, endpoint.last_update_time, current_time);

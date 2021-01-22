@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.17)
 project(Cpp_Middleware)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -36,4 +36,5 @@ target_include_directories(Middleware PRIVATE
         ${CMAKE_SOURCE_DIR}/RESTInterface
         ${CMAKE_SOURCE_DIR}/Utils
         ${CMAKE_SOURCE_DIR}/Types
+        ${CMAKE_SOURCE_DIR}/taskflow/taskflow
         )

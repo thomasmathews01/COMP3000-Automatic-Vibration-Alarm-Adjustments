@@ -31,7 +31,7 @@ private:
 	std::vector<unique_endpoint> endpoints;
 
 	void update();
-	unique_endpoint update_endpoint(unique_endpoint& endpoint);
+	void update_endpoint(unique_endpoint& endpoint);
 };
 
 

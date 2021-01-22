@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iostream>
 #include <utility>
+#include <taskflow.hpp>
 
 using namespace ranges;
 using namespace std::chrono_literals;
@@ -21,6 +22,22 @@ AlarmOrchestrator::~AlarmOrchestrator() {
 
 void AlarmOrchestrator::update_alarm_states() {
 	load_initial_alarm_calculators();
+
+	tf::Executor executor;
+	tf::Taskflow taskflow;
+
+	auto[A, B, C, D] = taskflow.emplace(  // create 4 tasks
+		[]() { std::cout << "TaskA\n"; },
+		[]() { std::cout << "TaskB\n"; },
+		[]() { std::cout << "TaskC\n"; },
+		[]() { std::cout << "TaskD\n"; }
+	);
+
+	A.precede(B, C);  // A runs before B and C
+	D.succeed(B, C);  // D runs after  B and C
+
+	executor.run(taskflow).wait();
+
 
 	while (!should_stop) {
 		for (const auto& calculator : alarm_calculators) {

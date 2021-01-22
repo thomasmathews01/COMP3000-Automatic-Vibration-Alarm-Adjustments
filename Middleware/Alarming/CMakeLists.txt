@@ -10,4 +10,5 @@ endif ()
 target_include_directories(Alarming PRIVATE
         ${CMAKE_SOURCE_DIR}/Hypodermic
         ${CMAKE_SOURCE_DIR}/Database
+        ${CMAKE_SOURCE_DIR}/taskflow/taskflow
         ${CMAKE_SOURCE_DIR}/Types)
