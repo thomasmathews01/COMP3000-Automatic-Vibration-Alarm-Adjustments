@@ -300,3 +300,23 @@ void Database::remove_state(int machine_id, int state_id) {
 std::vector<state_t> Database::get_states_for_machine(int machine_id) {
 	return std::vector<state_t>();
 }
+
+alarm_state_t Database::get_alarm_state_of_alarm(const alarm_settings_t& alarm) {
+	return alarm_state_t(std::nullopt);
+}
+
+std::vector<alarm_settings_t> Database::get_all_alarm_settings() {
+	std::lock_guard guard(database_access_mutex);
+	const auto statement = "SELECT alarm_settings.channel_id, alarm_settings.type_id, alarm_severity, custom_fixed_threshold, alarm_threshold_type "
+						   "FROM alarm_settings";
+
+	return get_query_results<alarm_settings_t>(statement.c_str(), database, [](const auto& row)
+	{
+		const auto[channel, type, severity, threshold, threshold_type] = row.template get_columns<int, int, int, float, int>(0, 1, 2, 3, 4);
+		const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
+		const auto severity_enum = static_cast<alarmSeverity>(severity);
+		const auto threshold_value = threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
+
+		return alarm_settings_t(channel, type, severity_enum, threshold_enum, threshold_value);
+	});
+}

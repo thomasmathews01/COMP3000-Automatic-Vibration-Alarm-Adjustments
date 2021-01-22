@@ -26,6 +26,7 @@ public:
 	int get_machine_id_from_channel_id(int channel_id) final;
 	time_point_t get_earliest_data_point_for_machine(int machine_id) final;
 
+	std::vector<alarm_settings_t> get_all_alarm_settings() final; // not tested
 	std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) final;
 	bool update_alarm_setting(const alarm_settings_t& new_setting) final; // Tested up to here.
 
@@ -39,6 +40,7 @@ public:
 	virtual void add_state(int machine_id, const state_t& state) override;
 	virtual void remove_state(int machine_id, int state_id) override;
 	virtual std::vector<state_t> get_states_for_machine(int machine_id) override;
+	virtual alarm_state_t get_alarm_state_of_alarm(const alarm_settings_t& alarm) override;
 
 private:
 	std::shared_ptr<IDatabaseFactory> factory;

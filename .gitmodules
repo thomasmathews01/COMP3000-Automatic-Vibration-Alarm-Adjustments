@@ -1,3 +1,6 @@
 [submodule "Middleware/Hypodermic"]
 	path = Middleware/Hypodermic
 	url = https://github.com/ybainier/Hypodermic.git
+[submodule "Middleware/taskflow"]
+	path = Middleware/taskflow
+	url = https://github.com/taskflow/taskflow.git

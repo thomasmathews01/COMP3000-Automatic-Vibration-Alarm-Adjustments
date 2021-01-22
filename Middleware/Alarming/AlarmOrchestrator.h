@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <vector>
+#include <functional>
 #include "Calculators/IAlarmCalculator.h"
 #include "IAlarmCalculatorFactory.h"
 #include "IDatabase.h"
@@ -13,7 +14,7 @@ public:
 
 private:
 	std::vector<std::shared_ptr<IAlarmCalculator>> alarm_calculators;
-	std::vector<alarm_state_t> alarm_states;
+	std::vector<std::function<void()>> get_update_tasks();
 
 	std::shared_ptr<IDatabase> database;
 	std::shared_ptr<IAlarmCalculatorFactory> calculator_factory;

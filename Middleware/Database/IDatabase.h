@@ -21,6 +21,7 @@ public:
 	virtual time_point_t get_earliest_data_point_for_machine(int machine_id) = 0;
 
 	// Alarm Settings
+	virtual std::vector<alarm_settings_t> get_all_alarm_settings() = 0;
 	virtual std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) = 0;
 	virtual bool update_alarm_setting(const alarm_settings_t& new_setting) = 0;
 
@@ -30,6 +31,7 @@ public:
 	virtual alarm_state_t get_alarm_state_of_site(const site& site) = 0;
 	virtual alarm_state_t get_alarm_state_of_machine(const machine& machine) = 0;
 	virtual alarm_state_t get_alarm_state_of_channel(const channel& channel) = 0;
+	virtual alarm_state_t get_alarm_state_of_alarm(const alarm_settings_t& alarm) = 0;
 
 	// Alarm log
 	virtual std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) = 0;

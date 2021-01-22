@@ -93,6 +93,11 @@ struct alarm_level_history_point {
 	alarm_level_history_point(const time_point_t& time_changed, float level) : time_changed(time_changed), level(level) {}
 };
 
+struct alarm_state_t {
+	std::optional<alarmSeverity> severity; // nullopt indicates no alarms are active
+	alarm_state_t(std::optional<alarmSeverity>&& severity) : severity(std::move(severity)) {}
+};
+
 struct alarm_activation_t {
 	int channel_id;
 	int type_id;
@@ -103,9 +108,10 @@ struct alarm_activation_t {
 
 	alarm_activation_t(int channel_id, int type_id, alarmSeverity severity, const time_point_t& activation_time, bool became_active) : channel_id(channel_id), type_id(type_id), severity(severity), activation_time(activation_time),
 																																	   became_active(became_active) {}
-};
 
-struct alarm_state_t {
-	std::optional<alarmSeverity> severity; // nullopt indicates no alarms are active
-	alarm_state_t(std::optional<alarmSeverity>&& severity) : severity(std::move(severity)) {}
+	alarm_activation_t(const alarm_settings_t& settings, const time_point_t& activation_time, const alarm_state_t& new_state)
+		: activation_time(activation_time), channel_id(settings.channel_id), type_id(settings.type_id) {
+		became_active = new_state.severity.has_value();
+		severity = settings.severity;
+	}
 };
