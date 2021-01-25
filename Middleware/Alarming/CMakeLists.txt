@@ -1,6 +1,6 @@
 file(GLOB Alarming_SRC CONFIGURE_DEPENDS "Calculators/*.cpp" "Statistics/*.cpp" "*.cpp")
 
-add_library(Alarming ${Alarming_SRC} Statistics/BasicStatisticsGenerator.cpp Statistics/BasicStatisticsGenerator.h Statistics/StateStatisticsGenerator.cpp Statistics/StateStatisticsGenerator.h)
+add_library(Alarming ${Alarming_SRC} Statistics/AlarmStatistics.cpp Statistics/AlarmStatistics.h Statistics/IAlarmStatistics.h Statistics/SOM.cpp Statistics/SOM.h)
 
 if (WIN32)
     add_compile_definitions(NOMINMAX)
@@ -9,6 +9,7 @@ endif ()
 
 target_include_directories(Alarming PRIVATE
         ${CMAKE_SOURCE_DIR}/Hypodermic
+        ${CMAKE_SOURCE_DIR}/Utils
         ${CMAKE_SOURCE_DIR}/Database
         ${CMAKE_SOURCE_DIR}/taskflow/taskflow
         ${CMAKE_SOURCE_DIR}/Types)

@@ -1,9 +1,10 @@
 #pragma once
-
 #include <mutex>
+#include <map>
 #include "IDatabase.h"
 #include "Helpers/sqlite3pp.h"
 #include "IDatabaseFactory.h"
+#include "IStatistics.h"
 
 class Database : public IDatabase {
 public:
@@ -15,6 +16,7 @@ public:
 	std::vector<channel> get_channel_information_for_machine(const machine& machine) final;
 
 	std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final;
+	std::vector<float> get_data_points_only(int channel, int type, time_point_t start, time_point_t end) final;
 	std::vector<std::pair<int, std::string>> get_data_types_available_for_channel(int channel_id) final;
 
 	std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) final;
@@ -42,8 +44,12 @@ public:
 	virtual std::vector<state_t> get_states_for_machine(int machine_id) override;
 	virtual alarm_state_t get_alarm_state_of_alarm(const alarm_settings_t& alarm) override;
 
+	virtual statistics_point_t get_last_statistics_calculation(int channel, int type) override;
+	virtual void update_last_statistics_calculation(int channel, int type, const statistics_point_t& new_values) override;
+
 private:
 	std::shared_ptr<IDatabaseFactory> factory;
+	std::map<std::pair<int, int>, statistics_point_t> latest_statistics; // This should be behind a second interface, there is no need to store persistently, might as well calculate them each run and keep in memory for faster access.
 
 	std::mutex database_access_mutex;
 	std::shared_ptr<sqlite3pp::database> database; // This is a shared pointer for testing purposes, but should never be accessed by anyone other than this class, with the mutex, unless they take ownership whilst they use it, and we can't access it in that period.

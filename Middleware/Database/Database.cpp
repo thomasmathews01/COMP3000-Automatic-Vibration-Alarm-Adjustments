@@ -310,7 +310,7 @@ std::vector<alarm_settings_t> Database::get_all_alarm_settings() {
 	const auto statement = "SELECT alarm_settings.channel_id, alarm_settings.type_id, alarm_severity, custom_fixed_threshold, alarm_threshold_type "
 						   "FROM alarm_settings";
 
-	return get_query_results<alarm_settings_t>(statement.c_str(), database, [](const auto& row)
+	return get_query_results<alarm_settings_t>(statement, database, [](const auto& row)
 	{
 		const auto[channel, type, severity, threshold, threshold_type] = row.template get_columns<int, int, int, float, int>(0, 1, 2, 3, 4);
 		const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
@@ -318,5 +318,33 @@ std::vector<alarm_settings_t> Database::get_all_alarm_settings() {
 		const auto threshold_value = threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
 
 		return alarm_settings_t(channel, type, severity_enum, threshold_enum, threshold_value);
+	});
+}
+
+statistics_point_t Database::get_last_statistics_calculation(int channel, int type) {
+	std::lock_guard guard(database_access_mutex);
+	const auto map_index = std::make_pair(channel, type);
+	const auto matching_statistic = latest_statistics.emplace(map_index, statistics_point_t());
+
+	return matching_statistic.first->second;
+}
+
+void Database::update_last_statistics_calculation(int channel, int type, const statistics_point_t& new_values) {
+	std::lock_guard guard(database_access_mutex);
+	latest_statistics.at({channel, type}) = new_values;
+}
+
+std::vector<float> Database::get_data_points_only(int channel, int type, time_point_t start, time_point_t finish) {
+	std::lock_guard guard(database_access_mutex);
+
+	const auto statement = "SELECT value FROM data"s +
+						   " WHERE type_id =  " + std::to_string(type) +
+						   " AND channel_id = " + std::to_string(channel) +
+						   " AND time_since_epoch BETWEEN " + seconds_since_epoch_str(start + 1s) + " AND " + std::to_string(seconds_since_epoch(finish));
+
+	return get_query_results<float>(statement.c_str(), database, [](const auto& row)
+	{
+		const auto[value] = row.template get_columns<float>(0);
+		return value;
 	});
 }

@@ -115,3 +115,15 @@ struct alarm_activation_t {
 		severity = settings.severity;
 	}
 };
+
+struct statistics_point_t {
+	float mean = 0;
+	float variance = 0;
+	time_point_t time_of_last_point_in_calculation = time_point_t(0s);
+	double m2 = 0;
+	int sample_count = 0;
+
+	statistics_point_t() = default;
+	statistics_point_t(float mean, float standard_deviation, const time_point_t& time_of_last_point_in_calculation, double m_2, double sample_count) : mean(mean), variance(standard_deviation),
+																																					   time_of_last_point_in_calculation(time_of_last_point_in_calculation), m2(m_2), sample_count(sample_count) {}
+};
