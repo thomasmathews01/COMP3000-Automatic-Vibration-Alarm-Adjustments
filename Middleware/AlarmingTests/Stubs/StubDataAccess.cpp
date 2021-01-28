@@ -20,3 +20,7 @@ std::vector<std::pair<int, std::string>> StubDataAccess::get_data_types_availabl
 	return data_types;
 }
 
+std::pair<time_point_t, float> StubDataAccess::get_last_data_point_before(int channel, int type, time_point_t time) {
+	return data.back();
+}
+

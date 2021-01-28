@@ -16,6 +16,7 @@ public:
 	std::vector<channel> get_channel_information_for_machine(const machine& machine) final;
 
 	std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final;
+	virtual std::pair<time_point_t, float> get_last_data_point_before(int channel, int type, time_point_t time) override;
 	std::vector<float> get_data_points_only(int channel, int type, time_point_t start, time_point_t end) final;
 	std::vector<std::pair<int, std::string>> get_data_types_available_for_channel(int channel_id) final;
 
@@ -44,6 +45,8 @@ public:
 	virtual std::vector<state_t> get_states_for_machine(int machine_id) override;
 	virtual alarm_state_t get_alarm_state_of_alarm(const alarm_settings_t& alarm) override;
 
+	virtual alarm_settings_t get_updated_alarm_settings(const alarm_settings_t& previous_settings) override;
+
 	virtual statistics_point_t get_last_statistics_calculation(int channel, int type) override;
 	virtual void update_last_statistics_calculation(int channel, int type, const statistics_point_t& new_values) override;
 
@@ -52,6 +55,13 @@ private:
 	std::map<std::pair<int, int>, statistics_point_t> latest_statistics; // This should be behind a second interface, there is no need to store persistently, might as well calculate them each run and keep in memory for faster access.
 
 	std::mutex database_access_mutex;
+	/*
+	 * Documentation seems to suggest that mutex locking this is not needed, and it has some in built locks anyway
+	 * So possibly this could be removed, it is definitely the case that we can have concurrent reads which makes much
+	 * more sense, the only time consuming actions are getting data out, not adding data, which is always added slowly
+	 * and in relatively tiny chunks. Look into this when a performance bottleneck becomes problematic.
+	*/
+
 	std::shared_ptr<sqlite3pp::database> database; // This is a shared pointer for testing purposes, but should never be accessed by anyone other than this class, with the mutex, unless they take ownership whilst they use it, and we can't access it in that period.
 
 	std::optional<int> get_state_at_time(const time_point_t& time, int machine_id);

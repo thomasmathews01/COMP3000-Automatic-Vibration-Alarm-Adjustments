@@ -4,11 +4,10 @@
 
 using namespace ranges;
 
-void AlarmStatistics::update() {
-	const auto current_time = clock->get_current_time();
+void AlarmStatistics::update(const time_point_t& time) {
 	auto calculation_cache = statistics_storage->get_last_statistics_calculation(settings.channel_id, settings.type_id);
 
-	const auto new_data = data_storage->get_data(settings.channel_id, settings.type_id, calculation_cache.time_of_last_point_in_calculation, current_time);
+	const auto new_data = data_storage->get_data(settings.channel_id, settings.type_id, calculation_cache.time_of_last_point_in_calculation, time);
 
 	if (new_data.empty())
 		return;
@@ -31,5 +30,5 @@ void AlarmStatistics::update_statistics(statistics_point_t& cached_values, const
 }
 
 
-AlarmStatistics::AlarmStatistics(alarm_settings_t settings, std::shared_ptr<IStatistics> statistics_storage, std::shared_ptr<IDataAccess> data_storage, std::shared_ptr<IClock> clock)
-	: settings(settings), statistics_storage(std::move(statistics_storage)), data_storage(std::move(data_storage)), clock(std::move(clock)) {}
+AlarmStatistics::AlarmStatistics(alarm_settings_t settings, std::shared_ptr<IStatistics> statistics_storage, std::shared_ptr<IDataAccess> data_storage)
+	: settings(settings), statistics_storage(std::move(statistics_storage)), data_storage(std::move(data_storage)) {}

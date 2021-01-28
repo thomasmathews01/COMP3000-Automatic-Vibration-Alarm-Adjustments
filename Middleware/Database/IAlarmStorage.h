@@ -6,6 +6,7 @@ public:
 	virtual std::vector<alarm_settings_t> get_all_alarm_settings() = 0;
 	virtual std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) = 0;
 	virtual bool update_alarm_setting(const alarm_settings_t& new_setting) = 0;
+	virtual alarm_settings_t get_updated_alarm_settings(const alarm_settings_t& old_settings) = 0;
 
 	// Alarm firings
 	virtual std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) = 0;

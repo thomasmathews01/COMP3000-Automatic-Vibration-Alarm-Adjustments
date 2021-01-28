@@ -11,6 +11,8 @@ public:
 
 	time_point_t get_earliest_data_point_for_machine(int machine_id) override;
 
+	virtual std::pair<time_point_t, float> get_last_data_point_before(int channel, int type, time_point_t time) override;
+
 	std::vector<std::pair<time_point_t, float>> data;
 	std::vector<std::pair<int, std::string>> data_types;
 };

@@ -95,7 +95,20 @@ struct alarm_level_history_point {
 
 struct alarm_state_t {
 	std::optional<alarmSeverity> severity; // nullopt indicates no alarms are active
-	alarm_state_t(std::optional<alarmSeverity>&& severity) : severity(std::move(severity)) {}
+	alarm_state_t(std::optional<alarmSeverity>&& severity) : severity(severity) {}
+
+	bool operator==(const alarm_state_t& rhs) const {
+		if (severity.has_value() != rhs.severity.has_value())
+			return false;
+		if (severity == std::nullopt && rhs.severity == std::nullopt)
+			return true;
+
+		return severity.value() == rhs.severity.value();
+	}
+
+	bool operator!=(const alarm_state_t& rhs) const {
+		return !(rhs == *this);
+	}
 };
 
 struct alarm_activation_t {

@@ -1,9 +1,11 @@
 #pragma once
+
 #include <chrono>
+#include "types.h"
+
 using namespace std::chrono;
 
-class IClock
-{
+class IClock {
 public:
-	[[nodiscard]] virtual system_clock::time_point get_current_time() const noexcept = 0;
+	[[nodiscard]] virtual time_point_t get_current_time() const noexcept = 0;
 };

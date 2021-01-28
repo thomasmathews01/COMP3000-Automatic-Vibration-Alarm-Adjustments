@@ -38,20 +38,20 @@ TEST (Statistics, canConstructStatisticsObject) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	ASSERT_NO_THROW(AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>(), container->resolve<IClock>()));
+	ASSERT_NO_THROW(AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>()));
 }
 
 TEST (Statistics, CalculatesMeanOfSingleValue) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>(), container->resolve<IClock>());
+	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 	stub_data_access->data.emplace_back(time_point_t(100s), 10.f);
 	stub_data_access->data.emplace_back(time_point_t(101s), 10.f);
 	stub_data_access->data.emplace_back(time_point_t(102s), 10.f);
-	test_object.update();
+	test_object.update(container->resolve<IClock>()->get_current_time());
 
 	const auto stub_statistics_storage = std::dynamic_pointer_cast<StubStatistics>(container->resolve<IStatistics>());
 	ASSERT_EQ(10.f, stub_statistics_storage->point.mean);
@@ -62,13 +62,13 @@ TEST (Statistics, CalculatesMeanOf1ThousandValuesInAcceptableTime) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>(), container->resolve<IClock>());
+	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
 	stub_data_access->data |= actions::push_back(views::iota(1, 1000) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 
-	const auto execution_time = time_lambda([&](){test_object.update(); });
+	const auto execution_time = time_lambda([&](){test_object.update(container->resolve<IClock>()->get_current_time()); });
 	ASSERT_LE((duration_cast<milliseconds>(execution_time)).count(), (1ms).count());
 }
 
@@ -76,18 +76,18 @@ TEST (Statistics, CanCalculateRollingMean) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>(), container->resolve<IClock>());
+	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
 	stub_data_access->data |= actions::push_back(views::iota(1, 6) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 
-	test_object.update();
+	test_object.update(container->resolve<IClock>()->get_current_time());
 
 	stub_data_access->data.clear();
 	stub_data_access->data |= actions::push_back(views::iota(6, 11) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 
-	test_object.update();
+	test_object.update(container->resolve<IClock>()->get_current_time());
 
 	const auto stub_statistics_storage = std::dynamic_pointer_cast<StubStatistics>(container->resolve<IStatistics>());
 	ASSERT_EQ(5.5, stub_statistics_storage->point.mean);
@@ -97,13 +97,13 @@ TEST (Statistics, CanCalculateStdDeviation) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>(), container->resolve<IClock>());
+	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
 	stub_data_access->data |= actions::push_back(views::iota(1, 11) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 
-	test_object.update();
+	test_object.update(container->resolve<IClock>()->get_current_time());
 
 	const auto stub_statistics_storage = std::dynamic_pointer_cast<StubStatistics>(container->resolve<IStatistics>());
 	ASSERT_EQ(8.25, stub_statistics_storage->point.variance);
@@ -113,20 +113,20 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>(), container->resolve<IClock>());
+	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
 	stub_data_access->data |= actions::push_back(views::iota(1, 6) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 	ASSERT_EQ(5, stub_data_access->data.size());
 
-	test_object.update();
+	test_object.update(container->resolve<IClock>()->get_current_time());
 
 	stub_data_access->data.clear();
 	stub_data_access->data |= actions::push_back(views::iota(6, 11) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 	ASSERT_EQ(5, stub_data_access->data.size());
 
-	test_object.update();
+	test_object.update(container->resolve<IClock>()->get_current_time());
 
 	const auto stub_statistics_storage = std::dynamic_pointer_cast<StubStatistics>(container->resolve<IStatistics>());
 	ASSERT_EQ(8.25, stub_statistics_storage->point.variance);
@@ -135,4 +135,5 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 TEST (Statistics, somdoesntdieimmediately) {
 	SOM<100, 100> som;
 	som.initialise();
+	som.train_on({}, [](float x, int y) { return x * y; }, [](int x) { return static_cast<float>(x); });
 }

@@ -321,6 +321,41 @@ std::vector<alarm_settings_t> Database::get_all_alarm_settings() {
 	});
 }
 
+alarm_settings_t Database::get_updated_alarm_settings(const alarm_settings_t& previous_settings) {
+	std::lock_guard guard(database_access_mutex);
+	const auto statement = "SELECT custom_fixed_threshold, alarm_threshold_type"
+						   " FROM alarm_settings"
+						   " WHERE channel_id = " + std::to_string(previous_settings.channel_id) +
+						   " AND type_id = " + std::to_string(previous_settings.type_id) +
+						   " AND alarm_severity = " + std::to_string(static_cast<int>(previous_settings.severity));
+
+	auto query_results = sqlite3pp::query(*database, statement.c_str());
+	// TODO: What if we don't find any results? Should probably check and at least return an optional. We don't want async exception throwing, this code needs to be fast and non blocking as much as possible.
+
+	const auto[threshold, threshold_type] = (*query_results.begin()).get_columns<float, int>(0, 1);
+	const auto threshold_type_enum = static_cast<alarmThreshold>(threshold_type);
+
+	return alarm_settings_t(previous_settings.channel_id, previous_settings.type_id, previous_settings.severity, threshold_type_enum, threshold_type_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt);
+}
+
+std::pair<time_point_t, float> Database::get_last_data_point_before(int channel, int type, time_point_t time) {
+	std::lock_guard guard(database_access_mutex);
+
+	const auto statement = "SELECT time_since_epoch, value FROM data"s +
+						   " WHERE type_id =  " + std::to_string(type) +
+						   " AND time_since_epoch <= " + seconds_since_epoch_str(time) +
+						   " AND channel_id = " + std::to_string(channel) +
+						   " ORDER BY time_since_epoch DESC" +
+						   " LIMIT 1";
+
+	auto query_results = sqlite3pp::query(*database, statement.c_str());
+	// TODO: What if we don't find any results? Should probably check and at least return an optional. We don't want async exception throwing, this code needs to be fast and non blocking as much as possible.
+
+	const auto[epoch_time, value] = (*query_results.begin()).get_columns<int, float>(0, 1);
+
+	return std::make_pair(time_point_t(seconds(epoch_time)), value);
+}
+
 statistics_point_t Database::get_last_statistics_calculation(int channel, int type) {
 	std::lock_guard guard(database_access_mutex);
 	const auto map_index = std::make_pair(channel, type);
