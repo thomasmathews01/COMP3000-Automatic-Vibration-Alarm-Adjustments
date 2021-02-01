@@ -14,13 +14,15 @@ public:
 	std::vector<site> get_site_data() final;
 	std::vector<machine> get_machines_for_site(const site& site) final;
 	std::vector<channel> get_channel_information_for_machine(const machine& machine) final;
+    std::vector<channel> get_all_channels() final;
 
-	std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final;
-	virtual std::pair<time_point_t, float> get_last_data_point_before(int channel, int type, time_point_t time) override;
+    std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final;
+	std::pair<time_point_t, float> get_last_data_point_before(int channel, int type, time_point_t time) override;
 	std::vector<float> get_data_points_only(int channel, int type, time_point_t start, time_point_t end) final;
 	std::vector<std::pair<int, std::string>> get_data_types_available_for_channel(int channel_id) final;
+    std::vector<int> get_all_data_types() final;
 
-	std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) final;
+    std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) final;
 	void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final;
 
 	void add_alarm_activation(const alarm_activation_t& activation) final;
@@ -40,15 +42,15 @@ public:
 	alarm_state_t get_alarm_state_of_machine(const machine& machine) final;
 	alarm_state_t get_alarm_state_of_channel(const channel& channel) final;
 
-	virtual void add_state(int machine_id, const state_t& state) override;
-	virtual void remove_state(int machine_id, int state_id) override;
-	virtual std::vector<state_t> get_states_for_machine(int machine_id) override;
-	virtual alarm_state_t get_alarm_state_of_alarm(const alarm_settings_t& alarm) override;
+	void add_state(int machine_id, const state_t& state) override;
+	void remove_state(int machine_id, int state_id) override;
+	std::vector<state_t> get_states_for_machine(int machine_id) override;
+	alarm_state_t get_alarm_state_of_alarm(const alarm_settings_t& alarm) override;
 
-	virtual alarm_settings_t get_updated_alarm_settings(const alarm_settings_t& previous_settings) override;
+	alarm_settings_t get_updated_alarm_settings(const alarm_settings_t& previous_settings) override;
 
-	virtual statistics_point_t get_last_statistics_calculation(int channel, int type) override;
-	virtual void update_last_statistics_calculation(int channel, int type, const statistics_point_t& new_values) override;
+	statistics_point_t get_last_statistics_calculation(int channel, int type) override;
+	void update_last_statistics_calculation(int channel, int type, const statistics_point_t& new_values) override;
 
 private:
 	std::shared_ptr<IDatabaseFactory> factory;

@@ -24,3 +24,7 @@ std::pair<time_point_t, float> StubDataAccess::get_last_data_point_before(int ch
 	return data.back();
 }
 
+std::vector<int> StubDataAccess::get_all_data_types() {
+    return data_types | views::keys | to<std::vector>();
+}
+

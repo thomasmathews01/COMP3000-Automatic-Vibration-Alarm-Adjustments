@@ -5,7 +5,7 @@
 
 class IAlarmCalc {
 public:
-	virtual void update_alarm_state_at(const time_point_t& time) = 0;
+	virtual void update(const time_point_t& time) = 0;
 };
 
 

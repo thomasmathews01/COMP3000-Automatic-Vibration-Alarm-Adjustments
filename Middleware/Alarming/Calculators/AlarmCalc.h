@@ -6,11 +6,12 @@
 
 class AlarmCalc : public IAlarmCalc {
 public:
-	AlarmCalc(std::shared_ptr<IDatabase> database, const alarm_settings_t& alarm_settings);
+	AlarmCalc(std::shared_ptr<IDataAccess> data_access, std::shared_ptr<IAlarmStorage> alarm_access, const alarm_settings_t&	alarm_settings);
 
-	void update_alarm_state_at(const time_point_t& time) override;
+	void update(const time_point_t& time) override;
 private:
-	std::shared_ptr<IDatabase> database;
+	std::shared_ptr<IDataAccess> data_access;
+	std::shared_ptr<IAlarmStorage> alarm_access;
 	alarm_settings_t alarm_settings;
 
 	std::pair<alarm_state_t, time_point_t> get_next_state(const time_point_t& time);

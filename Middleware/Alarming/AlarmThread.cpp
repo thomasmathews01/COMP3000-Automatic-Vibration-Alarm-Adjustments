@@ -8,7 +8,7 @@ AlarmThread::AlarmThread(const std::shared_ptr<IDatabase>& database) {
 	auto factory = std::make_shared<AlarmCalcFactory>();
 	auto stats_factory = std::make_shared<StatsCalcFactory>();
 
-	processor = std::make_shared<AlarmHandler>(clock, database, factory, database, database, stats_factory);
+	processor = std::make_shared<AlarmHandler>(clock, database, factory, database, database, stats_factory, database);
 	worker = std::thread([this]() { process_alarms(); });
 }
 
@@ -19,7 +19,6 @@ void AlarmThread::process_alarms() {
 		std::this_thread::sleep_until(start + process_loop);
 	}
 }
-
 
 AlarmThread::~AlarmThread() {
 	should_stop = true;

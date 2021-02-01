@@ -1,3 +1,4 @@
+#pragma once
 #include "alarmTypes.h"
 
 class IAlarmStorage {

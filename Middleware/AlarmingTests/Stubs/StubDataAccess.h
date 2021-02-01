@@ -13,6 +13,8 @@ public:
 
 	virtual std::pair<time_point_t, float> get_last_data_point_before(int channel, int type, time_point_t time) override;
 
-	std::vector<std::pair<time_point_t, float>> data;
+    std::vector<int> get_all_data_types() override;
+
+    std::vector<std::pair<time_point_t, float>> data;
 	std::vector<std::pair<int, std::string>> data_types;
 };

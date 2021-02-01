@@ -23,6 +23,7 @@ add_subdirectory(Utils)
 if (WIN32)
     add_compile_definitions(NOMINMAX)
     add_definitions(-D_WIN32_WINNT=0x0A00)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif ()
 
 add_executable(Middleware main.cpp)

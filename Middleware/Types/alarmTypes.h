@@ -78,6 +78,7 @@ struct alarm_settings_t {
 	alarmThreshold threshold;
 	std::optional<float> customLevel; // nullopt indicates the threshold type is not custom.
 
+	alarm_settings_t() = default;
 	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(alarmThreshold::automaticStateBased) {}
 
 	alarm_settings_t(int channel_id, int type_id, alarmSeverity severity, alarmThreshold threshold) : channel_id(channel_id), type_id(type_id), severity(severity), threshold(threshold), customLevel(std::nullopt) {}

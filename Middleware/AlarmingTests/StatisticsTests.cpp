@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "Stubs/StubDataAccess.h"
 #include "Stubs/StubStatistics.h"
+#include "Stubs/StubConfigurationAccess.h"
 #include "Stubs/StubClock.h"
 #include "Statistics/AlarmStatistics.h"
 #include <Hypodermic/Hypodermic.h>
@@ -30,6 +31,7 @@ std::shared_ptr<Hypodermic::Container> get_container() {
 	builder.registerType<StubStatistics>().as<IStatistics>().singleInstance();
 	builder.registerType<StubClock>().as<IClock>().singleInstance();
 	builder.registerType<StubDataAccess>().as<IDataAccess>().singleInstance();
+	builder.registerType<StubConfigurationAccess>().as<IConfigurationAccess>().singleInstance();
 
 	return builder.build();
 }
@@ -38,14 +40,14 @@ TEST (Statistics, canConstructStatisticsObject) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	ASSERT_NO_THROW(AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>()));
+	ASSERT_NO_THROW(AlarmStatistics(test_settings.channel_id, test_settings.type_id, container->resolve<IStatistics>(), container->resolve<IDataAccess>()));
 }
 
 TEST (Statistics, CalculatesMeanOfSingleValue) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
+	auto test_object = AlarmStatistics(test_settings.channel_id, test_settings.type_id, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 	stub_data_access->data.emplace_back(time_point_t(100s), 10.f);
@@ -62,7 +64,7 @@ TEST (Statistics, CalculatesMeanOf1ThousandValuesInAcceptableTime) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
+	auto test_object = AlarmStatistics(test_settings.channel_id, test_settings.type_id, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
@@ -76,7 +78,7 @@ TEST (Statistics, CanCalculateRollingMean) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
+	auto test_object = AlarmStatistics(test_settings.channel_id, test_settings.type_id, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
@@ -97,7 +99,7 @@ TEST (Statistics, CanCalculateStdDeviation) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
+	auto test_object = AlarmStatistics(test_settings.channel_id, test_settings.type_id, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
@@ -113,7 +115,7 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 	alarm_settings_t test_settings(1, 2, alarmSeverity::alarm);
 	const auto container = get_container();
 
-	auto test_object = AlarmStatistics(test_settings, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
+	auto test_object = AlarmStatistics(test_settings.channel_id, test_settings.type_id, container->resolve<IStatistics>(), container->resolve<IDataAccess>());
 
 	const auto stub_data_access = std::dynamic_pointer_cast<StubDataAccess>(container->resolve<IDataAccess>());
 
@@ -135,5 +137,5 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 TEST (Statistics, somdoesntdieimmediately) {
 	SOM<100, 100> som;
 	som.initialise();
-	som.train_on({}, [](float x, int y) { return x * y; }, [](int x) { return static_cast<float>(x); });
+	som.train({}, [](float x, int y) { return x * y; }, [](int x) { return static_cast<float>(x); });
 }
