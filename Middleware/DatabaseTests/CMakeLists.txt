@@ -12,7 +12,7 @@ target_include_directories(DatabaseTests PRIVATE
         ${CMAKE_SOURCE_DIR}/Types
         )
 
-gtest_add_tests(TARGET DatabaseTests SOURCES DatabaseTests.cpp DatabaseInitialiserTests.cpp)
+gtest_add_tests(TARGET DatabaseTests SOURCES DatabaseTests.cpp DatabaseInitialiserTests.cpp ConfigStorageTests.cpp)
 
 if (WIN32)
     add_compile_definitions(NOMINMAX)

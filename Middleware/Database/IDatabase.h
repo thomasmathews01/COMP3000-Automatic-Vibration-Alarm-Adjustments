@@ -10,7 +10,7 @@
 #include "IStatistics.h"
 #include "IDataAccess.h"
 
-class IDatabase : public IAlarmStorage, public IConfigurationAccess, public IStateStorage, public IStatistics , public IDataAccess {
+class IDatabase : public IAlarmStorage, public IStateStorage, public IStatistics , public IDataAccess {
 public:
 	virtual ~IDatabase() = default;
 };

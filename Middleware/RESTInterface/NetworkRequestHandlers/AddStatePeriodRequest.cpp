@@ -10,16 +10,17 @@ int get_state_id_at_time(const std::vector<state_change_t>& state_changes, const
 std::vector<state_change_t> insert_new_state(std::vector<state_change_t>&& states, const state_period_t& new_state);
 std::vector<state_change_t> remove_subsumed_states(std::vector<state_change_t>&& states, const state_period_t& new_state);
 
-std::string AddStatePeriodRequest::add_state_period(const crow::request& request, std::shared_ptr<IDatabase>& database) {
+std::string AddStatePeriodRequest::add_state_period(const crow::request& request, std::shared_ptr<IConfigurationAccess>& config_storage, std::shared_ptr<IStateStorage>&
+        state_storage) {
 	const auto channel_id = std::stoi(request.url_params.get("channel_id"));
 	const auto new_state_period = parse_new_period_from_request(request);
 
-	const auto machine_id = database->get_machine_id_from_channel_id(channel_id);
+	const auto machine_id = config_storage->get_machine_id_from_channel_id(channel_id);
 
-	auto existing_states = database->get_state_changes_for_machine(machine_id);
+	auto existing_states = state_storage->get_state_changes_for_machine(machine_id);
 	const auto new_states = insert_new_state(std::move(existing_states), new_state_period);
 
-	//database->update_state_changes_for_machine(machine_id); // TODO: This is absolute nonsense and we need some proper logic to fold in the news states in the database.
+	//config_storage->update_state_changes_for_machine(machine_id); // TODO: This is absolute nonsense and we need some proper logic to fold in the news states in the config_storage.
 	// ORM might have solved this...
 
 	return ""; // TODO: Determine return for a failure case

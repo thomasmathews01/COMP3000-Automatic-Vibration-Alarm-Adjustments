@@ -38,11 +38,12 @@ std::string activations_as_json_string(const std::vector<alarm_activation_t>& ac
 	return buff.GetString();
 }
 
-std::string AlarmActivationsRequest::get_activations(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database) {
+std::string AlarmActivationsRequest::get_activations(const crow::request& request, alarmSeverity severity, std::shared_ptr<IConfigurationAccess>& config_storage,
+                                                     std::shared_ptr<IAlarmStorage>& alarm_storage) {
 	// Extract identifying information
 	auto machine_id = CrowExtractionHelpers::extract_int_from_url_params(request, "machine_id");
 	const auto channel_id = CrowExtractionHelpers::extract_int_from_url_params(request, "channel_id");
-	machine_id = machine_id ? machine_id : database->get_machine_id_from_channel_id(*channel_id);
+	machine_id = machine_id ? machine_id : config_storage->get_machine_id_from_channel_id(*channel_id);
 	if (!machine_id)
 		return ""; // TODO: Error handling for invalid identifiers case
 
@@ -50,7 +51,7 @@ std::string AlarmActivationsRequest::get_activations(const crow::request& reques
 	const auto type_id = CrowExtractionHelpers::extract_int_from_url_params(request, "type_id");
 	const auto state_id = CrowExtractionHelpers::extract_int_from_url_params(request, "state_id");
 
-	const auto activations = database->get_activations_for_machine(*machine_id);
+	const auto activations = alarm_storage->get_activations_for_machine(*machine_id);
 
 	return activations_as_json_string(activations
 									  | views::filter([&](const auto& activation) { return activation.severity == severity; })

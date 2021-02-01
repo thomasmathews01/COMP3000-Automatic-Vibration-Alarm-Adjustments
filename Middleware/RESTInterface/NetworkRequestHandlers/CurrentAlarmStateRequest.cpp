@@ -25,11 +25,14 @@ std::string get_alarm_severity_as_json(const alarmSeverity severity) {
 	return buff.GetString();
 }
 
-std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database) { // TODO: We should support sites, but this requires a refactoring to get rid of the nonsense API to the database structure
+std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, alarmSeverity severity, std::shared_ptr<IConfigurationAccess>& config_storage,
+                                                              std::shared_ptr<IAlarmStorage>& alarm_storage) { // TODO: We
+    // should
+    // support sites, but this requires a refactoring to get rid of the nonsense API to the config_storage structure
 	// Extract identifying information
 	auto machine_id = CrowExtractionHelpers::extract_int_from_url_params(request, "machine_id");
 	const auto channel_id = CrowExtractionHelpers::extract_int_from_url_params(request, "channel_id");
-	machine_id = machine_id ? machine_id : database->get_machine_id_from_channel_id(*channel_id);
+	machine_id = machine_id ? machine_id : config_storage->get_machine_id_from_channel_id(*channel_id);
 
 	if (!machine_id)
 		return ""; // TODO: Error handling for invalid identifiers case
@@ -37,7 +40,7 @@ std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::reques
 	// Extract optional filters
 	const auto type_id = CrowExtractionHelpers::extract_int_from_url_params(request, "type_id");
 
-	const auto all_activations = database->get_activations_for_machine(*machine_id);
+	const auto all_activations = alarm_storage->get_activations_for_machine(*machine_id);
 	const auto severities_of_active_alarms = all_activations
 									   | views::filter([&](const auto& activation) { return activation.severity == severity; })
 									   | views::filter([&](const auto& activation) { return !channel_id || activation.channel_id == *channel_id; })

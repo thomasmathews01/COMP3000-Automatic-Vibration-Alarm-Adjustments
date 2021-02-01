@@ -6,7 +6,7 @@
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
 
-std::string GetSitesRequest::get_sites_info(const std::shared_ptr<IDatabase>& database) {
+std::string GetSitesRequest::get_sites_info(const std::shared_ptr<IConfigurationAccess>& database) {
 	StringBuffer buff;
 	PrettyWriter<StringBuffer> writer(buff);
 	writer.StartObject();

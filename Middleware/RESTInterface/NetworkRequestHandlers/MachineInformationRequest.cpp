@@ -6,7 +6,7 @@
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
 
-std::string MachineInformationRequest::get_machine_information(const crow::request& request, const std::shared_ptr<IDatabase>& database) {
+std::string MachineInformationRequest::get_machine_information(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& database) {
 	StringBuffer buffer;
 	PrettyWriter writer(buffer);
 	writer.StartObject();

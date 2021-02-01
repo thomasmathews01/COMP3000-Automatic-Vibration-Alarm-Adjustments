@@ -2,11 +2,11 @@
 #include <memory>
 #include <string>
 #include "../Utils/include_crow.h"
-#include "../../Database/IDatabase.h"
+#include <IConfigurationAccess.h>
 
 class GetSitesRequest {
 public:
-	static std::string get_sites_info(const std::shared_ptr<IDatabase>& database);
+	static std::string get_sites_info(const std::shared_ptr<IConfigurationAccess>& database);
 };
 
 

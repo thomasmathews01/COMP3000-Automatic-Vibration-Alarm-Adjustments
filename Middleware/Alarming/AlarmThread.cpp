@@ -2,13 +2,14 @@
 #include "RealClock.h"
 #include "Calculators/AlarmCalcFactory.h"
 #include "Statistics/StatsCalcFactory.h"
+#include <ConfigStorage.h>
 
-AlarmThread::AlarmThread(const std::shared_ptr<IDatabase>& database) {
+AlarmThread::AlarmThread(const std::shared_ptr<IDatabase>& database, const std::shared_ptr<IConfigurationAccess>& config_storage) {
 	auto clock = std::make_shared<RealClock>();
 	auto factory = std::make_shared<AlarmCalcFactory>();
 	auto stats_factory = std::make_shared<StatsCalcFactory>();
 
-	processor = std::make_shared<AlarmHandler>(clock, database, factory, database, database, stats_factory, database);
+	processor = std::make_shared<AlarmHandler>(clock, database, factory, database, database, stats_factory, config_storage);
 	worker = std::thread([this]() { process_alarms(); });
 }
 

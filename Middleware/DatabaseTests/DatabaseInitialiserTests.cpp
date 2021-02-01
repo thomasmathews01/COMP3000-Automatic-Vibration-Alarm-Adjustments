@@ -2,18 +2,18 @@
 #include <Hypodermic/Hypodermic.h>
 #include <Database.h>
 #include <array>
-#include "MockDatabaseFactory.h"
 #include <SQLiteCpp/Transaction.h>
 #include <DatabaseInitialiser.h>
 #include <database_statements.h>
+#include <DatabaseFactory.h>
 
 using namespace std::string_view_literals;
 
 class DatabaseInitialiserTest : public ::testing::Test {
 protected:
 	void SetUp() override {
-		auto factory = std::make_shared<MockDatabaseFactory>();
-		database = DatabaseInitialiser::intialise_database(factory->get_database()); // Set up all the required tables.
+		auto factory = std::make_shared<DatabaseFactory>();
+		database = DatabaseInitialiser::intialise_database(factory->get_database(":memory:")); // Set up all the required tables.
 	}
 
 	void TearDown() override {

@@ -29,35 +29,6 @@ namespace {
     }
 }
 
-std::vector<site> Database::get_site_data() {
-    std::lock_guard guard(database_access_mutex);
-
-    return get_query_results<site>("SELECT site_id, site_name from SITES", database, [](const auto& row) {
-        const auto[id_number, name_string] = row.template get_columns<int, const char *>(0, 1);
-        return site(id_number, name_string);
-    });
-}
-
-std::vector<machine> Database::get_machines_for_site(const site& site) {
-    std::lock_guard guard(database_access_mutex);
-
-    return get_query_results<machine>(find_machine_for_site(site.id).c_str(), database, [](const auto& row) {
-        const auto[id, name] = row.template get_columns<int, const char *>(0, 1);
-
-        return machine(id, name);
-    });
-}
-
-std::vector<channel> Database::get_channel_information_for_machine(const machine& machine) {
-    std::lock_guard guard(database_access_mutex);
-
-    return get_query_results<channel>(find_channels_for_machine(machine.id).c_str(), database, [](const auto& row) {
-        const auto[id, name, units] = row.template get_columns<int, const char *, const char *>(0, 1, 2);
-
-        return channel(id, name, units);
-    });
-}
-
 std::vector<std::pair<time_point_t, float>>
 Database::get_data(int channel, int type, time_point_t start, time_point_t finish) {
     std::lock_guard guard(database_access_mutex);
@@ -84,19 +55,6 @@ std::vector<std::pair<int, std::string>> Database::get_data_types_available_for_
         const auto[type_id, type_name] = row.template get_columns<int, const char *>(0, 1);
         return std::make_pair(type_id, type_name);
     });
-}
-
-int Database::get_machine_id_from_channel_id(int channel_id) {
-    std::lock_guard guard(database_access_mutex);
-
-    const auto selection_string = "SELECT machine_id from channels where channel_id = " + std::to_string(channel_id);
-
-    for (const auto& row : sqlite3pp::query(*database, selection_string.c_str())) {
-        const auto[machine_id] = row.template get_columns<int>(0);
-        return machine_id;
-    }
-
-    return -1;
 }
 
 time_point_t Database::get_earliest_data_point_for_machine(int machine_id) {
@@ -397,18 +355,6 @@ std::vector<float> Database::get_data_points_only(int channel, int type, time_po
         const auto[value] = row.template get_columns<float>(0);
         return value;
     });
-}
-
-std::vector<channel> Database::get_all_channels() {
-    std::lock_guard guard(database_access_mutex);
-
-    std::vector<channel> channels;
-
-    for (const auto& site : get_site_data())
-        for (const auto& machine : get_machines_for_site(site))
-            channels |= actions::push_back(get_channel_information_for_machine(machine));
-
-    return channels;
 }
 
 std::vector<int> Database::get_all_data_types() {

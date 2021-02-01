@@ -3,7 +3,7 @@
 #include "../../Database/TestDatabase.h"
 
 
-std::string SiteInformationRequest::get_site_information(const crow::request& request, const std::shared_ptr<IDatabase>& database) {
+std::string SiteInformationRequest::get_site_information(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& database) {
 	rapidjson::StringBuffer buffer;
 	rapidjson::PrettyWriter writer(buffer);
 	writer.StartObject();

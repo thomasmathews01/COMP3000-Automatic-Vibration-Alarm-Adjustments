@@ -1,13 +1,15 @@
 #pragma once
 
-#include "../../Types/alarmTypes.h"
+#include <alarmTypes.h>
 #include <memory>
 #include "../Utils/include_crow.h"
-#include "../../Database/IDatabase.h"
+#include <IConfigurationAccess.h>
+#include <IAlarmStorage.h>
 
 class AlarmActivationsRequest {
 public:
-	static std::string get_activations(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database);
+	static std::string get_activations(const crow::request& request, alarmSeverity severity, std::shared_ptr<IConfigurationAccess>& config_storage,
+    std::shared_ptr<IAlarmStorage>& alarm_storage);
 };
 
 
