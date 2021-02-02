@@ -62,8 +62,8 @@ void Server::work() {
 	CROW_ROUTE(app, "/site")([this](const crow::request& request) { return SiteInformationRequest::get_site_information(request, this->configuration_storage); });
 	CROW_ROUTE(app, "/machine")([this](const crow::request& request) { return MachineInformationRequest::get_machine_information(request, this->configuration_storage); });
 	CROW_ROUTE(app, "/time")([]() { return CurrentTimeRequest::get_current_time_response(); });
-	CROW_ROUTE(app, "/types")([this](const crow::request& req) { return AvailableDataTypesRequest::get_available_data_types(req, this->database); });
-	CROW_ROUTE(app, "/data")([this](const crow::request& req) { return GetDataRequest::get_data_points(req, this->database); });
+	CROW_ROUTE(app, "/types")([this](const crow::request& req) { return AvailableDataTypesRequest::get_available_data_types(req, this->data_storage); });
+	CROW_ROUTE(app, "/data")([this](const crow::request& req) { return GetDataRequest::get_data_points(req, this->data_storage); });
 	CROW_ROUTE(app, "/states")([this](const crow::request& req) { return GetStatePeriodsRequest::get_state_periods(req, this->configuration_storage, this->state_storage); });
 	CROW_ROUTE(app, "/alarmActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alarm, this->configuration_storage, this->alarm_storage); });
 	CROW_ROUTE(app, "/alertActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alert, this->configuration_storage, this->alarm_storage); });

@@ -18,6 +18,7 @@ private:
 	std::shared_ptr<IDatabase> database;
 	std::shared_ptr<IConfigurationAccess> configuration_storage;
 	std::shared_ptr<IStateStorage> state_storage;
+	std::shared_ptr<IDataAccess> data_storage;
 	std::shared_ptr<IAlarmStorage> alarm_storage;
 	std::thread worker;
 	bool started = false;

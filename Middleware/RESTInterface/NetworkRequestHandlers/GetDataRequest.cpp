@@ -66,7 +66,7 @@ decimated_points decimate_data(const std::vector<std::pair<time_point_t, float>>
  * @param database Database instance to retrieve the data from
  * @return JSON structure, as a string, representing up to 5000 points in the given range. Integer decimation performed to fit the points in this range.
  */
-std::string GetDataRequest::get_data_points(const crow::request& request, const std::shared_ptr<IDatabase>& database) {
+std::string GetDataRequest::get_data_points(const crow::request& request, const std::shared_ptr<IDataAccess>& database) {
 	const auto channel = std::stoi(request.url_params.get("channel")); // TODO: sensible error handling for malformed requests.
 	const auto type = std::stoi(request.url_params.get("type")); // TODO: Logging for easier understanding of what has gone wrong.
 
@@ -81,8 +81,8 @@ std::string GetDataRequest::get_data_points(const crow::request& request, const 
 
 	return convert_data_points_to_json(decimated_data);
 }
-/*
 
+/*
 namespace testing
 {
 	std::vector<std::pair<time_point_t, float>> get_test_collection(int sample_count) {

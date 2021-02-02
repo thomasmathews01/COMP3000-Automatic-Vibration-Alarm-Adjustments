@@ -1,6 +1,6 @@
 file(GLOB Database_SRC CONFIGURE_DEPENDS "*.cpp")
 
-add_library(Database ${Database_SRC} IDatabaseFactory.h DatabaseFactory.cpp DatabaseFactory.h IStatistics.h IConfigurationAccess.h IDataAccess.h IStateStorage.h IAlarmStorage.h)
+add_library(Database ${Database_SRC} IDatabaseFactory.h DatabaseFactory.cpp DatabaseFactory.h IStatistics.h IConfigurationAccess.h IDataAccess.h IStateStorage.h IAlarmStorage.h DataStorage.cpp DataStorage.h)
 
 if (WIN32)
     add_compile_definitions(NOMINMAX)

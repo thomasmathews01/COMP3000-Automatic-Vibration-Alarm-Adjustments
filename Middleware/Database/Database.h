@@ -11,19 +11,11 @@ public:
 	explicit Database(std::shared_ptr<IDatabaseFactory> factory);
 	~Database() override = default;
 
-    std::vector<std::pair<time_point_t, float>> get_data(int channel, int type, time_point_t start, time_point_t end) final;
-	std::pair<time_point_t, float> get_last_data_point_before(int channel, int type, time_point_t time) override;
-	std::vector<float> get_data_points_only(int channel, int type, time_point_t start, time_point_t end) final;
-	std::vector<std::pair<int, std::string>> get_data_types_available_for_channel(int channel_id) final;
-    std::vector<int> get_all_data_types() final;
-
     std::vector<alarm_level_history_point> get_alarm_level_history(const alarm_settings_t& associated_alarm) final;
 	void add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm, double new_level) final;
 
 	void add_alarm_activation(const alarm_activation_t& activation) final;
 	std::vector<alarm_activation_t> get_activations_for_machine(int machine_id) final;
-
-	time_point_t get_earliest_data_point_for_machine(int machine_id) final;
 
 	std::vector<alarm_settings_t> get_all_alarm_settings() final; // not tested
 	std::vector<alarm_settings_t> get_alarm_settings_for_machine(int machine_id) final;

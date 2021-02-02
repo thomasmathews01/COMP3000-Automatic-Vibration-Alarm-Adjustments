@@ -11,7 +11,7 @@ using namespace std::chrono;
 
 class AlarmThread {
 public:
-	AlarmThread(const std::shared_ptr<IDatabase>& database, const std::shared_ptr<IConfigurationAccess>& config_storage);
+	AlarmThread(const std::shared_ptr<IDatabase>& database, const std::shared_ptr<IConfigurationAccess>& config_storage, const std::shared_ptr<IDataAccess>& data_access);
 	~AlarmThread();
 
 	void process_alarms();
