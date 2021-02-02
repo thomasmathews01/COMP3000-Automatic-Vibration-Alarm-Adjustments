@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../Types/stateTypes.h"
-#include "../Types/alarmTypes.h"
+#include <alarmTypes.h>
+#include <stateTypes.h>
 
 #include "IAlarmStorage.h"
 #include "IConfigurationAccess.h"
@@ -10,7 +10,7 @@
 #include "IStatistics.h"
 #include "IDataAccess.h"
 
-class IDatabase : public IAlarmStorage, public IStateStorage, public IStatistics {
+class IDatabase {
 public:
 	virtual ~IDatabase() = default;
 };

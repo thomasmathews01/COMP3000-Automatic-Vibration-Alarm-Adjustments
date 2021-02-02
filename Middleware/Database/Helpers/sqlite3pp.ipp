@@ -63,7 +63,7 @@ namespace sqlite3pp
 		if (dbname) {
 			auto rc = connect(dbname, flags, vfs);
 			if (rc != SQLITE_OK)
-				throw database_error("can't connect config_storage");
+				throw database_error("can't connect alarm_storage");
 		}
 	}
 

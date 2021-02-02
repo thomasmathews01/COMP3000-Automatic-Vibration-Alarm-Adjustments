@@ -28,7 +28,7 @@ std::string get_alarm_severity_as_json(const alarmSeverity severity) {
 std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, alarmSeverity severity, std::shared_ptr<IConfigurationAccess>& config_storage,
                                                               std::shared_ptr<IAlarmStorage>& alarm_storage) { // TODO: We
     // should
-    // support sites, but this requires a refactoring to get rid of the nonsense API to the config_storage structure
+    // support sites, but this requires a refactoring to get rid of the nonsense API to the alarm_storage structure
 	// Extract identifying information
 	auto machine_id = CrowExtractionHelpers::extract_int_from_url_params(request, "machine_id");
 	const auto channel_id = CrowExtractionHelpers::extract_int_from_url_params(request, "channel_id");

@@ -1,3 +1,5 @@
+#pragma once
+
 class IStateStorage {
 public:
 	virtual void add_new_state_period(int machine_id, state_period_t state_period) = 0;

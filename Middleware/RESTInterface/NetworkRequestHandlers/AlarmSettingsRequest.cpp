@@ -40,7 +40,7 @@ std::string serialise_alarm_settings_as_json(const std::vector<alarm_settings_t>
 
 	return buff.GetString();}
 
-std::string get_alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database) {
+std::string get_alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IAlarmStorage>& database) {
 	const auto machine_id = CrowExtractionHelpers::extract_int_from_url_params(request, "machine_id");
 	if (!machine_id)
 		return "Error";
@@ -50,7 +50,7 @@ std::string get_alarm_settings(const crow::request& request, alarmSeverity sever
 	return serialise_alarm_settings_as_json(all_settings_for_machine);
 }
 
-std::string set_alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database) {
+std::string set_alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IAlarmStorage>& database) {
 	Document document;
 	document.Parse(request.body.c_str());
 
@@ -75,7 +75,7 @@ std::string set_alarm_settings(const crow::request& request, alarmSeverity sever
 	return "Error"; // TODO: Better.
 }
 
-std::string AlarmSettingsRequest::alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database) {
+std::string AlarmSettingsRequest::alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IAlarmStorage>& database) {
 	switch (request.method) {
 		case crow::HTTPMethod::Get: return get_alarm_settings(request, severity, database);
 		case crow::HTTPMethod::Post: return set_alarm_settings(request, severity, database);

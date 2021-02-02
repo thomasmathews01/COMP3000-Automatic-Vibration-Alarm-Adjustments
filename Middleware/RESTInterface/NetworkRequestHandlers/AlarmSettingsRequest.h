@@ -6,7 +6,7 @@
 
 class AlarmSettingsRequest {
 public:
-	static std::string alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database);
+	static std::string alarm_settings(const crow::request& request, alarmSeverity severity, std::shared_ptr<IAlarmStorage>& database);
 };
 
 
