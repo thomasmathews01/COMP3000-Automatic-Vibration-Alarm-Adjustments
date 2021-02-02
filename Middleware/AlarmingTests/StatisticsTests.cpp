@@ -135,7 +135,7 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 }
 
 TEST (Statistics, somdoesntdieimmediately) {
-	SOM<100, 100> som;
+	SOM<100, 100, 1000> som;
 	som.initialise();
 	som.train({}, [](float x, int y) { return x * y; }, [](int x) { return static_cast<float>(x); });
 }

@@ -16,6 +16,7 @@ protected:
     void SetUp() override {
         std::shared_ptr<IDatabaseFactory> factory = std::make_shared<DatabaseFactory>();
         raw_database = factory->get_database(":memory:");
+        raw_database = DatabaseInitialiser::intialise_database(std::move(raw_database));
         alarm_storage = std::make_shared<AlarmStorage>(factory);
     }
 
