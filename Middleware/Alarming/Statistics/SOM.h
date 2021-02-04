@@ -3,6 +3,7 @@
 #include <array>
 #include <memory>
 #include <random>
+#include <execution>
 #include <range/v3/all.hpp>
 #include <boost/hof/compose.hpp>
 #include <STLExtensions.h>
@@ -68,8 +69,9 @@ public:
 	constexpr point_t find_bmu_for(const som_point_t& point) const noexcept {
 		const auto distance_from_point = [&point](const auto& other) { return STLExtensions::semi_euclidean_distance(point, other); };
 		const auto closer_to_point = [&point, distance_from_point](const auto& first, const auto& second) { return distance_from_point(first) < distance_from_point(second); };
+		const auto closest_element = std::min_element(std::execution::par_unseq, nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
 
-		return point_t(distance(begin(*nodes), min_element(*nodes, closer_to_point)));
+		return point_t(std::distance(nodes->cbegin(), closest_element));
 	}
 
 	constexpr bounding_box get_inner_bounding_box(const point_t& element, const float distance) const noexcept {
