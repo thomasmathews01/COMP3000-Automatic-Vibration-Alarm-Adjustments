@@ -8,6 +8,7 @@
 #include <array>
 #include <range/v3/all.hpp>
 #include "Statistics/SOM.h"
+#include "Statistics/SOMLearningFunctions.h"
 
 using namespace ranges;
 
@@ -137,5 +138,5 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 TEST (Statistics, somdoesntdieimmediately) {
 	SOM<100, 100, 1000> som;
 	som.initialise();
-	som.train({}, [](float x, int y) { return x * y; }, [](int x) { return static_cast<float>(x); });
+	som.train({}, LearningFunctions::get_inverse_time_learning_function(1000), NeighbourhoodFunctions::get_inverse_time_neighbourhood_function(1000, 100));
 }

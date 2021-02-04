@@ -8,7 +8,7 @@ namespace STLExtensions {
 	std::optional<int> opt_stoi(const std::string& string);
 
 	template <class T>
-	T value_or_default(const std::optional<T>& an_optional, const T default_value) {
+	constexpr T value_or_default(const std::optional<T>& an_optional, const T default_value) {
 		return an_optional ? *an_optional : default_value;
 	}
 
@@ -29,11 +29,16 @@ namespace STLExtensions {
     };
 
     template<class T, int N>
-    float euclidean_distance(const std::array<T, N>& first, const std::array<T, N>& second) {
-        return std::sqrt(ranges::inner_product(first, second, 0.f, {}, boost::hof::compose(sqr, difference)));
+    constexpr float semi_euclidean_distance(const std::array<T, N>& first, const std::array<T, N>& second) {
+        return ranges::inner_product(first, second, 0.f, {}, boost::hof::compose(sqr, difference));
     }
 
-    auto get_random_number_generator() {
+	template<class T, int N>
+	constexpr float euclidean_distance(const std::array<T, N>& first, const std::array<T, N>& second) {
+		return std::sqrt(semi_euclidean_distance(first, second));
+	}
+
+	auto get_random_number_generator() {
         std::random_device dev;
         std::mt19937 rng(dev());
         std::normal_distribution<float> dist(-1.f * std::numeric_limits<float>::max(),

@@ -9,153 +9,113 @@
 
 using namespace ranges;
 
-struct point_t {
-    int x, y;
-
-    point_t(int x, int y) : x(x), y(y) {}
-
-    [[nodiscard]] std::array<int, 2> as_array() const { return {x, y}; };
-
-    bool operator==(const point_t& rhs) const {
-        return x == rhs.x &&
-               y == rhs.y;
-    }
-
-    bool operator!=(const point_t& rhs) const {
-        return !(rhs == *this);
-    }
-};
-
-// TODO: Move learning functions out into either function objects or lambdas contained in a separate header
-
-
-// Learning Functions supported, most common according to : http://www.ijmo.org/vol6/504-M08.pdf
-// Linear, inverse time, power series
-
-// Supported neighbourhood functions:
-// Bubble - just a fixed neighbourhood to be a certain number of node edge traversals for any given node, this could easily be compile time embedded.
-// gaussian - continuous, although presumably you then have to go through and further tune the mean/stdd
-
-// TODO: Look into either templating the function call or using boost function references to lower the call cost and maybe get some compile time optimisations in there.
-
-auto get_inverse_time_learning_function(int total_iteration_number) {
-    return [total_iteration_number](int iteration_number) {
-        const auto initial_learning_rate = 1.0;
-        const auto phase = iteration_number / total_iteration_number;
-
-        return initial_learning_rate - (1 - phase);
-    };
-}
-
-constexpr auto get_max_distance_for_current_iteration = [](int iteration_number, int total_iterations) {
-    const auto initial_distance = 50.0; // TODO: Inject - Should be about half the distance across the map.
-    const auto phase = iteration_number / total_iterations;
-
-    return initial_distance * phase;
-};
-
 template<int NodeDims, int FeatureDims, int IterationCount>
 class SOM {
-    using som_point_t = std::array<float, FeatureDims>;
-    using net = std::array<som_point_t, FeatureDims * FeatureDims>;
+	using som_point_t = std::array<float, FeatureDims>;
+	using net = std::array<som_point_t, NodeDims * NodeDims>;
 
 public:
-    void initialise() {
-        nodes = std::make_unique<net>();
+	void initialise() noexcept {
+		nodes = std::make_unique<net>(); // Has to be a pointer, because it is unlikely to fit on the stack.
 
-        for (auto& arr : *nodes)
-            ranges::generate(arr, STLExtensions::get_random_number_generator());
-    }
+		for (auto& node : *nodes)
+			ranges::generate(node, STLExtensions::get_random_number_generator()); // Place node in random location.
+	}
 
-    std::vector<point_t> get_indexes_within_distance_of_element(const point_t& element, const float distance) {
-        // We can presumably draw 2 limits. Some indexes are just unusable, anything that is further than d in any dimension, and som have to be, if they are within the distance that is given by the hypotenuse
-        const auto dimensions = FeatureDims;
+	struct point_t {
+		int x, y;
 
-        const auto lower_outer_limit_x = std::max(0, static_cast<int>(std::floor(element.x - distance)));
-        const auto upper_outer_limit_x = std::min(dimensions, static_cast<int>(std::floor(element.x + distance)));
+		constexpr point_t(int x, int y) : x(x), y(y) {}
 
-        const auto lower_outer_limit_y = std::max(0, static_cast<int>(std::floor(element.y - distance)));
-        const auto upper_outer_limit_y = std::min(dimensions, static_cast<int>(std::floor(element.y + distance)));
+		constexpr point_t(const std::tuple<int, int>& pair) : x(std::get<0>(pair)), y(std::get<1>(pair)) {}
 
-        const auto inner_boundary_distance = static_cast<int>(std::floor(distance / 1.41)); // TODO: Use a more specific constant
+		constexpr explicit point_t(int idx) : x(idx % NodeDims), y(idx / NodeDims) {}
 
-        const auto lower_inner_limit_x = std::max(0, element.x - inner_boundary_distance);
-        const auto upper_inner_limit_x = std::min(0, element.x - inner_boundary_distance);
-        const auto lower_inner_limit_y = std::max(0, element.y - inner_boundary_distance);
-        const auto upper_inner_limit_y = std::min(0, element.y - inner_boundary_distance);
+		[[nodiscard]] constexpr float semi_distance_from(const point_t& other) const noexcept {
+			return STLExtensions::semi_euclidean_distance<int, 2>({x, y}, {other.x, other.y});
+		}
 
-        std::vector<point_t> definite_values;
+		constexpr bool operator==(const point_t& rhs) const noexcept {
+			return x == rhs.x &&
+				   y == rhs.y;
+		}
 
-        const auto is_in_inner_box = [&](const point_t& p) {
-            return p.x >= lower_inner_limit_x && p.x <= upper_inner_limit_x &&
-                   p.x >= lower_inner_limit_y && p.x <= upper_inner_limit_y;
-        };
+		constexpr bool operator!=(const point_t& rhs) const noexcept {
+			return !(rhs == *this);
+		}
 
-        for (auto x = lower_outer_limit_x; x <= upper_outer_limit_x; ++x) {
-            for (auto y = lower_outer_limit_y; y <= upper_outer_limit_y; ++y) {
-                // For all points that exist inside the possible range
-                point_t p(x, y);
+		constexpr operator int() const noexcept {
+			return x + (y * NodeDims);
+		}
+	};
 
-                if (is_in_inner_box(p))
-                    definite_values.emplace_back(p);
-                else {
-                    const auto real_distance = STLExtensions::euclidean_distance<int, 2>(element.as_array(), p.as_array());
-                    if (real_distance <= distance)
-                        definite_values.emplace_back(p);
-                }
-            }
-        }
+	struct bounding_box {
+		point_t lower, upper;
 
-        return definite_values;
-    }
+		constexpr explicit bounding_box(const std::pair<point_t, point_t>& bounds) : lower(bounds.first), upper(bounds.second) {}
 
-    auto lowest_distance_from(const som_point_t& point) {
-        return [&point, this](const auto& first, const auto& second) {
-            return STLExtensions::euclidean_distance<float, FeatureDims>(first, point) <
-                   STLExtensions::euclidean_distance<float, FeatureDims>(second, point);
-        };
-    }
+		constexpr bool contains(const point_t& p) const noexcept {
+			return p.x >= lower.x && p.x <= upper.x &&
+				   p.y >= lower.y && p.y <= upper.y;
+		}
 
-    typename net::iterator find_bmu(const som_point_t& point) {
-        return min_element(*nodes, lowest_distance_from(point));
-    }
+		constexpr auto all_contained_points() const noexcept {
+			return views::cartesian_product(views::iota(lower.x, upper.x), views::iota(lower.y, upper.y))
+				   | views::transform([](const auto& pair) { return point_t(pair); });
+		}
+	};
 
-    constexpr std::array<int, 2> get_idx_as_coords(int idx) {
-        return {idx % NodeDims, idx / NodeDims};
-    }
+	constexpr point_t find_bmu_for(const som_point_t& point) const noexcept {
+		const auto distance_from_point = [&point](const auto& other) { return STLExtensions::semi_euclidean_distance(point, other); };
+		const auto closer_to_point = [&point, distance_from_point](const auto& first, const auto& second) { return distance_from_point(first) < distance_from_point(second); };
 
-    void train(const std::vector<som_point_t>& points, const std::function<float(float, int)>& neighbourhood_function, const std::function<float(int)>& learning_function) {
-        for (auto iteration_number = 1; iteration_number <= IterationCount; ++iteration_number) {
-            const auto learning_weight = learning_function(iteration_number);
+		return point_t(distance(begin(*nodes), min_element(*nodes, closer_to_point)));
+	}
 
-            for (const auto& point : points) {
-                const auto bmu = find_bmu(point);
-                update_net_based_on_bmu(bmu, point, neighbourhood_function, learning_weight, iteration_number);
-            }
-        }
-    }
+	constexpr bounding_box get_inner_bounding_box(const point_t& element, const float distance) const noexcept {
+		const auto inner_boundary_distance = static_cast<int>(std::floor(distance / STLExtensions::sqrt(2.0)));
 
-    void update_net_based_on_bmu(typename net::iterator bmu, const som_point_t& point,
-                                 const std::function<float(float, int)>& neighbourhood_function, float learning_weight,
-                                 int iteration_number) {
-        const auto idx = std::distance(nodes->begin(), bmu);
+		return bounding_box({{std::max(0, element.x - inner_boundary_distance), std::max(0, element.y - inner_boundary_distance)},
+							 {std::min(NodeDims, element.x + inner_boundary_distance), std::min(NodeDims, element.y + inner_boundary_distance)}});
+	}
 
-        const auto coords = get_idx_as_coords(idx);
-        const point_t bmu_point = point_t(coords.at(0), coords.at(1));
+	constexpr bounding_box get_outer_bounding_box(const point_t& element, const float distance) const noexcept {
+		return bounding_box({{std::max(0, static_cast<int>(std::floor(element.x - distance))),        std::max(0, static_cast<int>(std::floor(element.y - distance)))},
+							 {std::min(NodeDims, static_cast<int>(std::floor(element.x + distance))), std::min(NodeDims, static_cast<int>(std::floor(element.y + distance)))}});
+	}
 
-        const auto neighbourhood_distance_for_this_iteration = get_max_distance_for_current_iteration(iteration_number, IterationCount); //TODO: Inject the iteration number
-        const auto units_that_need_updating = get_indexes_within_distance_of_element(bmu_point, neighbourhood_distance_for_this_iteration);
+	constexpr auto points_within_distance(const point_t& element, const float distance) const noexcept {
+		const auto inner_box = get_inner_bounding_box(element, distance); // Points that have to be within the distance
+		const auto outer_box = get_outer_bounding_box(element, distance); // Points that could be within the distance, and need testing with euclidean distance.
 
-        for (const auto& unit : units_that_need_updating) {
-            const auto unit_idx = unit.x * FeatureDims + FeatureDims;
-            std::transform(nodes->at(unit_idx).begin(), nodes->at(unit_idx).end(), point.cbegin(), nodes->at(unit_idx).begin(),
-                           [&](const auto first, const auto second) {
-                               return first + (STLExtensions::difference(first, second) * learning_weight);
-                           });
-        }
-    }
+		const auto point_within_distance = [&element, distance, &inner_box](const auto& point) { return inner_box.contains(point) || element.semi_distance_from(point) <= (distance * distance); }; // We take squared distance to avoid expensive sqrts.
+
+		return outer_box.all_contained_points() | views::filter(point_within_distance);
+	}
+
+	constexpr auto pull_together(const float learning_weight) const noexcept {
+		return [learning_weight](const auto first, const auto second) { return first + (STLExtensions::difference(first, second) * learning_weight); };
+	}
+
+	constexpr void update_net_based_on_bmu(const point_t& bmu, const som_point_t& training_point, const float learning_weight, const int iteration_number, const float neighbourhood_size) const noexcept {
+		for (const int unit : points_within_distance(bmu, neighbourhood_size)) // Pull each point in the BMUs neighbourhood closer to the training point, scaled by the learning factor.
+			std::transform(nodes->at(unit).cbegin(), nodes->at(unit).cend(), training_point.cbegin(), nodes->at(unit).begin(), pull_together(learning_weight));
+	}
+
+	template<class learningFunction, class neighbourhoodFunction>
+	void train(const std::vector<som_point_t>& training_data, learningFunction learning_function, neighbourhoodFunction neighbourhood_function) {
+		for (auto iteration_number = 1; iteration_number <= IterationCount; ++iteration_number) {
+			const auto learning_weight = learning_function(iteration_number);
+			const auto neighbourhood_size = neighbourhood_function(iteration_number);
+
+			for (const auto& training_point : training_data) {
+				const auto bmu = find_bmu_for(training_point);
+				update_net_based_on_bmu(bmu, training_point, learning_weight, iteration_number, neighbourhood_size);
+			}
+		}
+	}
 
 private:
-    std::unique_ptr<net> nodes;
+	std::unique_ptr<net> nodes;
 };
 
