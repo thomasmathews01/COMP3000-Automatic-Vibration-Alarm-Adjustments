@@ -61,7 +61,7 @@ public:
 		}
 
 		constexpr auto all_contained_points() const noexcept {
-			return views::cartesian_product(views::iota(lower.x, upper.x), views::iota(lower.y, upper.y))
+			return views::cartesian_product(views::iota(lower.x, upper.x + 1), views::iota(lower.y, upper.y + 1))
 				   | views::transform([](const auto& pair) { return point_t(pair); });
 		}
 	};
