@@ -38,8 +38,8 @@ std::string activations_as_json_string(const std::vector<alarm_activation_t>& ac
 	return buff.GetString();
 }
 
-std::string AlarmActivationsRequest::get_activations(const crow::request& request, alarmSeverity severity, std::shared_ptr<IConfigurationAccess>& config_storage,
-                                                     std::shared_ptr<IAlarmStorage>& alarm_storage) {
+std::string AlarmActivationsRequest::get_activations(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IConfigurationAccess>& config_storage,
+                                                     const std::shared_ptr<IAlarmStorage>& alarm_storage) {
 	// Extract identifying information
 	auto machine_id = CrowExtractionHelpers::extract_int_from_url_params(request, "machine_id");
 	const auto channel_id = CrowExtractionHelpers::extract_int_from_url_params(request, "channel_id");

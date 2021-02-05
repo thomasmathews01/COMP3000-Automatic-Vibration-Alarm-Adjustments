@@ -27,9 +27,7 @@ public:
 		int x, y;
 
 		constexpr point_t(int x, int y) : x(x), y(y) {}
-
 		constexpr point_t(const std::tuple<int, int>& pair) : x(std::get<0>(pair)), y(std::get<1>(pair)) {}
-
 		constexpr explicit point_t(int idx) : x(idx % NodeDims), y(idx / NodeDims) {}
 
 		[[nodiscard]] constexpr float semi_distance_from(const point_t& other) const noexcept {

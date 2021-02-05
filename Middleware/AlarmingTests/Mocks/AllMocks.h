@@ -49,7 +49,7 @@ public:
 
 class MockAlarmStatistics : public IAlarmStatistics {
 public:
-    MOCK_METHOD(void, update, (const time_point_t& time));
+    MOCK_METHOD(void, update, (const time_point_t& time), (const, noexcept));
 };
 
 class MockAlarmCalc : public IAlarmCalc {

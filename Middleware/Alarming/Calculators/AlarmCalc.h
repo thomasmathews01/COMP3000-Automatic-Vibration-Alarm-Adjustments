@@ -14,9 +14,8 @@ private:
 	std::shared_ptr<IAlarmStorage> alarm_access;
 	alarm_settings_t alarm_settings;
 
-	std::pair<alarm_state_t, time_point_t> get_next_state(const time_point_t& time);
-	std::pair<alarm_state_t, time_point_t> get_state_of_alarm_fixed(const time_point_t& time);
-	void add_state_change(const alarm_state_t& new_state, const time_point_t& time_of_state_change);
+	std::pair<alarm_state_t, time_point_t> get_next_state(const time_point_t& time) const noexcept;
+	void add_state_change(const alarm_state_t& new_state, const time_point_t& time_of_state_change) const noexcept;
 };
 
 

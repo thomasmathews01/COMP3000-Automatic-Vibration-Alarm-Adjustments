@@ -1,11 +1,11 @@
 #pragma once
-#include "../../Database/IDatabase.h"
 #include "../Utils/include_crow.h"
 #include <memory>
+#include <IAlarmStorage.h>
 
 class GetAlarmLevelHistory {
 public:
-	static std::string get_alarm_level_history(const crow::request& request, alarmSeverity severity, std::shared_ptr<IDatabase>& database);
+	static std::string get_alarm_level_history(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IAlarmStorage>& database);
 };
 
 

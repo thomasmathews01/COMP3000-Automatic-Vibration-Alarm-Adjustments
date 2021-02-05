@@ -19,18 +19,16 @@ void AlarmHandler::process() {
 
 void AlarmHandler::load_alarms() {
     const auto all_settings = alarm_storage->get_all_alarm_settings();
-    const auto constructor = boost::hof::partial(&IAlarmCalcFactory::construct_calculator)(alarm_factory)(data_storage)(alarm_storage);
+    const auto construct_calculator_from_settings = boost::hof::partial(&IAlarmCalcFactory::construct_calculator)(alarm_factory)(data_storage)(alarm_storage);
 
-    alarms |= actions::push_back(all_settings | views::transform(constructor));
+    alarms |= actions::push_back(all_settings | views::transform(construct_calculator_from_settings));
 }
 
 void AlarmHandler::load_statistics() {
     const auto all_type_ids = data_storage->get_all_data_types();
-
     const auto all_channels = configuration_storage->get_all_channels();
-    auto all_channel_ids = all_channels | views::transform(&channel::id);
 
-    auto all_calculators = views::cartesian_product(all_channel_ids, all_type_ids) // Generate all unique combinations of channel and type ID.
+    auto all_calculators = views::cartesian_product(all_channels | views::transform(&channel::id), all_type_ids) // Generate all unique combinations of channel and type ID.
                            | views::transform([this](const auto pair) { return get_statistics_calculator_for_pair(pair); });
 
     statistics |= actions::push_back(all_calculators);

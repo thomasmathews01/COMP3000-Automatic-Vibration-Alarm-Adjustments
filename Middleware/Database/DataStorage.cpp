@@ -4,17 +4,17 @@
 using namespace std::string_literals;
 
 namespace {
-    int seconds_since_epoch(const time_point_t t) {
+    int seconds_since_epoch(const time_point_t t) noexcept {
         return duration_cast<seconds>(t.time_since_epoch()).count();
     }
 
-    std::string seconds_since_epoch_str(const time_point_t t) {
+    std::string seconds_since_epoch_str(const time_point_t t) noexcept {
         return std::to_string(seconds_since_epoch(t));
     }
 
     template<class T, class F>
     std::vector<T>
-    get_query_results(const char *statement, const std::shared_ptr<sqlite3pp::database>& database, F&& func) {
+    get_query_results(const char *statement, const std::shared_ptr<sqlite3pp::database>& database, F&& func) noexcept {
         std::vector<T> result;
 
         auto query_results = sqlite3pp::query(*database, statement);
@@ -25,7 +25,7 @@ namespace {
 }
 
 std::vector<std::pair<time_point_t, float>>
-DataStorage::get_data(int channel, int type, time_point_t start, time_point_t finish) {
+DataStorage::get_data(int channel, int type, time_point_t start, time_point_t finish) const noexcept {
     const auto statement = "SELECT time_since_epoch, value FROM data"s +
                            " WHERE type_id =  " + std::to_string(type) +
                            " AND time_since_epoch BETWEEN " + seconds_since_epoch_str(start) + " AND " +
@@ -39,18 +39,18 @@ DataStorage::get_data(int channel, int type, time_point_t start, time_point_t fi
     });
 }
 
-std::vector<std::pair<int, std::string>> DataStorage::get_data_types_available_for_channel(int channel_id) {
+std::vector<std::pair<int, std::string>> DataStorage::get_data_types_available_for_channel(int channel_id) const noexcept {
     const auto statement =
             "SELECT DISTINCT types.type_id, types.type_name FROM data INNER JOIN types on types.type_id = data.type_id WHERE channel_id = " +
             std::to_string(channel_id);
 
-    return get_query_results<std::pair<int, std::string>>(statement.c_str(), database, [](const auto& row) {
+    return get_query_results<std::pair<int, std::string>>(statement.c_str(), database, [](const auto& row)  {
         const auto[type_id, type_name] = row.template get_columns<int, const char *>(0, 1);
         return std::make_pair(type_id, type_name);
     });
 }
 
-time_point_t DataStorage::get_earliest_data_point_for_machine(int machine_id) {
+time_point_t DataStorage::get_earliest_data_point_for_machine(int machine_id) const noexcept {
     const auto selection_string =
             "SELECT min(data.time_since_epoch) from data inner join channels on data.channel_id = channels.channel_id "
             "inner join machines on channels.machine_id = machines.machine_id where machines.machine_id = " +
@@ -64,7 +64,7 @@ time_point_t DataStorage::get_earliest_data_point_for_machine(int machine_id) {
 }
 
 
-std::pair<time_point_t, float> DataStorage::get_last_data_point_before(int channel, int type, time_point_t time) {
+std::pair<time_point_t, float> DataStorage::get_last_data_point_before(int channel, int type, time_point_t time) const noexcept {
     const auto statement = "SELECT time_since_epoch, value FROM data"s +
                            " WHERE type_id =  " + std::to_string(type) +
                            " AND time_since_epoch <= " + seconds_since_epoch_str(time) +
@@ -80,7 +80,7 @@ std::pair<time_point_t, float> DataStorage::get_last_data_point_before(int chann
 
     return std::make_pair(time_point_t(seconds(epoch_time)), value);
 }
-std::vector<float> DataStorage::get_data_points_only(int channel, int type, time_point_t start, time_point_t finish) {
+std::vector<float> DataStorage::get_data_points_only(int channel, int type, time_point_t start, time_point_t finish) const noexcept {
     const auto statement = "SELECT value FROM data"s +
                            " WHERE type_id =  " + std::to_string(type) +
                            " AND channel_id = " + std::to_string(channel) +
@@ -93,7 +93,7 @@ std::vector<float> DataStorage::get_data_points_only(int channel, int type, time
     });
 }
 
-std::vector<int> DataStorage::get_all_data_types() {
+std::vector<int> DataStorage::get_all_data_types() const noexcept {
     const auto statement = "SELECT DISTINCT type_id FROM types";
 
     return get_query_results<int>(statement, database, [](const auto& row) {

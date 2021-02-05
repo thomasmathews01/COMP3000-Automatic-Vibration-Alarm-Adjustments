@@ -2,7 +2,7 @@
 
 class IServer {
 public:
-	virtual void startServer() = 0;
+	virtual void startServer() noexcept = 0;
 
 	virtual ~IServer() = default;
 };

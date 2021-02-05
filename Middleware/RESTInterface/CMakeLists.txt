@@ -13,4 +13,5 @@ target_include_directories(RESTInterface PRIVATE
         ${CMAKE_SOURCE_DIR}/Hypodermic
         ${CMAKE_SOURCE_DIR}/Database
         ${CMAKE_SOURCE_DIR}/Types
+        ${CMAKE_SOURCE_DIR}/Utils
         )
