@@ -37,18 +37,6 @@ namespace STLExtensions {
 	constexpr float euclidean_distance(const std::array<T, N>& first, const std::array<T, N>& second) {
 		return std::sqrt(semi_euclidean_distance(first, second));
 	}
-
-	auto get_random_number_generator() {
-        std::random_device dev;
-        std::mt19937 rng(dev());
-        std::normal_distribution<float> dist(-1.f * std::numeric_limits<float>::max(),
-                                             std::numeric_limits<float>::max());
-        return [rng, dist]() mutable {
-
-            return dist(rng);
-        };
-    }
-
 };
 
 

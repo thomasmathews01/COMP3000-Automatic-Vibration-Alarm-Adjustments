@@ -2,7 +2,7 @@
 #include "../Utils/include_crow.h"
 #include <string>
 #include <memory>
-#include "../../Database/IDatabase.h"
+#include <IAlarmStorage.h>
 
 class AlarmSettingsRequest {
 public:

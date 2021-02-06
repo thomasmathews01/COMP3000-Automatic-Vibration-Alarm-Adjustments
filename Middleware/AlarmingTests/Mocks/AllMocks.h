@@ -18,21 +18,21 @@ public:
 
 class MockConfigurationAccess : public IConfigurationAccess {
 public:
-    MOCK_METHOD0(get_site_data, std::vector<site>(void));
-    MOCK_METHOD1(get_machines_for_site, std::vector<machine>(const site& site));
-    MOCK_METHOD1(get_channel_information_for_machine, std::vector<channel>(const machine& machine));
-    MOCK_METHOD0(get_all_channels, std::vector<channel>(void));
-    MOCK_METHOD1(get_machine_id_from_channel_id, int(int channel_id));
+    MOCK_METHOD(std::vector<site>, get_site_data, (), (const, noexcept));
+    MOCK_METHOD(std::vector<machine>, get_machines_for_site, (const site& site), (const, noexcept));
+    MOCK_METHOD(std::vector<channel>, get_channel_information_for_machine, (const machine& machine), (const, noexcept));
+    MOCK_METHOD(std::vector<channel>, get_all_channels, (), (const, noexcept));
+    MOCK_METHOD(int, get_machine_id_from_channel_id, (int channel_id), (const, noexcept));
 };
 
 class MockDataAccess : public IDataAccess {
 public:
-    MOCK_METHOD4(get_data, std::vector<std::pair<time_point_t, float>>(int channel, int type, time_point_t start, time_point_t end));
-    MOCK_METHOD3(get_last_data_point_before, std::pair<time_point_t, float>(int channel, int type, time_point_t time));
-    MOCK_METHOD4(get_data_points_only, std::vector<float>(int channel, int type, time_point_t start, time_point_t end));
-    MOCK_METHOD1(get_data_types_available_for_channel, std::vector<std::pair<int, std::string>>(int channel_id));
-    MOCK_METHOD0(get_all_data_types, std::vector<int>(void));
-    MOCK_METHOD1(get_earliest_data_point_for_machine, time_point_t(int machine_id));
+    MOCK_METHOD((std::vector<std::pair<time_point_t, float>>), get_data, (int channel, int type, time_point_t start, time_point_t end), (const, noexcept));
+    MOCK_METHOD((std::pair<time_point_t, float>), get_last_data_point_before, (int channel, int type, time_point_t time), (const, noexcept));
+    MOCK_METHOD(std::vector<float>, get_data_points_only, (int channel, int type, time_point_t start, time_point_t end), (const, noexcept));
+    MOCK_METHOD((std::vector<std::pair<int, std::string>>), get_data_types_available_for_channel, (int channel_id), (const, noexcept));
+    MOCK_METHOD(std::vector<int>, get_all_data_types, (), (const, noexcept));
+    MOCK_METHOD(time_point_t, get_earliest_data_point_for_machine, (int machine_id), (const, noexcept));
 };
 
 class MockClock : public IClock {

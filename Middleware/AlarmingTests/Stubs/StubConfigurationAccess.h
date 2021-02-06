@@ -6,23 +6,23 @@ public:
     StubConfigurationAccess() = default;
     ~StubConfigurationAccess() = default;
 
-    std::vector<site> get_site_data() override {
+    std::vector<site> get_site_data() const noexcept final {
         return sites;
     }
 
-    std::vector<machine> get_machines_for_site(const site& site) override {
+    std::vector<machine> get_machines_for_site(const site& site) const noexcept final {
         return machines;
     }
 
-    std::vector<channel> get_channel_information_for_machine(const machine& machine) override {
+    std::vector<channel> get_channel_information_for_machine(const machine& machine) const noexcept final {
         return channels;
     }
 
-    std::vector<channel> get_all_channels() override {
+    std::vector<channel> get_all_channels() const noexcept final {
         return channels;
     }
 
-    int get_machine_id_from_channel_id(int channel_id) override {
+    int get_machine_id_from_channel_id(int channel_id) const noexcept final {
         return 0;
     }
 

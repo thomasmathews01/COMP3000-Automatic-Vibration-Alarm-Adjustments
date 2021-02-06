@@ -20,7 +20,7 @@ public:
 		nodes = std::make_unique<net>(); // Has to be a pointer, because it is unlikely to fit on the stack.
 
 		for (auto& node : *nodes)
-			ranges::generate(node, STLExtensions::get_random_number_generator()); // Place node in random location.
+			ranges::generate(node, get_random_number_generator()); // Place node in random location.
 	}
 
 	struct point_t {
@@ -65,9 +65,10 @@ public:
 	};
 
 	constexpr point_t find_bmu_for(const som_point_t& point) const noexcept {
-		const auto distance_from_point = [&point](const auto& other) { return STLExtensions::semi_euclidean_distance(point, other); };
+		const auto distance_from_point = [&point](const som_point_t& other) { return STLExtensions::semi_euclidean_distance<float, FeatureDims>(point, other); };
 		const auto closer_to_point = [&point, distance_from_point](const auto& first, const auto& second) { return distance_from_point(first) < distance_from_point(second); };
-		const auto closest_element = std::min_element(std::execution::par_unseq, nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
+		// TODO: On windows, this can be CPU parallelized, amazingly clang still doesn't support CPU parallel STL algorithms, despite them being standardised 4 years ago. Which settles the debate, this shall have to end up being a docker container
+		const auto closest_element = std::min_element(nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
 
 		return point_t(std::distance(nodes->cbegin(), closest_element));
 	}
@@ -117,5 +118,16 @@ public:
 
 private:
 	std::unique_ptr<net> nodes;
+
+	auto get_random_number_generator() {
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::normal_distribution<float> dist(-1.f * std::numeric_limits<float>::max(),
+											 std::numeric_limits<float>::max());
+		return [rng, dist]() mutable {
+
+			return dist(rng);
+		};
+	}
 };
 
