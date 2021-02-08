@@ -6,7 +6,7 @@ import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 
 const startChannelRefreshInterval = (siteID: number, updateFn: (x: SingleAlarmStateItem[]) => void) => {
-    const networkAccess = new NetworkAccess("http://localhost:1234")
+    const networkAccess = new NetworkAccess();
 
     return setInterval(async () => {
         const newMachines = await networkAccess.getChannels(siteID);

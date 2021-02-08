@@ -12,7 +12,7 @@ const columns: ColDef[] = [
 ];
 
 export const AlarmLogPage = () => {
-    const networkAccess = new NetworkAccess('http://localhost:1234');
+    const networkAccess = new NetworkAccess();
     const alarmLogEntries = networkAccess.GetAllAlarmLogEntries();
     const rows = alarmLogEntries.map((entry, index) => {
         return {...entry, ...{id: index}}; // ID isn't the ID of the entry itself, just a requirement of the data grid itself.

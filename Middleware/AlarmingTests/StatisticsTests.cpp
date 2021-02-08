@@ -136,7 +136,8 @@ TEST (Statistics, CanCalculateRollingStdDeviation) {
 }
 
 TEST (Statistics, somdoesntdieimmediately) {
-	SOM<100, 100, 1000> som;
+	using som_type_t = SOM<100, 100, 1000>;
+	som_type_t som;
 	som.initialise();
-	som.train({}, LearningFunctions::get_inverse_time_learning_function(1000), NeighbourhoodFunctions::get_inverse_time_neighbourhood_function(1000, 100));
+	som.train(std::vector<som_type_t::som_point_t>{}, LearningFunctions::get_inverse_time_learning_function(som_type_t::iterations), NeighbourhoodFunctions::get_inverse_time_neighbourhood_function(som_type_t::iterations, som_type_t::map_size));
 }

@@ -40,13 +40,6 @@ protected:
 };
 
 TEST_F(MachineLearningTest, CanAddAlarmLevelInformation) {
- 	/* Now I think about this, what I actually have 260 dimensional feature arrays.
- 	 * This is a huge problem, and a fundamental one.
- 	 * By the looks of a single return takes about 350ms, for a single channela and a single type
- 	 * Which suggests 260 / 3 seconds for all retrieval, or 90 seconds, which is not too bad
- 	 * The question is then how long to reformulate this, which will have to be done in code to really test it out.
- 	 */
-
  	const auto start = std::chrono::high_resolution_clock::now();
 	const auto get_data = data_storage->get_data_types_available_for_channel(161);
 	const auto end = std::chrono::high_resolution_clock::now();
@@ -59,13 +52,6 @@ TEST_F(MachineLearningTest, CanAddAlarmLevelInformation) {
 }
 
 TEST_F(MachineLearningTest, GetDimensions) {
- 	/* Now I think about this, what I actually have 260 dimensional feature arrays.
- 	 * This is a huge problem, and a fundamental one.
- 	 * By the looks of a single return takes about 350ms, for a single channels and a single type
- 	 * Which suggests 260 / 3 seconds for all retrieval, or 90 seconds, which is not too bad
- 	 * The question is then how long to reformulate this, which will have to be done in code to really test it out.
- 	 */
-
  	const machine test_machine(21);
  	const auto channels = config_storage->get_channel_information_for_machine(test_machine);
  	std::vector<int> types_count;

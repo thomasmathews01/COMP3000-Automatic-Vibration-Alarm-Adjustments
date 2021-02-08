@@ -11,10 +11,13 @@ using namespace ranges;
 
 template<int NodeDims, int FeatureDims, int IterationCount>
 class SOM {
+public:
 	using som_point_t = std::array<float, FeatureDims>;
 	using net = std::array<som_point_t, NodeDims * NodeDims>;
+	constexpr static auto iterations = IterationCount;
+	constexpr static auto map_size = NodeDims;
+	std::unique_ptr<net> nodes;
 
-public:
 	void initialise() noexcept {
 		nodes = std::make_unique<net>(); // Has to be a pointer, because it is unlikely to fit on the stack.
 
@@ -66,8 +69,8 @@ public:
 	constexpr point_t find_bmu_for(const som_point_t& point) const noexcept {
 		const auto distance_from_point = [&point](const som_point_t& other) { return STLExtensions::semi_euclidean_distance<float, FeatureDims>(point, other); };
 		const auto closer_to_point = [&point, distance_from_point](const auto& first, const auto& second) { return distance_from_point(first) < distance_from_point(second); };
-		// TODO: On windows, this can be CPU parallelized, amazingly clang still doesn't support CPU parallel STL algorithms, despite them being standardised 4 years ago. Which settles the debate, this shall have to end up being a docker container
-		const auto closest_element = std::min_element(nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
+
+		const auto closest_element = std::min_element(std::execution::par_unseq, nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
 
 		return point_t(std::distance(nodes->cbegin(), closest_element));
 	}
@@ -98,12 +101,15 @@ public:
 	}
 
 	constexpr void update_net_based_on_bmu(const point_t& bmu, const som_point_t& training_point, const float learning_weight, const int iteration_number, const float neighbourhood_size) const noexcept {
-		for (const int unit : points_within_distance(bmu, neighbourhood_size)) // Pull each point in the BMUs neighbourhood closer to the training point, scaled by the learning factor.
+		auto points = points_within_distance(bmu, neighbourhood_size);
+
+		std::for_each(std::execution::par_unseq, points.begin(), points.end(), [&](const int unit) {
 			std::transform(nodes->at(unit).cbegin(), nodes->at(unit).cend(), training_point.cbegin(), nodes->at(unit).begin(), pull_together(learning_weight));
+		});
 	}
 
-	template<class learningFunction, class neighbourhoodFunction>
-	void train(const std::vector<som_point_t>& training_data, learningFunction learning_function, neighbourhoodFunction neighbourhood_function) {
+	template<class learningFunction, class neighbourhoodFunction, class Rng>
+	constexpr void train(const Rng& training_data, learningFunction learning_function, neighbourhoodFunction neighbourhood_function) {
 		for (auto iteration_number = 1; iteration_number <= IterationCount; ++iteration_number) {
 			const auto learning_weight = learning_function(iteration_number);
 			const auto neighbourhood_size = neighbourhood_function(iteration_number);
@@ -125,9 +131,5 @@ public:
 			return dist(rng);
 		};
 	}
-
-private:
-	std::unique_ptr<net> nodes;
-
 };
 

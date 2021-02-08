@@ -5,7 +5,7 @@ import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 export const AddStateForm = (props: { states: State[] }) => {
     const [newStateName, updateNewStateName] = useState("");
-    const networkAccess = new NetworkAccess("http://loalhost:3456");
+    const networkAccess = new NetworkAccess();
 
     const newNameIsUnique = (): boolean => {
         return props.states.find(state => state.name.toLowerCase() === newStateName.toLowerCase()) === undefined;

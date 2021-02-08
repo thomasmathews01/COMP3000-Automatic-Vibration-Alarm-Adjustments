@@ -76,7 +76,7 @@ std::string set_alarm_settings(const crow::request& request, alarmSeverity sever
 	return "Error"; // TODO: Better.
 }
 
-crow::response AlarmSettingsRequest::alarm_settings(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IAlarmStorage>& database) {
+crow::response AlarmSettingsRequest::alarm_settings(const crow::request& request, const alarmSeverity severity, const std::shared_ptr<IAlarmStorage>& database) {
 	switch (request.method) {
 		case crow::HTTPMethod::Get: return CrowUtils::add_cors_headers(crow::response(get_alarm_settings(request, severity, database)));
 		case crow::HTTPMethod::Post: return CrowUtils::add_cors_headers(crow::response(set_alarm_settings(request, severity, database)));

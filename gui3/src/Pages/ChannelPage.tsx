@@ -36,7 +36,7 @@ function IndividualGraph(props: graphProps) {
 
 export const ChannelPage = () => {
     const classes = useStyles();
-    const networkAccess = new NetworkAccess("http://localhost:1234");
+    const networkAccess = new NetworkAccess();
 
     const [GraphTypes, setGraphTypes] = useState<type[]>([]);
 

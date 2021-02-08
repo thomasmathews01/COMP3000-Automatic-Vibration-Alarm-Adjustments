@@ -87,8 +87,6 @@ void AlarmStorage::add_alarm_level_history_item(const time_point_t& occurence, c
 }
 
 void AlarmStorage::add_alarm_activation(const alarm_activation_t& activation) {
-    
-
     sqlite3pp::command cmd(*database, add_alarm_activation_change);
 
     cmd.bind(":type", activation.type_id);
@@ -101,8 +99,6 @@ void AlarmStorage::add_alarm_activation(const alarm_activation_t& activation) {
 }
 
 std::vector<alarm_activation_t> AlarmStorage::get_activations_for_machine(int machine_id) {
-    
-
     const auto statement =
             "SELECT alarm_activation_changes.type_id, alarm_activation_changes.channel_id, alarm_activation_changes.alarm_severity, alarm_activation_changes.became_active, alarm_activation_changes.time_since_epoch FROM alarm_activation_changes "
             "INNER JOIN channels on channels.channel_id = alarm_activation_changes.channel_id "

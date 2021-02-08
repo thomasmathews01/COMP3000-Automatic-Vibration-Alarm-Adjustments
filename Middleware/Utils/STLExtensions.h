@@ -1,6 +1,9 @@
 #pragma once
 #include <optional>
 #include <string>
+#include <numeric>
+#include <algorithm>
+#include <algorithm>
 #include <range/v3/all.hpp>
 #include <boost/hof.hpp>
 

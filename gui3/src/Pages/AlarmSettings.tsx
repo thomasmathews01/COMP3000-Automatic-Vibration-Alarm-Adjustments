@@ -29,7 +29,7 @@ const AlarmSettingItem = (props: { information: AlarmSettings, updateSetting: (n
 export const AlarmSettingsPage = () => {
     const [selectedSiteIndex, setSelectedSiteIndex] = useState<number | undefined>(undefined);
     const [selectedMachineIndex, setSelectedMachineIndex] = useState<number | undefined>(undefined);
-    const networkAccess = new NetworkAccess("http://localhost:1234");
+    const networkAccess = new NetworkAccess();
     const sites = networkAccess.getAllSites();
     const [machines, setMachines] = useState<Machine[]>([]);
     const [alarmSettings, setAlarmSettings] = useState<AlarmSettings[]>([]);

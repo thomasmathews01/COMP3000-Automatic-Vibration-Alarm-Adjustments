@@ -7,7 +7,7 @@ import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 export const StateSettingsPage = () => {
     const [states, setStates] = useState<State[]>([]);
-    const networkAccess = new NetworkAccess("http://localhost:1234")
+    const networkAccess = new NetworkAccess();
 
     if (states?.length === 0)
         networkAccess.fetchStates().then(newStates => setStates(newStates));

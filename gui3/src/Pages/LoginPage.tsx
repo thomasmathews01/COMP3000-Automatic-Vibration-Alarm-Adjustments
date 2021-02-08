@@ -47,7 +47,7 @@ export const LoginPage = () => {
     const history = useHistory();
 
     const handleLogin = () => {
-        axios.post(`http://localhost:1234/login?username=${username}&password=${password}`, {}).then(response => {
+        axios.post(`http://localhost:3456/login?username=${username}&password=${password}`, {}).then(response => {
             if (response && response.data === "Accepted") {
                 console.log("Accepted");
                 history.push("/sites");

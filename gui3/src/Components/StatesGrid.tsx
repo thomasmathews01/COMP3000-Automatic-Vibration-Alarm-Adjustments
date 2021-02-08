@@ -11,7 +11,7 @@ const columns: ColDef[] = [
 
 export const StatesGrid = (props: { states: State[] }) => {
     const [selectedRows, updateSelectedRows] = useState<number[]>([]);
-    const networkAccess = new NetworkAccess("http://localhost:1234")
+    const networkAccess = new NetworkAccess();
 
     const deleteSelectedRows = async () => {
         if (!selectedRows.includes(0))

@@ -15,8 +15,6 @@ std::shared_ptr<sqlite3pp::database> DatabaseInitialiser::intialise_database(std
 }
 
 void DatabaseInitialiser::add_alarm_settings_entries_for_all_channels(const std::shared_ptr<sqlite3pp::database>& database) {
-	// TODO: Should this access also be mutex protected if we have a more complex initialisation sequence?
-
 	std::vector<int> types_with_data = {};
 
 	for (const auto& row : sqlite3pp::query(*database, get_all_types_with_data_associated_with_them)) {
