@@ -6,11 +6,10 @@ import {GraphSettings} from "./GraphSettings";
 import {State} from "../Types/StateTypes";
 import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
-const networkAccess = new NetworkAccess("http://localhost:3456");
+const networkAccess = new NetworkAccess("http://localhost:1234");
 
 const fetchAlarmLevels = async (channel: number, type: number) => networkAccess.fetchAlarmChanges(channel, type, "alarm");
 const fetchAlertLevels = async (channel: number, type: number) => networkAccess.fetchAlarmChanges(channel, type, "alert");
-
 
 const fetchStatePeriods = async (channel: number) => {
     const states = await networkAccess.networkFetchStatePeriods(channel);
@@ -57,7 +56,7 @@ const Graph = (props: PropsT) => {
         const leftBound = (area.left as any).getTime(); // The documentation suggests this should come through as a number. It doesn't, it comes through as a date.
         const rightBound = (area.right as any).getTime(); // The documentation suggests this should come through as a number. It doesn't, it comes through as a date.
 
-        const networkAccess = new NetworkAccess("http://localhost:3456");
+        const networkAccess = new NetworkAccess("http://localhost:1234");
         networkAccess.issueStateUpdate(leftBound, rightBound, selectedState.id)
             .then(() => console.log("Pushed new state update")); // TODO: Non-static machine address and error handling
     }

@@ -36,12 +36,14 @@ function IndividualGraph(props: graphProps) {
 
 export const ChannelPage = () => {
     const classes = useStyles();
-    const networkAccess = new NetworkAccess("http://localhost:3456");
+    const networkAccess = new NetworkAccess("http://localhost:1234");
 
     const [GraphTypes, setGraphTypes] = useState<type[]>([]);
 
     if (GraphTypes.length === 0)
         networkAccess.fetchGraphTypes().then(x => setGraphTypes(x));
+
+    console.log(`Known graph types: ${GraphTypes.length}`);
 
     return (
         <Grid container spacing={2}>

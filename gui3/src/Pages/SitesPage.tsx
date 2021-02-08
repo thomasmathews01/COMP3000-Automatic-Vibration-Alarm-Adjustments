@@ -5,7 +5,7 @@ import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 export const SitesPage = () => {
     const [sitesData, setSitesData] = useState<SingleAlarmStateItem[]>([]);
-    const networkAccess = new NetworkAccess("http://localhost:3456")
+    const networkAccess = new NetworkAccess("http://localhost:1234")
 
 
     if (sitesData.length === 0)

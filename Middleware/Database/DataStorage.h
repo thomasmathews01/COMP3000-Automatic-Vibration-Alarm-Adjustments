@@ -1,7 +1,7 @@
 #pragma once
 #include <mutex>
 #include <map>
-#include "IDatabase.h"
+#include "IDataAccess.h"
 #include "Helpers/sqlite3pp.h"
 #include "IDatabaseFactory.h"
 

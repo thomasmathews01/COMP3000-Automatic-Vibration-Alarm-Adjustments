@@ -7,7 +7,7 @@
 
 class GetDataRequest {
 public:
-	static std::string get_data_points(const crow::request& request, const std::shared_ptr<IDataAccess>& database);
+	static crow::response get_data_points(const crow::request& request, const std::shared_ptr<IDataAccess>& database);
 };
 
 

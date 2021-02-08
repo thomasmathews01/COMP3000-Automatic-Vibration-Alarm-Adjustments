@@ -2,11 +2,12 @@
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 #include "../../Database/TestDatabase.h"
+#include "../Utils/CrowUtils.h"
 
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
 
-std::string GetSitesRequest::get_sites_info(const std::shared_ptr<IConfigurationAccess>& database) {
+crow::response GetSitesRequest::get_sites_info(const std::shared_ptr<IConfigurationAccess>& database) {
 	StringBuffer buff;
 	PrettyWriter<StringBuffer> writer(buff);
 	writer.StartObject();
@@ -26,7 +27,7 @@ std::string GetSitesRequest::get_sites_info(const std::shared_ptr<IConfiguration
 	writer.EndArray();
 	writer.EndObject();
 
-	return buff.GetString();
+	return CrowUtils::add_cors_headers(crow::response(buff.GetString()));
 }
 /*
 

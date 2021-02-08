@@ -1,6 +1,6 @@
 file(GLOB Utils_SRC CONFIGURE_DEPENDS "*.cpp")
 
-add_library(Utils ${Utils_SRC} spdloghelper.h)
+add_library(Utils ${Utils_SRC} spdloghelper.h ../RESTInterface/Utils/CrowUtils.cpp ../RESTInterface/Utils/CrowUtils.h)
 
 #[[
 add_compile_definitions(NOMINMAX)

@@ -5,7 +5,7 @@ import {useParams} from "react-router";
 import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 const startMachineRefreshInterval = (siteID: number, updateFn: (x: SingleAlarmStateItem[]) => void) => {
-    const networkAccess = new NetworkAccess("http://localhost:3456")
+    const networkAccess = new NetworkAccess("http://localhost:1234")
 
     return setInterval(async () => {
         const newMachines = await networkAccess.getMachines(siteID);

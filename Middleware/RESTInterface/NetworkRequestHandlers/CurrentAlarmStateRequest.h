@@ -9,7 +9,7 @@
 
 class CurrentAlarmStateRequest {
 public:
-	static std::string get_current_alarm_state(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IConfigurationAccess>& config_storage,
+	static crow::response get_current_alarm_state(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IConfigurationAccess>& config_storage,
                                                const std::shared_ptr<IAlarmStorage>& alarm_storage);
 };
 

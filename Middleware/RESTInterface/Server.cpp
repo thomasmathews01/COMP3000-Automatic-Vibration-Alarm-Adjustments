@@ -2,8 +2,8 @@
 #include "Utils/include_crow.h"
 #include <spdloghelper.h>
 #include "NetworkRequestHandlers/all.h"
-#include "../Types/alarmTypes.h"
 #include "Utils/CrowExtractionHelpers.h"
+#include "Utils/CrowUtils.h"
 
 using namespace std::string_literals;
 
@@ -17,12 +17,7 @@ Server::~Server() {
 crow::response pre_flight_response(const crow::request& req) {
 	crow::response response(200);
 
-	response.add_header("Access-Control-Allow-Origin", "*");
-	response.add_header("Access-Control-Allow-Headers", "*");
-	response.add_header("Access-Control-Allow-Methods", "*");
-	response.add_header("Access-Control-Allow-Credentials", "true");
-
-	return response;
+	return CrowUtils::add_cors_headers(std::move(response));
 }
 
 crow::response handle_login(const crow::request& req) {
@@ -38,18 +33,18 @@ crow::response handle_login(const crow::request& req) {
 	if (!username || !password)
 	{
 		logger->error("Login Request was of invalid format, returning error 400");
-		return crow::response(400);
+		return CrowUtils::add_cors_headers(crow::response(400));
 	}
 
 	const auto credentials_authorised = *username == "admin"s && *password == "admin"s;
 
 	if (credentials_authorised) {
 		logger->debug("Login request was valid, login accepted.");
-		return crow::response(200, "Accepted");
+		return CrowUtils::add_cors_headers(crow::response(200, "Accepted"));
 	}
 
 	logger->debug("Login request was not valid, login rejected");
-	return crow::response(401, "Rejected");
+	return CrowUtils::add_cors_headers(crow::response(401, "Rejected"));
 }
 
 void Server::work() const {
@@ -59,10 +54,10 @@ void Server::work() const {
 
 	CROW_ROUTE(app, "/")([]() { return HelloWorldRequest::get_hello_world_response(); });
 	CROW_ROUTE(app, "/sites")([this]() { return GetSitesRequest::get_sites_info(configuration_storage); });
-	CROW_ROUTE(app, "/site")([this](const crow::request& request) { return SiteInformationRequest::get_site_information(request, configuration_storage); });
-	CROW_ROUTE(app, "/machine")([this](const crow::request& request) { return MachineInformationRequest::get_machine_information(request, configuration_storage); });
+	CROW_ROUTE(app, "/machines")([this](const crow::request& request) { return SiteInformationRequest::get_site_information(request, configuration_storage); });
+	CROW_ROUTE(app, "/channels")([this](const crow::request& request) { return MachineInformationRequest::get_machine_information(request, configuration_storage); });
 	CROW_ROUTE(app, "/time")([this]() { return CurrentTimeRequest::get_current_time_response(clock); });
-	CROW_ROUTE(app, "/types")([this](const crow::request& req) { return AvailableDataTypesRequest::get_available_data_types(req, data_storage); });
+	CROW_ROUTE(app, "/dataTypes")([this](const crow::request& req) { return AvailableDataTypesRequest::get_available_data_types(req, data_storage); });
 	CROW_ROUTE(app, "/data")([this](const crow::request& req) { return GetDataRequest::get_data_points(req, data_storage); });
 	CROW_ROUTE(app, "/states")([this](const crow::request& req) { return GetStatePeriodsRequest::get_state_periods(req, configuration_storage, state_storage); });
 	CROW_ROUTE(app, "/alarmActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alarm, configuration_storage, alarm_storage); });

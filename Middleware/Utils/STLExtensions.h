@@ -30,7 +30,8 @@ namespace STLExtensions {
 
     template<class T, int N>
     constexpr float semi_euclidean_distance(const std::array<T, N>& first, const std::array<T, N>& second) {
-        return ranges::inner_product(first, second, 0.f, {}, boost::hof::compose(sqr, difference));
+		return std::transform_reduce(first.cbegin(), first.cend(), second.cbegin(), 0, [](const auto first, const auto second) {
+			return (first - second) * (first - second); }, std::plus<T>{});
     }
 
 	template<class T, int N>

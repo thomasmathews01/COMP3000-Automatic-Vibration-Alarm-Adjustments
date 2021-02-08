@@ -1,7 +1,15 @@
 #pragma once
 
-#include "IDatabase.h"
 #include "IServer.h"
+#include <alarmTypes.h>
+#include <stateTypes.h>
+
+#include "IAlarmStorage.h"
+#include "IConfigurationAccess.h"
+#include "IStateStorage.h"
+#include "IStatistics.h"
+#include "IDataAccess.h"
+
 #include <thread>
 #include <utility>
 #include <IClock.h>

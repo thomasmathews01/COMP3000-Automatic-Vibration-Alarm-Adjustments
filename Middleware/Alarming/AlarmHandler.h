@@ -2,7 +2,8 @@
 
 #include "IClock.h"
 #include <memory>
-#include "IDatabase.h"
+#include <IAlarmStorage.h>
+#include <IConfigurationAccess.h>
 #include "Calculators/IAlarmCalcFactory.h"
 #include "Statistics/IStatsCalcFactory.h"
 

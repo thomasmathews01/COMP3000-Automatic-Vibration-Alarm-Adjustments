@@ -62,7 +62,7 @@ export class NetworkAccess {
 
 
     async fetchAlarmChanges(channel: number, type: number, alarmType: string) {
-        const response = await axios.get<{ alarms: alarmLevelChange[] }>(`http://localhost:3456/${alarmType}s?channel=${channel}&type=${type}`);
+        const response = await axios.get<{ alarms: alarmLevelChange[] }>(`http://localhost:1234/${alarmType}s?channel=${channel}&type=${type}`);
 
         if (response.data.alarms) {
             console.log(`Retrieved ${response.data.alarms} alarm levels of type: ${alarmType}`);
@@ -75,7 +75,7 @@ export class NetworkAccess {
     }
 
     async fetchValueData(channel: number, type: number) {
-        const response = await axios.get<{ data: dataItem[] }>(`http://localhost:3456/data?channel=${channel}&type=${type}`);
+        const response = await axios.get<{ data: dataItem[] }>(`http://localhost:1234/data?channel=${channel}&type=${type}`);
         if (response.data.data)
             return response.data.data.map(item => {
                 return {x: item.secondsSinceEpoch * 1000, y: item.value}
@@ -85,17 +85,17 @@ export class NetworkAccess {
     }
 
     async fetchStates() {
-        const response = await axios.get<{ states: State[] }>(`http://localhost:3456/states`);
+        const response = await axios.get<{ states: State[] }>(`http://localhost:1234/states`);
         return response.data.states ?? [];
     }
 
     async networkFetchStatePeriods(channel: number) {
-        const response = await axios.get<{ states: statePeriod[] }>(`http://localhost:3456/statePeriods?channel=${channel}`);
+        const response = await axios.get<{ states: statePeriod[] }>(`http://localhost:1234/statePeriods?channel=${channel}`);
         return response.data.states ?? [];
     }
 
     async deleteStateName(name: string) {
-        const response = await axios.post(`http://localhost:3456/deleteState?name=${name}`);
+        const response = await axios.post(`http://localhost:1234/deleteState?name=${name}`);
 
         if (response.status !== 200)
             console.log("Failed to issue state deletion request");
@@ -103,7 +103,7 @@ export class NetworkAccess {
 
     async fetchGraphTypes(): Promise<type[]> {
         try {
-            const resp = await axios.get<{ types: type[] }>(`http://localhost:3456/dataTypes?channel=${1}`);
+            const resp = await axios.get<{ types: type[] }>(`http://localhost:1234/dataTypes?channel=${1}`);
 
             return resp.data.types;
         } catch (exception) {
@@ -114,7 +114,7 @@ export class NetworkAccess {
 
     async getChannels(machineID: number) {
         try {
-            const resp = await axios.get<{ channels: serverChannel[] }>(`http://localhost:3456/channels?machine=${machineID}`);
+            const resp = await axios.get<{ channels: serverChannel[] }>(`http://localhost:1234/channels?machine=${machineID}`);
 
             return resp.data.channels.map((x) => {
                 return {
@@ -132,7 +132,7 @@ export class NetworkAccess {
 
     async getMachines(siteID: number) {
         try {
-            const resp = await axios.get<{ machines: serverMachine[] }>(`http://localhost:3456/machines?site=${siteID}`);
+            const resp = await axios.get<{ machines: serverMachine[] }>(`http://localhost:1234/machines?site=${siteID}`);
 
             return resp.data.machines.map((x) => {
                 return {
@@ -150,7 +150,7 @@ export class NetworkAccess {
 
     async getSites(updateFn: (x: SingleAlarmStateItem[]) => void) {
         try {
-            const sites = await axios.get<{ sites: serverSite[] }>("http://localhost:3456/sites");
+            const sites = await axios.get<{ sites: serverSite[] }>("http://localhost:1234/sites");
 
             updateFn(sites.data.sites.map((x) => {
                 return {
@@ -167,7 +167,7 @@ export class NetworkAccess {
 
     async addNewState(newStateName: string) {
         try {
-            const response = await axios.post(`http://localhost:3456/states?name=${newStateName}`, {});
+            const response = await axios.post(`http://localhost:1234/states?name=${newStateName}`, {});
             if (response.status !== 200)
                 console.log("Error whilst adding a new state");
         } catch (exception) {
@@ -176,6 +176,6 @@ export class NetworkAccess {
     }
 
     async issueStateUpdate(leftBound: number, rightBound: number, stateID: number) { // TODO: get this to work with multiple states.
-        await axios.post(`http://localhost:3456/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${1}&stateId=${stateID}`)
+        await axios.post(`http://localhost:1234/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${1}&stateId=${stateID}`)
     }
 }

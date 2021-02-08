@@ -1,7 +1,8 @@
 #pragma once
 
 #include "IAlarmCalc.h"
-#include <IDatabase.h>
+#include <IDataAccess.h>
+#include <IAlarmStorage.h>
 #include <memory>
 
 class AlarmCalc : public IAlarmCalc {

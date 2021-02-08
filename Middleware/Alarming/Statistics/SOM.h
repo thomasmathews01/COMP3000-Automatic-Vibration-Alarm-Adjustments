@@ -5,7 +5,6 @@
 #include <random>
 #include <execution>
 #include <range/v3/all.hpp>
-#include <boost/hof/compose.hpp>
 #include <STLExtensions.h>
 
 using namespace ranges;
@@ -116,9 +115,6 @@ public:
 		}
 	}
 
-private:
-	std::unique_ptr<net> nodes;
-
 	auto get_random_number_generator() {
 		std::random_device dev;
 		std::mt19937 rng(dev());
@@ -129,5 +125,9 @@ private:
 			return dist(rng);
 		};
 	}
+
+private:
+	std::unique_ptr<net> nodes;
+
 };
 

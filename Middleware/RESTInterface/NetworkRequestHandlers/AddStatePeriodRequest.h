@@ -3,7 +3,8 @@
 #include <memory>
 #include <string>
 #include "../Utils/include_crow.h"
-#include "../../Database/IDatabase.h"
+#include <IConfigurationAccess.h>
+#include <IStateStorage.h>
 
 class AddStatePeriodRequest {
 public:

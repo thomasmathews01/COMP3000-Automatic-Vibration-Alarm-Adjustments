@@ -2,7 +2,7 @@
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 #include <cmath>
-
+#include "../Utils/CrowUtils.h"
 
 using rapidjson::StringBuffer;
 using rapidjson::PrettyWriter;
@@ -66,7 +66,7 @@ decimated_points decimate_data(const std::vector<std::pair<time_point_t, float>>
  * @param database Database instance to retrieve the data from
  * @return JSON structure, as a string, representing up to 5000 points in the given range. Integer decimation performed to fit the points in this range.
  */
-std::string GetDataRequest::get_data_points(const crow::request& request, const std::shared_ptr<IDataAccess>& database) {
+crow::response GetDataRequest::get_data_points(const crow::request& request, const std::shared_ptr<IDataAccess>& database) {
 	const auto channel = std::stoi(request.url_params.get("channel")); // TODO: sensible error handling for malformed requests.
 	const auto type = std::stoi(request.url_params.get("type")); // TODO: Logging for easier understanding of what has gone wrong.
 
@@ -79,69 +79,5 @@ std::string GetDataRequest::get_data_points(const crow::request& request, const 
 	const auto data_points = database->get_data(channel, type, start_time, end_time);
 	const auto decimated_data = decimate_data(data_points);
 
-	return convert_data_points_to_json(decimated_data);
+	return CrowUtils::add_cors_headers(crow::response(convert_data_points_to_json(decimated_data)));
 }
-
-/*
-namespace testing
-{
-	std::vector<std::pair<time_point_t, float>> get_test_collection(int sample_count) {
-		auto collection = std::vector<std::pair<time_point_t, float>>();
-		collection.reserve(sample_count);
-
-		for (int i = 0; i < sample_count; ++i)
-			collection.emplace_back(time_point_t() + std::chrono::seconds(i), (float) i);
-
-		return collection;
-	}
-
-	TEST_CASE ("Decimation") {
-			SUBCASE("Full set of 5000 points is returned in original condition") {
-			const auto data = get_test_collection(maximum_number_of_points);
-
-			const auto decimation_result = decimate_data(data);
-
-			const auto match = std::equal(decimation_result.second.cbegin(), decimation_result.second.cend(), data.cbegin());
-				CHECK(match);
-		}
-
-			SUBCASE("Full set of 5000 points returns a valid decimation factor") {
-			const auto data = get_test_collection(maximum_number_of_points);
-
-			const auto decimation_result = decimate_data(data);
-				CHECK_EQ(decimation_result.first, 1);
-		}
-
-			SUBCASE("Small set is not decimated.") {
-			const auto data = get_test_collection(maximum_number_of_points / 10);
-
-			const auto decimation_result = decimate_data(data);
-
-			const auto match = std::equal(data.cbegin(), data.cend(), decimation_result.second.cbegin());
-				CHECK(match);
-		}
-
-			SUBCASE("Handles 2x decimation as expected") {
-			const auto data = get_test_collection(2 * maximum_number_of_points);
-
-			const auto[decimation_factor, decimated_data] = decimate_data(data);
-				CHECK_EQ(decimation_factor, 2);
-				CHECK(std::all_of(decimated_data.cbegin(), decimated_data.cend(), [](const std::pair<time_point_t, float>& pair) { return (int) pair.second % 2 == 0; }));
-		}
-			SUBCASE("Handles Non-Integer decimation (1.5x)") {
-			const auto data = get_test_collection(1.5 * maximum_number_of_points);
-
-			const auto[decimation_factor, decimated_data] = decimate_data(data);
-				CHECK_EQ(decimation_factor, 2);
-				CHECK(std::all_of(decimated_data.cbegin(), decimated_data.cend(), [](const std::pair<time_point_t, float>& pair) { return (int) pair.second % 2 == 0; }));
-				CHECK_EQ(0.75 * maximum_number_of_points, std::count_if(decimated_data.cbegin(), decimated_data.cend(), [](const auto& pair) { return pair.second != -1 * std::numeric_limits<float>::max(); }));
-		}
-			SUBCASE("Handles Realistically sized problem") {
-			const auto data = get_test_collection(30 * maximum_number_of_points);
-
-			const auto[decimation_factor, decimated_data] = decimate_data(data);
-				CHECK_EQ(decimation_factor, 30);
-		}
-	}
-}
-*/

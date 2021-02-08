@@ -6,7 +6,7 @@
 
 class SiteInformationRequest {
 public:
-	static std::string get_site_information(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& database);
+	static crow::response get_site_information(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& database);
 };
 
 

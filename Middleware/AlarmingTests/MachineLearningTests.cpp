@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <Statistics/SOM.h>
 #include <chrono>
+#include <Statistics/SOMLearningFunctions.h>
 
 using namespace std::chrono_literals;
 
@@ -55,4 +56,24 @@ TEST (SOMTests, FindsNeighbourhoodInReasonableTime) {
 
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us. " << std::endl;
     ASSERT_LE(end - start, 10ms);
+}
+
+TEST (SOMTests, TimeForLargeMap) {
+	constexpr auto features = 300;
+	constexpr auto data_points = 1000;
+	constexpr auto iterations = 100;
+
+    SOM<20, features, iterations> som;
+    som.initialise();
+    std::vector<std::array<float, features>> points;
+    for (auto i = 0; i < data_points; ++i) {
+		auto& new_training_point = points.emplace_back();
+		std::generate(new_training_point.begin(), new_training_point.end(), som.get_random_number_generator());
+	}
+
+	const auto start = std::chrono::high_resolution_clock::now();
+    som.train(points, LearningFunctions::get_inverse_time_learning_function(iterations), NeighbourhoodFunctions::get_inverse_time_neighbourhood_function(iterations, 20));
+	const auto end = std::chrono::high_resolution_clock::now();
+
+	std::cout << "Training took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms. " << std::endl;
 }

@@ -6,7 +6,7 @@
 
 class GetSitesRequest {
 public:
-	static std::string get_sites_info(const std::shared_ptr<IConfigurationAccess>& database);
+	static crow::response get_sites_info(const std::shared_ptr<IConfigurationAccess>& database);
 };
 
 

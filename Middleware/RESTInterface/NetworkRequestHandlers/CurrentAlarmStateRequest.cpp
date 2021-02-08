@@ -25,7 +25,7 @@ std::string get_alarm_severity_as_json(const alarmSeverity severity) {
 	return buff.GetString();
 }
 
-std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IConfigurationAccess>& config_storage,
+crow::response CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IConfigurationAccess>& config_storage,
                                                               const std::shared_ptr<IAlarmStorage>& alarm_storage) {
     // should
     // support sites, but this requires a refactoring to get rid of the nonsense API to the alarm_storage structure
@@ -35,7 +35,7 @@ std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::reques
 	machine_id = machine_id ? machine_id : config_storage->get_machine_id_from_channel_id(*channel_id);
 
 	if (!machine_id)
-		return ""; // TODO: Error handling for invalid identifiers case
+		return crow::response(401);
 
 	// Extract optional filters
 	const auto type_id = CrowExtractionHelpers::extract_int_from_url_params(request, "type_id");
@@ -53,5 +53,5 @@ std::string CurrentAlarmStateRequest::get_current_alarm_state(const crow::reques
 		if (ranges::find(severities_of_active_alarms, type) != ranges::end(severities_of_active_alarms))
 			return get_alarm_severity_as_json(type);
 
-	return get_alarm_severity_as_json(alarmSeverity::none);
+	return crow::response(get_alarm_severity_as_json(alarmSeverity::none));
 }

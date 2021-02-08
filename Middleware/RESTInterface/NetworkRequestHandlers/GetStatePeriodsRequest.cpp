@@ -4,6 +4,7 @@
 
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
+#include "../Utils/CrowUtils.h"
 
 using namespace std::chrono_literals;
 using namespace std::chrono;
@@ -36,7 +37,7 @@ std::string get_state_periods_as_json(const std::vector<state_period_t>& states)
     return buffer.GetString();
 }
 
-std::string GetStatePeriodsRequest::get_state_periods(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& config_storage,
+crow::response GetStatePeriodsRequest::get_state_periods(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& config_storage,
                                                       const std::shared_ptr<IStateStorage>& state_storage) {
     // We allow requests by channel, because that it is likely what is being displayed, but in reality they are specified at machine level, so we translate.
     const auto channel_id = std::stoi(request.url_params.get("channel"));
@@ -45,5 +46,5 @@ std::string GetStatePeriodsRequest::get_state_periods(const crow::request& reque
     auto state_changes = state_storage->get_state_changes_for_machine(machine_id);
     const auto state_periods = Conversions::convert_state_changes_to_state_periods(std::move(state_changes));
 
-    return get_state_periods_as_json(state_periods);
+    return CrowUtils::add_cors_headers(crow::response(get_state_periods_as_json(state_periods)));
 }
