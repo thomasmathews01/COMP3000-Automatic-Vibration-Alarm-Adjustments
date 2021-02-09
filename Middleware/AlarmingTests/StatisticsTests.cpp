@@ -72,7 +72,7 @@ TEST (Statistics, CalculatesMeanOf1ThousandValuesInAcceptableTime) {
 	stub_data_access->data |= actions::push_back(views::iota(1, 1000) | views::transform([](const auto i) { return std::make_pair(time_point_t(seconds(i)), i); }));
 
 	const auto execution_time = time_lambda([&](){test_object.update(container->resolve<IClock>()->get_current_time()); });
-	ASSERT_LE((duration_cast<milliseconds>(execution_time)).count(), (1ms).count());
+	ASSERT_LE((duration_cast<milliseconds>(execution_time)).count(), (10ms).count());
 }
 
 TEST (Statistics, CanCalculateRollingMean) {

@@ -16,6 +16,7 @@ public:
 	using net = std::array<som_point_t, NodeDims * NodeDims>;
 	constexpr static auto iterations = IterationCount;
 	constexpr static auto map_size = NodeDims;
+	constexpr static auto featureDimensions = FeatureDims;
 	std::unique_ptr<net> nodes;
 
 	void initialise() noexcept {

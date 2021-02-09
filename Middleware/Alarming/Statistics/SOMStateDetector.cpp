@@ -1,14 +1,15 @@
 #include "SOMStateDetector.h"
 #include "SOMLearningFunctions.h"
+#include "MLDataAggregator.h"
+#include "StateInterpretter.h"
 
 void SOMStateDetector::update() noexcept {
 	if (requires_update())
-		retrain();
+		retrain_model();
 
 	remap_states();
 
-	const int current_state = get_current_state();
-	publish(current_state, clock->get_current_time());
+	publish_current_state(get_current_state(), clock->get_current_time());
 }
 
 bool SOMStateDetector::requires_update() const noexcept {
@@ -23,40 +24,11 @@ bool SOMStateDetector::requires_update() const noexcept {
 	return too_many_points_missing || too_much_time_has_passed;
 }
 
-void SOMStateDetector::retrain() noexcept {
+void SOMStateDetector::retrain_model() noexcept {
 	const auto current_time = clock->get_current_time();
-	std::vector<std::pair<time_point_t, map_type_t::som_point_t>> data_points;
-	auto idx = 0;
-	auto first = true;
-	for (const auto& channel : configuration_storage->get_channel_information_for_machine(machine(machine_id))) {
-		for (const auto&[type_id, name] : data_storage->get_data_types_available_for_channel(channel.id)) {
-			const auto data = data_storage->get_data(channel.id, type_id, time_point_t(0s), current_time);
-			if (first) {
-				first = false;
-				data_points |= actions::push_back(data | views::transform([](const auto& pair)
-																		  {
-																			  map_type_t::som_point_t data_point{};
-																			  data_point.at(0) = pair.second;
-																			  return std::make_pair(pair.first, data_point);
-																		  }));
 
-				data_points |= actions::sort([](const auto& first, const auto& second) { return first.first < second.first; });
-			}
-			else {
-				for (const auto& pair : data) {
-					const auto&[time, value] = pair;
-					auto lower_bound = std::lower_bound(data_points.begin(), data_points.end(), time, [](const std::pair<time_point_t, map_type_t::som_point_t> pair, const time_point_t& time)
-					{
-						return pair.first < time;
-					});
-
-					lower_bound->second.at(idx) = value;
-				}
-			}
-			++idx;
-		}
-
-	}
+	MLDataAggregator<map_type_t::featureDimensions> aggregator(data_storage, configuration_storage);
+	const auto data_points = aggregator.get_data_before_time(machine_id, current_time);
 
 	generate_new_model_and_update_values(data_points);
 }
@@ -69,30 +41,27 @@ void SOMStateDetector::generate_new_model_and_update_values(const std::vector<st
 }
 
 void SOMStateDetector::remap_states() noexcept {
-	/* TODO: If performance proves a problem, abseil have a flat map which might do the trick */
-	const auto states = state_storage->get_state_changes_for_machine(machine_id);
 	const auto state_changes = state_storage->get_state_changes_for_machine(machine_id);
-	state_interpretation = {};
-
-	auto final_time = time_point_t::max();
-	for (const auto& change : state_changes | views::reverse) {
-		const auto time_comp = [](const auto& pair, const auto time) { return pair.first < time; };
-		const auto first = std::lower_bound(time_mapping.cbegin(), time_mapping.cend(), change.change_time, time_comp);
-		const auto last = std::lower_bound(time_mapping.cbegin(), time_mapping.cend(), final_time, time_comp);
-		// If one was being clever, the first value is always the last value for the next iteration and it could be kept, for the sake of < 30 comparisons.
-
-		for (const auto& [time, node_index] : ranges::subrange(first, last)) {
-			auto& map = state_interpretation.at(node_index);
-			if (map.count(change.new_state_id))
-				++map.at(change.new_state_id);
-			else map.insert({change.new_state_id, 1});
-		}
-
-		final_time = change.change_time;
-	}
+	state_interpretation = StateInterpretter::get_state_mappings(state_changes, time_mapping);
 }
 
 int SOMStateDetector::get_current_state() const noexcept {
+	map_type_t::som_point_t current_points = get_som_point_representing_latest_values();
+
+	const auto bmu = underlying_map.find_bmu_for(current_points);
+	const auto state_map = state_interpretation.at(bmu);
+	const auto state_with_most_attached_points = std::max_element(state_map.cbegin(), state_map.cend(), [](const std::pair<int, int>& x, const std::pair<int, int>& y) { return x.second < y.second; });
+
+	return state_with_most_attached_points->first;
+	/*
+	 * The problem with this implementation is that is has absolutely no stability. Really we want to sample the last n points, and determine whether we are sure what state they belong to
+	 * and if that doesn't give us a clear option we then want to report the special state of unknown.
+	 * At that stage it needs to become it's own class, and be passed in a time history and have more information in that regard
+	 * TODO: Improve, and consider things like time decay
+	 */
+}
+
+map_type_t::som_point_t SOMStateDetector::get_som_point_representing_latest_values() const noexcept {
 	const auto current_time = clock->get_current_time();
 	map_type_t::som_point_t current_points;
 
@@ -105,19 +74,10 @@ int SOMStateDetector::get_current_state() const noexcept {
 		}
 	}
 
-	const auto bmu = underlying_map.find_bmu_for(current_points);
-	const auto state_map = state_interpretation.at(bmu);
-	const auto state_with_most_attached_points = std::max_element(state_map.cbegin(), state_map.cend(), [](const std::pair<int, int>& x, const std::pair<int, int>& y) { return x.second < y.second; });
-
-	return state_with_most_attached_points->first;
-	/*
-	 * The problem with this implementation is that is has absolutely no stability. Really we want to sample the last n points, and determine whether we are sure what state they belong to
-	 * and if that doesn't give us a clear option we then want to report the special state of unknown.
-	 * TODO: Improve, and consider things like time decay
-	 */
+	return current_points;
 }
 
-void SOMStateDetector::publish(const int state, const time_point_t time) const noexcept {
+void SOMStateDetector::publish_current_state(int state, time_point_t time) const noexcept {
 	const auto current_states_in_database = state_storage->get_state_changes_for_machine(machine_id);
 	const auto current_state = current_states_in_database.back().new_state_id;
 
@@ -130,7 +90,8 @@ SOMStateDetector::SOMStateDetector(int machine_number, std::shared_ptr<IDataAcce
 }
 
 void SOMStateDetector::cache_the_things(const std::vector<std::pair<time_point_t, map_type_t::som_point_t>>& points) noexcept {
-	time_mapping.clear();
 	auto& map = underlying_map;
-	time_mapping |= actions::push_back(points | views::transform([&](const auto& pair) { return std::pair<time_point_t, int>{pair.first, map.find_bmu_for(pair.second)}; }));
+	time_mapping = points
+		| views::transform([&](const auto& pair) { return std::pair<time_point_t, int>{pair.first, map.find_bmu_for(pair.second)}; })
+		| to<std::vector>();
 }

@@ -3,7 +3,7 @@ link_directories(${CONAN_LIB_DIRS})
 
 file(GLOB AlarmingTests_SRC CONFIGURE_DEPENDS "*.cpp" "Stubs/*.cpp" "Mocks/*.cpp")
 
-add_executable(AlarmingTests ${AlarmingTests_SRC} MachineLearningTests.cpp)
+add_executable(AlarmingTests ${AlarmingTests_SRC} MachineLearningTests.cpp MLAggregatorTests.cpp StateInterpretterTests.cpp)
 
 target_link_libraries(AlarmingTests ${CONAN_LIBS} Alarming)
 
@@ -24,4 +24,4 @@ if (WIN32)
 endif ()
 
 
-gtest_add_tests(TARGET AlarmingTests SOURCES alarmTests.cpp StatisticsTests.cpp AlarmHandlerTests.cpp MachineLearningTests.cpp)
+gtest_add_tests(TARGET AlarmingTests SOURCES alarmTests.cpp StatisticsTests.cpp AlarmHandlerTests.cpp MachineLearningTests.cpp StateInterpretterTests.cpp MLAggregatorTests.cpp)

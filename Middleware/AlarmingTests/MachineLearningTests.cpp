@@ -59,7 +59,7 @@ TEST (SOMTests, FindsNeighbourhoodInReasonableTime) {
 }
 
 TEST (SOMTests, TimeForLargeMap) {
-	constexpr auto features = 300;
+	/*constexpr auto features = 300;
 	constexpr auto data_points = 1000;
 	constexpr auto iterations = 100;
 
@@ -75,5 +75,5 @@ TEST (SOMTests, TimeForLargeMap) {
     som.train(points, LearningFunctions::get_inverse_time_learning_function(iterations), NeighbourhoodFunctions::get_inverse_time_neighbourhood_function(iterations, 20));
 	const auto end = std::chrono::high_resolution_clock::now();
 
-	std::cout << "Training took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms. " << std::endl;
+	std::cout << "Training took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms. " << std::endl;*/
 }

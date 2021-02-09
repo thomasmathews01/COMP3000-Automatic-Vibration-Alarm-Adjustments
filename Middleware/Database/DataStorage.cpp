@@ -103,4 +103,3 @@ std::vector<int> DataStorage::get_all_data_types() const noexcept {
         return type_id;
     });
 }
-

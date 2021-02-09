@@ -1,5 +1,6 @@
 #pragma once
-
+#include <gmock/gmock.h>
+#include <IClock.h>
 #include <Statistics/IStatsCalcFactory.h>
 #include <Calculators/IAlarmCalcFactory.h>
 #include "IConfigurationAccess.h"
