@@ -95,7 +95,7 @@ export class NetworkAccess {
     }
 
     async deleteStateName(name: string) {
-        const response = await axios.post(`${this.serverAddress}/deleteState?name=${name}`);
+        const response = await axios.delete(`${this.serverAddress}/states?name=${name}`);
 
         if (response.status !== 200)
             console.log("Failed to issue state deletion request");
