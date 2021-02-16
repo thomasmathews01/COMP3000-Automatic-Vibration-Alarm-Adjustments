@@ -51,7 +51,6 @@ crow::response AlarmActivationsRequest::get_activations(const crow::request& req
 
 	// Extract optional filters
 	const auto type_id = CrowExtractionHelpers::extract_int_from_url_params(request, "type_id");
-	const auto state_id = CrowExtractionHelpers::extract_int_from_url_params(request, "state_id");
 
 	const auto activations = alarm_storage->get_activations_for_machine(*machine_id);
 

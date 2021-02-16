@@ -25,7 +25,7 @@ std::string get_alarm_severity_as_json(const alarmSeverity severity) {
 	return buff.GetString();
 }
 
-crow::response CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, alarmSeverity severity, const std::shared_ptr<IConfigurationAccess>& config_storage,
+crow::response CurrentAlarmStateRequest::get_current_alarm_state(const crow::request& request, const std::shared_ptr<IConfigurationAccess>& config_storage,
                                                               const std::shared_ptr<IAlarmStorage>& alarm_storage) {
 	auto machine_id = CrowExtractionHelpers::extract_int_from_url_params(request, "machine_id");
 	const auto channel_id = CrowExtractionHelpers::extract_int_from_url_params(request, "channel_id");
@@ -39,16 +39,17 @@ crow::response CurrentAlarmStateRequest::get_current_alarm_state(const crow::req
 
 	const auto all_activations = alarm_storage->get_activations_for_machine(*machine_id);
 	const auto severities_of_active_alarms = all_activations
-									   | views::filter([&](const auto& activation) { return activation.severity == severity; })
 									   | views::filter([&](const auto& activation) { return !channel_id || activation.channel_id == *channel_id; })
 									   | views::filter([&](const auto& activation) { return !type_id || activation.type_id == *type_id; })
-									   | views::transform([](const auto& activation) { return activation.severity; })
+									   | views::transform(&alarm_activation_t::severity)
 									   | views::unique
 									   | to<std::vector>();
 
 	for (const auto type : {alarmSeverity::alarm, alarmSeverity::alert})
-		if (ranges::find(severities_of_active_alarms, type) != ranges::end(severities_of_active_alarms))
+		if (ranges::contains(severities_of_active_alarms, type))
 			return get_alarm_severity_as_json(type);
+
+		// TODO: This is actually BS, because we have added the ability for the alarms to issue activations with a false param on deactiviation, so if the last thing was a deactivation this will currently report the current state inccorectly.
 
 	return crow::response(get_alarm_severity_as_json(alarmSeverity::none));
 }

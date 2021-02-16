@@ -15,9 +15,7 @@ Server::~Server() {
 }
 
 crow::response pre_flight_response(const crow::request& req) {
-	crow::response response(200);
-
-	return CrowUtils::add_cors_headers(std::move(response));
+	return CrowUtils::add_cors_headers(crow::response(200));
 }
 
 crow::response handle_login(const crow::request& req) {
@@ -30,8 +28,7 @@ crow::response handle_login(const crow::request& req) {
 	const auto username = CrowExtractionHelpers::extract_string_from_url_params(req, "username");
 	const auto password = CrowExtractionHelpers::extract_string_from_url_params(req, "password");
 
-	if (!username || !password)
-	{
+	if (!username || !password) {
 		logger->error("Login Request was of invalid format, returning error 400");
 		return CrowUtils::add_cors_headers(crow::response(400));
 	}
@@ -62,15 +59,11 @@ void Server::work() const {
 	CROW_ROUTE(app, "/states")([this](const crow::request& req) { return GetStatePeriodsRequest::get_state_periods(req, configuration_storage, state_storage); });
 	CROW_ROUTE(app, "/alarmActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alarm, configuration_storage, alarm_storage); });
 	CROW_ROUTE(app, "/alertActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alert, configuration_storage, alarm_storage); });
-	CROW_ROUTE(app, "/currentAlarmState")([this](const crow::request& req) { return CurrentAlarmStateRequest::get_current_alarm_state(req, alarmSeverity::alarm,
-                                                                                                                                   configuration_storage, alarm_storage); });
-	CROW_ROUTE(app, "/currentAlertState")([this](const crow::request& req) { return CurrentAlarmStateRequest::get_current_alarm_state(req, alarmSeverity::alert,
-                                                                                                                                   configuration_storage, alarm_storage); });
+	CROW_ROUTE(app, "/currentAlarmState")([this](const crow::request& req) { return CurrentAlarmStateRequest::get_current_alarm_state(req, configuration_storage, alarm_storage); });
 	CROW_ROUTE(app, "/alarmSettings").methods("POST"_method, "GET"_method)([this](const crow::request& req) { return AlarmSettingsRequest::alarm_settings(req, alarmSeverity::alarm, alarm_storage); });
 	CROW_ROUTE(app, "/alertSettings").methods("POST"_method, "GET"_method)([this](const crow::request& req) { return AlarmSettingsRequest::alarm_settings(req, alarmSeverity::alert, alarm_storage); });
 	CROW_ROUTE(app, "/alarmLevelHistory")([this](const crow::request& req) { return GetAlarmLevelHistory::get_alarm_level_history(req, alarmSeverity::alarm, alarm_storage); });
 	CROW_ROUTE(app, "/alertLevelHistory")([this](const crow::request& req) { return GetAlarmLevelHistory::get_alarm_level_history(req, alarmSeverity::alert, alarm_storage); });
-
 
 	CROW_ROUTE(app, "/login").methods("POST"_method, "OPTIONS"_method)([](const crow::request& req) { return handle_login(req); });
 

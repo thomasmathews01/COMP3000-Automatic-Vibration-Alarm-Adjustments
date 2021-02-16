@@ -94,6 +94,7 @@ public:
 
 		const auto point_within_distance = [&element, distance, &inner_box](const auto& point) { return inner_box.contains(point) || element.semi_distance_from(point) <= (distance * distance); }; // We take squared distance to avoid expensive sqrts.
 
+		const auto inner_points = outer_box.all_contained_points() | views::filter([&element, distance, &inner_box](const auto& point) { return inner_box.contains(point); });
 		return outer_box.all_contained_points() | views::filter(point_within_distance);
 	}
 
