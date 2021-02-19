@@ -5,7 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34207020-8f60-477d-b746-bffb0a289840" name="Default Changelist" comment="Added back fetching of state and alarm levels, along with user selectable state periods.">
+      <change afterPath="$PROJECT_DIR$/src/Pages/CustomDataDisplayConfigurationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestServer/TestServer.js" beforeDir="false" afterPath="$PROJECT_DIR$/TestServer/TestServer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/APIAccess/NetworkAccess.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/APIAccess/NetworkAccess.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/MenuDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/MenuDrawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,9 +27,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript JSX File" />
         <option value="JavaScript File" />
         <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
       </list>
     </option>
   </component>
@@ -56,7 +64,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/TestServer/TestServer.js" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -81,7 +89,7 @@
       <command value="npm install" />
     </option>
   </component>
-  <component name="RunManager" selected="Node.js.Run TestServer">
+  <component name="RunManager" selected="npm.start">
     <configuration name="Debug" type="JavascriptDebugType" uri="http://localhost:3000" useFirstLineBreakpoints="true">
       <method v="2" />
     </configuration>
@@ -137,6 +145,7 @@
       <workItem from="1610811614176" duration="4266000" />
       <workItem from="1610896703923" duration="974000" />
       <workItem from="1610898489112" duration="116000" />
+      <workItem from="1613740557591" duration="7299000" />
     </task>
     <task id="LOCAL-00001" summary="Add test server to the new project">
       <created>1606727670396</created>

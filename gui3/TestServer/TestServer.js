@@ -163,17 +163,23 @@ app.get('/dataTypes', (req, res) => {
 });
 
 app.get('/data', (req, res) => {
-    const pointCount = 10000;
+    if (!req.query.start || !req.query.end || !req.query.channel || !req.query.type) {
+        res.status(400); // Forgot what this means, hopefully something like: Naughty user don't do that.
+        return;
+    }
+
+    const pointCount = req.query.end - req.query.start;
+    const timeGapBetweenPointsSeconds = 3600;
+
     const data = Array.from({length: pointCount}, (x, y) => Math.abs(200 * Math.sin((y / pointCount) * 5 * 2 * Math.PI)));
-    const StartDate = new Date(2019, 11, 23, 10, 53, 0, 0);
-    const startEpochSeconds = Math.round(StartDate.getTime() / 1000);
-    const time = Array.from({length: pointCount}, (x, index) => (index * 3600) + startEpochSeconds);
+    const time = Array.from({length: pointCount}, (x, index) => (index * timeGapBetweenPointsSeconds) + req.query.start);
 
     if (req.query.channel !== undefined && req.query.type !== undefined) {
         res.send(JSON.stringify({
             data: time.map((timestamp, index) => {
                 return {secondsSinceEpoch: timestamp, value: data[index]}
-            })
+            }),
+            decimation: 2
         }));
     }
 });

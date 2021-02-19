@@ -16,9 +16,13 @@ export const MenuDrawer = (props: { open: boolean, setOpen: (newState: boolean) 
     return (
         <Drawer anchor='left' open={props.open} onClose={() => props.setOpen(false)}>
             <List>
-                <ListItem button key={"Live Data Display"} onClick={() => routeToPage("/sites")}>
+                <ListItem button key={"Live States Display"} onClick={() => routeToPage("/sites")}>
                     <ListItemIcon><BrokenImageIcon/></ListItemIcon>
-                    <ListItemText primary={"Live Data Display"}/>
+                    <ListItemText primary={"Live States Display"}/>
+                </ListItem>
+                <ListItem button key={"Custom Data Display"} onClick={() => routeToPage("/customDataDisplayConfiguration")}>
+                    <ListItemIcon><BrokenImageIcon/></ListItemIcon>
+                    <ListItemText primary={"Custom Data Display"}/>
                 </ListItem>
                 <ListItem button key={"State Settings"} onClick={() => routeToPage("/statesettings/1")}>
                     <ListItemIcon><AlarmIcon/></ListItemIcon>

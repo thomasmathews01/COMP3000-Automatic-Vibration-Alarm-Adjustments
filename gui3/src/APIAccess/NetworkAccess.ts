@@ -12,7 +12,7 @@ export class NetworkAccess {
     serverAddress: string;
 
     constructor(serverAddress?: string) {
-        this.serverAddress = serverAddress ?? "${this.serverAddress}";
+        this.serverAddress = serverAddress ?? `http://localhost:3456`;
     }
 
     getAllSites(): Site[] {
