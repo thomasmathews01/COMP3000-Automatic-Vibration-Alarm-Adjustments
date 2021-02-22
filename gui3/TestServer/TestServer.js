@@ -163,7 +163,6 @@ app.get('/dataTypes', (req, res) => {
 });
 
 app.get('/data', async (req, res) => {
-    console.log("Data Requested!");
     if (!req.query.start || !req.query.end || !req.query.channel || !req.query.type) {
         console.log("Data Requested badly!");
         res.status(400); // Forgot what this means, hopefully something like: Naughty user don't do that.
@@ -175,14 +174,9 @@ app.get('/data', async (req, res) => {
     let pointCount = 170000;
     const timeBetweenPoints = Math.floor((parseInt(req.query.end) - parseInt(req.query.start)) / pointCount);
 
-    const data = Array.from({length: pointCount}, (x, y) => Math.abs(200 * Math.sin((y / pointCount) * 5 * 2 * Math.PI)));
-    const time = Array.from({length: pointCount}, (x, index) => (index * timeBetweenPoints) + parseInt(req.query.start));
-
-    console.log("Generated arrays, filling json request");
     res.send(JSON.stringify({
-        times: time,
-        values: data,
-        decimation: 2
+        times: Array.from({length: pointCount}, (x, index) => (index * timeBetweenPoints) + parseInt(req.query.start)),
+        values: Array.from({length: pointCount}, (x, y) => Math.abs(200 * Math.sin((y / pointCount) * 5 * 2 * Math.PI)))
     }));
 });
 

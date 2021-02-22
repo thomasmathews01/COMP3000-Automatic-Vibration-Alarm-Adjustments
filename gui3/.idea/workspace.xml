@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34207020-8f60-477d-b746-bffb0a289840" name="Default Changelist" comment="Added back fetching of state and alarm levels, along with user selectable state periods.">
-      <change afterPath="$PROJECT_DIR$/src/Pages/CustomDataDisplayConfigurationPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestServer/TestServer.js" beforeDir="false" afterPath="$PROJECT_DIR$/TestServer/TestServer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/APIAccess/NetworkAccess.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/APIAccess/NetworkAccess.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/MenuDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/MenuDrawer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/ChannelPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,8 +21,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="TypeScript File" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -89,7 +82,7 @@
       <command value="npm install" />
     </option>
   </component>
-  <component name="RunManager" selected="npm.start">
+  <component name="RunManager" selected="Node.js.Run TestServer">
     <configuration name="Debug" type="JavascriptDebugType" uri="http://localhost:3000" useFirstLineBreakpoints="true">
       <method v="2" />
     </configuration>
@@ -111,14 +104,7 @@
       </scripts>
       <node-interpreter value="project" />
       <envs />
-      <method v="2">
-        <option name="NpmBeforeRunTask" enabled="true">
-          <package-json value="$PROJECT_DIR$/package.json" />
-          <command value="install" />
-          <node-interpreter value="project" />
-          <envs />
-        </option>
-      </method>
+      <method v="2" />
     </configuration>
     <list>
       <item itemvalue="JavaScript Debug.Debug" />
@@ -145,7 +131,9 @@
       <workItem from="1610811614176" duration="4266000" />
       <workItem from="1610896703923" duration="974000" />
       <workItem from="1610898489112" duration="116000" />
-      <workItem from="1613740557591" duration="7299000" />
+      <workItem from="1613740557591" duration="7353000" />
+      <workItem from="1613987391126" duration="50000" />
+      <workItem from="1613987565648" duration="22119000" />
     </task>
     <task id="LOCAL-00001" summary="Add test server to the new project">
       <created>1606727670396</created>
@@ -196,7 +184,28 @@
       <option name="project" value="LOCAL" />
       <updated>1610898562283</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="EOD">
+      <created>1613750680312</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1613750680312</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Adds customizable data view">
+      <created>1614009328531</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1614009328531</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Adjusted front end to use new more efficient data format">
+      <created>1614012384067</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1614012384067</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -212,10 +221,37 @@
     <MESSAGE value="Refactoring - Consolidate network requests&#10;&#10;Netowrk requests now consolidated in a single networking class so that they can be refactored more easily when the API for the server has to change for any reason." />
     <MESSAGE value="Added back fetching of state and alarm levels, along with user selectable state periods." />
     <MESSAGE value="More networking consolidation" />
-    <option name="LAST_COMMIT_MESSAGE" value="More networking consolidation" />
+    <MESSAGE value="EOD" />
+    <MESSAGE value="Adds customizable data view" />
+    <MESSAGE value="Adjusted front end to use new more efficient data format" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adjusted front end to use new more efficient data format" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/TestServer/TestServer.js</url>
+          <line>179</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/TestServer/TestServer.js</url>
+          <line>176</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/APIAccess/NetworkAccess.ts</url>
+          <line>83</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
