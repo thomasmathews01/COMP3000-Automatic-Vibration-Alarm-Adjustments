@@ -3,7 +3,7 @@ import {Card, CardContent, Grid, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import Graph from "../Components/Graph";
 import {NetworkAccess} from '../APIAccess/NetworkAccess'
-import {type} from '../APIAccess/ServerTypes'
+import {serverType} from '../APIAccess/ServerTypes'
 
 const useStyles = makeStyles(() => ({
     titleText: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface graphProps {
-    type: type,
+    type: serverType,
     channelID: number
 }
 
@@ -38,7 +38,7 @@ export const ChannelPage = () => {
     const classes = useStyles();
     const networkAccess = new NetworkAccess();
 
-    const [GraphTypes, setGraphTypes] = useState<type[]>([]);
+    const [GraphTypes, setGraphTypes] = useState<serverType[]>([]);
 
     if (GraphTypes.length === 0)
         networkAccess.fetchGraphTypes().then(x => setGraphTypes(x));

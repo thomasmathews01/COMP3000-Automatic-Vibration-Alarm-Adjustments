@@ -1,4 +1,4 @@
-export interface type {
+export interface serverType {
     id: number,
     name: string
 }

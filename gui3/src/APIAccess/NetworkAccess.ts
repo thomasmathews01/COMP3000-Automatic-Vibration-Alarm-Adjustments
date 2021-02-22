@@ -6,7 +6,7 @@ import axios from "axios";
 import {alarmLevelChange, dataItem} from "../Types/DataTypes";
 import {State, statePeriod} from "../Types/StateTypes";
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
-import {serverChannel, serverMachine, serverSite, type} from "./ServerTypes";
+import {serverChannel, serverMachine, serverSite, serverType} from "./ServerTypes";
 
 export class NetworkAccess {
     serverAddress: string;
@@ -101,9 +101,9 @@ export class NetworkAccess {
             console.log("Failed to issue state deletion request");
     }
 
-    async fetchGraphTypes(): Promise<type[]> {
+    async fetchGraphTypes(): Promise<serverType[]> {
         try {
-            const resp = await axios.get<{ types: type[] }>(`${this.serverAddress}/dataTypes?channel=${1}`);
+            const resp = await axios.get<{ types: serverType[] }>(`${this.serverAddress}/dataTypes?channel=${1}`); // TODO: Get using the channel ...
 
             return resp.data.types;
         } catch (exception) {
@@ -116,13 +116,7 @@ export class NetworkAccess {
         try {
             const resp = await axios.get<{ channels: serverChannel[] }>(`${this.serverAddress}/channels?machine=${machineID}`);
 
-            return resp.data.channels.map((x) => {
-                return {
-                    id: x.id,
-                    name: x.name,
-                    state: 1
-                }
-            });
+            return resp.data.channels;
         } catch (exception) {
             console.log(exception.toString());
             return [];
@@ -177,5 +171,15 @@ export class NetworkAccess {
 
     async issueStateUpdate(leftBound: number, rightBound: number, stateID: number) { // TODO: get this to work with multiple states.
         await axios.post(`${this.serverAddress}/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${1}&stateId=${stateID}`)
+    }
+
+    async getEarliestDataTime() { // TODO: get this to work with multiple states.
+        const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/earliestDataTime?machine=1`)
+        return response.data.secondsSinceEpoch;
+    }
+
+    async getLatestDataTime() { // TODO: get this to work with multiple states.
+        const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/latestDataTime?machine=1`)
+        return response.data.secondsSinceEpoch
     }
 }

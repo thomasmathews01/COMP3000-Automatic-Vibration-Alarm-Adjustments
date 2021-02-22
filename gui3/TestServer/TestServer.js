@@ -253,6 +253,20 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 });
 
+app.get('/earliestDataTime', (req, res) => {
+    console.log("Got earliest time request");
+    res.send(JSON.stringify({
+        secondsSinceEpoch: 883656000
+    }))
+});
+
+app.get('/latestDataTime', (req, res) => {
+    console.log("Got latest time request");
+    res.send(JSON.stringify({
+        secondsSinceEpoch: Date.now() / 1000
+    }));
+});
+
 app.post('/stateUpdate', (req, res) => {
     if (req.query.startTime && req.query.endTime && req.query.stateId && req.query.machine)
         console.log(`Registering that we entered state: ${(req.query.stateId)} at ${(req.query.startTime)} and exited at ${(req.query.endTime)} on machine ${req.query.machine}`);
