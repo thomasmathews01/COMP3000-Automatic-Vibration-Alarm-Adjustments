@@ -81,10 +81,23 @@ const Graph = (props: PropsT) => {
         // TODO: This should take into the account the alarm and alert levels when calculating the maximum and minimum
         // Not that, theoretically, the alarm or alert levels should ever be substantially higher that the real level
         // given that they are being calculated as n sigma against the average level.
+
+        let min = Number.POSITIVE_INFINITY;
+        points.forEach(point => {
+            if (point.y < min)
+                min = point.y;
+        })
+
+        let max = Number.NEGATIVE_INFINITY;
+        points.forEach(point => {
+            if (point.y > max)
+                max = point.y;
+        }); // This is nasty and I resent javascript for making me to it. Try and find a better way later.
+
         return {
             left: points[0].x, right: points[points.length - 1].x,
-            bottom: Math.min.apply(null, points.map(p => p.y)),
-            top: Math.max.apply(null, points.map(p => p.y))
+            bottom: min,
+            top: max
         };
     }
 

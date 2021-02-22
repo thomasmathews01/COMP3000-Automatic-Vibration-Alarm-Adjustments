@@ -162,26 +162,28 @@ app.get('/dataTypes', (req, res) => {
     }
 });
 
-app.get('/data', (req, res) => {
+app.get('/data', async (req, res) => {
+    console.log("Data Requested!");
     if (!req.query.start || !req.query.end || !req.query.channel || !req.query.type) {
+        console.log("Data Requested badly!");
         res.status(400); // Forgot what this means, hopefully something like: Naughty user don't do that.
         return;
     }
 
-    const pointCount = req.query.end - req.query.start;
-    const timeGapBetweenPointsSeconds = 3600;
+    req.query.end = Math.min(parseInt(req.query.end), (Date.now() / 1000));
+
+    let pointCount = 170000;
+    const timeBetweenPoints = Math.floor((parseInt(req.query.end) - parseInt(req.query.start)) / pointCount);
 
     const data = Array.from({length: pointCount}, (x, y) => Math.abs(200 * Math.sin((y / pointCount) * 5 * 2 * Math.PI)));
-    const time = Array.from({length: pointCount}, (x, index) => (index * timeGapBetweenPointsSeconds) + req.query.start);
+    const time = Array.from({length: pointCount}, (x, index) => (index * timeBetweenPoints) + parseInt(req.query.start));
 
-    if (req.query.channel !== undefined && req.query.type !== undefined) {
-        res.send(JSON.stringify({
-            data: time.map((timestamp, index) => {
-                return {secondsSinceEpoch: timestamp, value: data[index]}
-            }),
-            decimation: 2
-        }));
-    }
+    console.log("Generated arrays, filling json request");
+    res.send(JSON.stringify({
+        times: time,
+        values: data,
+        decimation: 2
+    }));
 });
 
 app.get('/alarms', (req, res) => {

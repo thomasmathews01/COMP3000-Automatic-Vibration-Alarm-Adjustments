@@ -3,7 +3,7 @@ import {Machine} from "../Types/MachineTypes";
 import {AlarmMode, AlarmSettings} from "../Types/AlarmSettingsTypes";
 import {AlarmLogEntry, AlarmLogEventType} from "../Types/AlarmLogEntryType";
 import axios from "axios";
-import {alarmLevelChange, dataItem} from "../Types/DataTypes";
+import {alarmLevelChange} from "../Types/DataTypes";
 import {State, statePeriod} from "../Types/StateTypes";
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
 import {serverChannel, serverMachine, serverSite, serverType} from "./ServerTypes";
@@ -75,10 +75,10 @@ export class NetworkAccess {
     }
 
     async fetchValueData(channel: number, type: number) {
-        const response = await axios.get<{ data: dataItem[] }>(`${this.serverAddress}/data?channel=${channel}&type=${type}`);
-        if (response.data.data)
-            return response.data.data.map(item => {
-                return {x: item.secondsSinceEpoch * 1000, y: item.value}
+        const response = await axios.get<{ times: number[], values: number[] }>(`${this.serverAddress}/data?channel=${channel}&type=${type}&start=946728000&end=1614011510`);
+        if (response.data)
+            return response.data.times.map((time, idx) => {
+                return {x: time * 1000, y: response.data.values[idx]}; //TODO: Vulnerable to bad array access
             });
 
         return [];
