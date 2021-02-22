@@ -18,17 +18,18 @@ std::string convert_data_points_to_json(const decimated_points& data) {
 
 	writer.Key("decimation_factor");
 	writer.Double(data.first);
-	writer.Key("data_points");
+	writer.Key("times");
 	writer.StartArray();
 
-	for (const auto& point : data.second) {
-		writer.StartObject();
-		writer.Key("time");
+	for (const auto& point : data.second)
 		writer.Int(duration_cast<seconds>(point.first.time_since_epoch()).count());
-		writer.Key("value");
+	writer.EndArray();
+
+	writer.Key("values");
+	writer.StartArray();
+
+	for (const auto& point : data.second)
 		writer.Double(point.second);
-		writer.EndObject();
-	}
 
 	writer.EndArray();
 	writer.EndObject();
