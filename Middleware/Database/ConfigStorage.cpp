@@ -67,3 +67,10 @@ int ConfigStorage::get_machine_id_from_channel_id(int channel_id) const noexcept
 
     return -1;
 }
+
+std::vector<data_type> ConfigStorage::get_all_types() const noexcept {
+	return get_query_results<data_type>("SELECT types.type_id, types.type_name FROM types", database, [](const auto& row) {
+		const auto[id_number, name_string] = row.template get_columns<int, const char *>(0, 1);
+		return data_type(id_number, name_string);
+	});
+}

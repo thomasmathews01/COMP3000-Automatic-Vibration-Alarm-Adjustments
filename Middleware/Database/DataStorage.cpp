@@ -65,6 +65,18 @@ time_point_t DataStorage::get_earliest_data_point_for_machine(int machine_id) co
     return time_point_t(0s);
 }
 
+time_point_t DataStorage::get_latest_data_point_for_machine(int machine_id) const noexcept {
+    const auto selection_string =
+            "SELECT max(data.time_since_epoch) from data inner join channels on data.channel_id = channels.channel_id "
+            "inner join machines on channels.machine_id = machines.machine_id where machines.machine_id = " +
+            std::to_string(machine_id);
+    for (const auto& row : sqlite3pp::query(*database, selection_string.c_str())) {
+        const auto[seconds_since_epoch] = row.template get_columns<int>(0);
+        return std::min(time_point_t(seconds(seconds_since_epoch)), clock->get_current_time());
+    }
+
+    return time_point_t(0s);
+}
 
 std::pair<time_point_t, float> DataStorage::get_last_data_point_before(int channel, int type, time_point_t time) const noexcept {
     const auto statement = "SELECT time_since_epoch, value FROM data"s +

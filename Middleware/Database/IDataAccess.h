@@ -9,4 +9,5 @@ public:
 	[[nodiscard]] virtual std::vector<std::pair<int, std::string>> get_data_types_available_for_channel(int channel_id) const noexcept = 0;
 	[[nodiscard]] virtual std::vector<int> get_all_data_types() const noexcept = 0;
 	[[nodiscard]] virtual time_point_t get_earliest_data_point_for_machine(int machine_id) const noexcept = 0;
+	[[nodiscard]] virtual time_point_t get_latest_data_point_for_machine(int machine_id) const noexcept = 0;
 };

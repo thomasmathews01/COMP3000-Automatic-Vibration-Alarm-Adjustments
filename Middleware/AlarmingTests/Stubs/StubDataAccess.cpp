@@ -14,6 +14,9 @@ std::vector<float> StubDataAccess::get_data_points_only(int channel, int type, t
 time_point_t StubDataAccess::get_earliest_data_point_for_machine(int machine_id) const noexcept  {
 	return ranges::min(data | views::keys);
 }
+time_point_t StubDataAccess::get_latest_data_point_for_machine(int machine_id) const noexcept  {
+	return ranges::max(data | views::keys);
+}
 
 std::vector<std::pair<int, std::string>> StubDataAccess::get_data_types_available_for_channel(int channel_id) const noexcept  {
 	return data_types;

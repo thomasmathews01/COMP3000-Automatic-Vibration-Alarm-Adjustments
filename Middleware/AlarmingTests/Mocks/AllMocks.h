@@ -23,6 +23,7 @@ public:
     MOCK_METHOD(std::vector<machine>, get_machines_for_site, (const site& site), (const, noexcept));
     MOCK_METHOD(std::vector<channel>, get_channel_information_for_machine, (const machine& machine), (const, noexcept));
     MOCK_METHOD(std::vector<channel>, get_all_channels, (), (const, noexcept));
+	MOCK_METHOD(std::vector<data_type>, get_all_types, (), (const, noexcept));
     MOCK_METHOD(int, get_machine_id_from_channel_id, (int channel_id), (const, noexcept));
 };
 
@@ -34,6 +35,7 @@ public:
     MOCK_METHOD((std::vector<std::pair<int, std::string>>), get_data_types_available_for_channel, (int channel_id), (const, noexcept));
     MOCK_METHOD(std::vector<int>, get_all_data_types, (), (const, noexcept));
     MOCK_METHOD(time_point_t, get_earliest_data_point_for_machine, (int machine_id), (const, noexcept));
+    MOCK_METHOD(time_point_t, get_latest_data_point_for_machine, (int machine_id), (const, noexcept));
 };
 
 class MockClock : public IClock {

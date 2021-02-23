@@ -35,3 +35,12 @@ struct site {
 	std::string name;
 	std::vector<machine> machines;
 };
+
+struct data_type {
+	explicit data_type(const int id) : id(id) {}
+
+	data_type(const int id, std::string name) : id(id), name(std::move(name)) {}
+
+	int id;
+	std::string name;
+};

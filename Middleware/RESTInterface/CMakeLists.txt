@@ -1,6 +1,6 @@
 file(GLOB RESTInterface_SRC CONFIGURE_DEPENDS "Utils/*.cpp" "NetworkRequestHandlers/*.cpp" "*.cpp")
 
-add_library(RESTInterface ${RESTInterface_SRC})
+add_library(RESTInterface ${RESTInterface_SRC} NetworkRequestHandlers/GetDataTimes.cpp NetworkRequestHandlers/GetDataTimes.h NetworkRequestHandlers/TypeInformationRequest.cpp NetworkRequestHandlers/TypeInformationRequest.h NetworkRequestHandlers/ChannelInformationRequest.cpp NetworkRequestHandlers/ChannelInformationRequest.h)
 
 if (WIN32)
     add_compile_definitions(NOMINMAX)

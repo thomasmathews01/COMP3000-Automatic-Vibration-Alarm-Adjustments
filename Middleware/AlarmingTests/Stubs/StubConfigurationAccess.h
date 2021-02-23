@@ -22,6 +22,10 @@ public:
         return channels;
     }
 
+    std::vector<data_type> get_all_types() const noexcept final {
+        return data_types;
+    }
+
     int get_machine_id_from_channel_id(int channel_id) const noexcept final {
         return 0;
     }
@@ -29,4 +33,5 @@ public:
     std::vector<site> sites;
     std::vector<machine> machines;
     std::vector<channel> channels;
+    std::vector<data_type> data_types;
 };

@@ -13,3 +13,6 @@
 #include "CurrentAlarmStateRequest.h"
 #include "AlarmSettingsRequest.h"
 #include "GetAlarmLevelHistory.h"
+#include "GetDataTimes.h"
+#include "TypeInformationRequest.h"
+#include "ChannelInformationRequest.h"

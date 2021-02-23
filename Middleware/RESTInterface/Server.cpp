@@ -53,6 +53,8 @@ void Server::work() const {
 	CROW_ROUTE(app, "/sites")([this]() { return GetSitesRequest::get_sites_info(configuration_storage); });
 	CROW_ROUTE(app, "/machines")([this](const crow::request& request) { return SiteInformationRequest::get_site_information(request, configuration_storage); });
 	CROW_ROUTE(app, "/channels")([this](const crow::request& request) { return MachineInformationRequest::get_machine_information(request, configuration_storage); });
+	CROW_ROUTE(app, "/typeInformation")([this](const crow::request& request) { return TypeInformationRequest::get_type_information(request, configuration_storage); });
+	CROW_ROUTE(app, "/channelInformation")([this](const crow::request& request) { return ChannelInformationRequest::get_channel_information(request, configuration_storage); });
 	CROW_ROUTE(app, "/time")([this]() { return CurrentTimeRequest::get_current_time_response(clock); });
 	CROW_ROUTE(app, "/dataTypes")([this](const crow::request& req) { return AvailableDataTypesRequest::get_available_data_types(req, data_storage); });
 	CROW_ROUTE(app, "/data")([this](const crow::request& req) { return GetDataRequest::get_data_points(req, data_storage); });
@@ -64,6 +66,8 @@ void Server::work() const {
 	CROW_ROUTE(app, "/alertSettings").methods("POST"_method, "GET"_method)([this](const crow::request& req) { return AlarmSettingsRequest::alarm_settings(req, alarmSeverity::alert, alarm_storage); });
 	CROW_ROUTE(app, "/alarmLevelHistory")([this](const crow::request& req) { return GetAlarmLevelHistory::get_alarm_level_history(req, alarmSeverity::alarm, alarm_storage); });
 	CROW_ROUTE(app, "/alertLevelHistory")([this](const crow::request& req) { return GetAlarmLevelHistory::get_alarm_level_history(req, alarmSeverity::alert, alarm_storage); });
+	CROW_ROUTE(app, "/earliestDataTime")([this](const crow::request& req) { return GetDataTimes::get_earliest_point(req, data_storage); });
+	CROW_ROUTE(app, "/latestDataTime")([this](const crow::request& req) { return GetDataTimes::get_latest_point(req, data_storage); });
 
 	CROW_ROUTE(app, "/login").methods("POST"_method, "OPTIONS"_method)([](const crow::request& req) { return handle_login(req); });
 

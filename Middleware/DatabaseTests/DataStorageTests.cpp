@@ -7,6 +7,7 @@
 #include <SQLiteCpp/Transaction.h>
 #include <DatabaseInitialiser.h>
 #include <DataStorage.h>
+#include "Mocks/AllMocks.h"
 
 using namespace std::string_view_literals;
 using namespace ranges;
@@ -17,7 +18,8 @@ protected:
         std::shared_ptr<IDatabaseFactory> factory = std::make_shared<DatabaseFactory>();
         raw_database = factory->get_database(":memory:");
         raw_database = DatabaseInitialiser::intialise_database(std::move(raw_database));
-        data_storage = std::make_shared<DataStorage>(factory);
+        auto clock = std::make_shared<MockClock>();
+        data_storage = std::make_shared<DataStorage>(factory, clock);
     }
 
     void TearDown() override {

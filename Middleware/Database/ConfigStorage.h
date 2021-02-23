@@ -12,6 +12,7 @@ public:
     [[nodiscard]] std::vector<channel> get_channel_information_for_machine(const machine& machine) const noexcept final;
     [[nodiscard]] std::vector<channel> get_all_channels() const noexcept final;
     [[nodiscard]] int get_machine_id_from_channel_id(int channel_id) const noexcept final;
+	[[nodiscard]] std::vector<data_type> get_all_types() const noexcept final;
 
 private:
     const std::shared_ptr<sqlite3pp::database> database;

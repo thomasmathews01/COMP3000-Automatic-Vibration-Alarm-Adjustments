@@ -1,5 +1,4 @@
 #include "MachineInformationRequest.h"
-#include "../../Database/TestDatabase.h"
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 #include "../Utils/CrowUtils.h"

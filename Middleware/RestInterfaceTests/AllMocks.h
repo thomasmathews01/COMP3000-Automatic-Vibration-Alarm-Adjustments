@@ -8,6 +8,7 @@ public:
 	MOCK_METHOD(std::vector<machine>, get_machines_for_site, (const site& site), (const, noexcept));
 	MOCK_METHOD(std::vector<channel>, get_channel_information_for_machine, (const machine& machine), (const, noexcept));
 	MOCK_METHOD(std::vector<channel>, get_all_channels, (), (const, noexcept));
+	MOCK_METHOD(std::vector<data_type>, get_all_types, (), (const, noexcept));
 	MOCK_METHOD(int, get_machine_id_from_channel_id, (int channel_id), (const, noexcept));
 };
 
