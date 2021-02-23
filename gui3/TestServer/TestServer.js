@@ -295,6 +295,30 @@ app.get('/channelInformation', (req, res) => {
     }));
 });
 
+app.get('/statePeriods', (req, res) => {
+    console.log(`Got state periods request for channel ${req.query.channels}`);
+
+    res.send(JSON.stringify({
+        states: [
+            {
+                id: 1,
+                start_seconds_since_epoch: 883656000,
+                end_seconds_since_epoch: 983656000
+            },
+            {
+                id: 2,
+                start_seconds_since_epoch: 983656000,
+                end_seconds_since_epoch: 1283656000
+            },
+            {
+                id: 1,
+                start_seconds_since_epoch: 1283656000,
+                end_seconds_since_epoch: Date.now() / 1000
+            }
+        ]
+    }));
+});
+
 app.post('/stateUpdate', (req, res) => {
     if (req.query.startTime && req.query.endTime && req.query.stateId && req.query.machine)
         console.log(`Registering that we entered state: ${(req.query.stateId)} at ${(req.query.startTime)} and exited at ${(req.query.endTime)} on machine ${req.query.machine}`);

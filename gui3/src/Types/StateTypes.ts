@@ -10,6 +10,6 @@ export interface StateValue {
 
 export interface statePeriod {
     id: number,
-    start: number,
-    end: number
+    start_seconds_since_epoch: number,
+    end_seconds_since_epoch: number
 }

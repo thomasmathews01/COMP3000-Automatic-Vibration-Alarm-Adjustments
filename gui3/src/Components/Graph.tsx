@@ -13,9 +13,17 @@ const fetchAlertLevels = async (channel: number, type: number) => networkAccess.
 
 const fetchStatePeriods = async (channel: number) => {
     const states = await networkAccess.networkFetchStatePeriods(channel);
-    const maxStateId = Math.max(...states.map(x => x.id));
 
-    return Array<LineSeriesPoint[]>(maxStateId - 1);
+    const periods: Array<LineSeriesPoint[]> = states.map(state => {
+        return [
+            {x: (state.start_seconds_since_epoch * 1000) - 1, y: 0},
+            {x: (state.start_seconds_since_epoch * 1000), y: 1000000},
+            {x: (state.end_seconds_since_epoch * 1000), y: 1000000},
+            {x: (state.end_seconds_since_epoch * 1000) + 1, y: 0}
+        ]
+    });
+
+    return periods;
 }
 
 interface PropsT {
