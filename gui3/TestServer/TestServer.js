@@ -263,6 +263,38 @@ app.get('/latestDataTime', (req, res) => {
     }));
 });
 
+app.get('/typeInformation', (req, res) => {
+    console.log("Got type information request");
+    const typeInformation = [
+        {id: 1, name: "SUBSYNC"},
+        {id: 2, name: "SUBSYNC_FREQ"},
+        {id: 3, name: "PK2PK"},
+        {id: 4, name: "NONSYNC"},
+        {id: 5, name: "RMS"},
+        {id: 6, name: "ORDER1"},
+        {id: 7, name: "ORDER2"},
+        {id: 8, name: "ORDER3"},
+        {id: 9, name: "ORDER4"},
+        {id: 10, name: "INTRAHARMONIC"},
+    ];
+
+    const type = typeInformation.find(x => x.id === parseInt(req.query.type_id));
+
+    res.send(JSON.stringify({
+        id: type.id,
+        name: type.name
+    }));
+});
+
+app.get('/channelInformation', (req, res) => {
+    console.log("Got channel information request");
+
+    res.send(JSON.stringify({
+        id: parseInt(req.query.channel_id),
+        name: `Channel ${parseInt(req.query.channel_id)}`
+    }));
+});
+
 app.post('/stateUpdate', (req, res) => {
     if (req.query.startTime && req.query.endTime && req.query.stateId && req.query.machine)
         console.log(`Registering that we entered state: ${(req.query.stateId)} at ${(req.query.startTime)} and exited at ${(req.query.endTime)} on machine ${req.query.machine}`);

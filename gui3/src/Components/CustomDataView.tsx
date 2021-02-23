@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Card, CardContent, Grid, Typography} from "@material-ui/core";
 import {CustomDataSet} from "../Types/CustomDataSet";
 import {makeStyles} from "@material-ui/core/styles";
 import Graph from "./Graph";
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 const useStyles = makeStyles(() => ({
     titleText: {
@@ -22,10 +23,18 @@ interface graphProps {
 }
 
 function IndividualGraph(props: graphProps) {
+    const [channelName, setChannelName] = useState("");
+    if (channelName === "")
+        (new NetworkAccess()).getChannelInformationFromID(props.channelID).then(response => setChannelName(response.name));
+
+    const [typeName, setTypeName] = useState("");
+    if (typeName === "")
+        (new NetworkAccess()).getTypeInformationFromID(props.typeID).then(response => setTypeName(response.name));
+
     const classes = useStyles();
     return (
         <Card elevation={3}>
-            <Typography className={classes.titleText}>{"Insert channel and type names here"}</Typography>
+            <Typography className={classes.titleText}>{`${channelName} - ${typeName}`}</Typography>
             <CardContent>
                 <Graph type={props.typeID} channel={props.channelID}/>
             </CardContent>

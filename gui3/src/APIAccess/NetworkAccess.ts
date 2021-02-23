@@ -182,4 +182,14 @@ export class NetworkAccess {
         const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/latestDataTime?machine=1`)
         return response.data.secondsSinceEpoch
     }
+
+    async getChannelInformationFromID(id: number) {
+        const response = await axios.get<{ name: string, id: number }>(`${this.serverAddress}/channelInformation?channel_id=${id}`);
+        return response.data;
+    }
+
+    async getTypeInformationFromID(id: number) {
+        const response = await axios.get<{ name: string, id: number }>(`${this.serverAddress}/typeInformation?type_id=${id}`);
+        return response.data;
+    }
 }
