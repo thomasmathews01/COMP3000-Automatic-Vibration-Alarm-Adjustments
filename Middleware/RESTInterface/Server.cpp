@@ -58,7 +58,7 @@ void Server::work() const {
 	CROW_ROUTE(app, "/time")([this]() { return CurrentTimeRequest::get_current_time_response(clock); });
 	CROW_ROUTE(app, "/dataTypes")([this](const crow::request& req) { return AvailableDataTypesRequest::get_available_data_types(req, data_storage); });
 	CROW_ROUTE(app, "/data")([this](const crow::request& req) { return GetDataRequest::get_data_points(req, data_storage); });
-	CROW_ROUTE(app, "/states")([this](const crow::request& req) { return GetStatePeriodsRequest::get_state_periods(req, configuration_storage, state_storage); });
+	CROW_ROUTE(app, "/statePeriods")([this](const crow::request& req) { return GetStatePeriodsRequest::get_state_periods(req, configuration_storage, state_storage); });
 	CROW_ROUTE(app, "/alarmActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alarm, configuration_storage, alarm_storage); });
 	CROW_ROUTE(app, "/alertActivations")([this](const crow::request& req) { return AlarmActivationsRequest::get_activations(req, alarmSeverity::alert, configuration_storage, alarm_storage); });
 	CROW_ROUTE(app, "/currentAlarmState")([this](const crow::request& req) { return CurrentAlarmStateRequest::get_current_alarm_state(req, configuration_storage, alarm_storage); });

@@ -142,17 +142,17 @@ export class NetworkAccess {
     };
 
 
-    async getSites(updateFn: (x: SingleAlarmStateItem[]) => void) {
+    async getSites(): Promise<SingleAlarmStateItem[]> {
         try {
             const sites = await axios.get<{ sites: serverSite[] }>(`${this.serverAddress}/sites`);
 
-            updateFn(sites.data.sites.map((x) => {
+            return sites.data.sites.map((x) => {
                 return {
                     id: x.id,
                     name: x.name,
                     state: 1
                 }
-            }));
+            });
         } catch (exception) {
             console.log(exception.toString());
             return [];

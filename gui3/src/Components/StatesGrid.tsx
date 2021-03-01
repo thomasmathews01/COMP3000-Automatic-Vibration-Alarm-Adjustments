@@ -36,5 +36,5 @@ export const StatesGrid = (props: { states: State[] }) => {
 
         );
 
-    return (<div></div>);
+    return null;
 }
