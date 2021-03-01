@@ -326,6 +326,29 @@ app.post('/stateUpdate', (req, res) => {
     res.status(200);
 });
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+app.get('/currentAlarmState', (req, res) => {
+    const possibleStates = ['alarm', 'alert', 'none'];
+    const response = JSON.stringify({
+        state: possibleStates[getRandomInt(3)]
+    });
+
+    if (req.query.site_id) {
+        console.log(`Sending a site ${req.query.site_id} alarm state of ${response} `);
+    }
+    if (req.query.machine_id) {
+        console.log(`Sending a machine ${req.query.machine_id} alarm state of ${response} `);
+    }
+    if (req.query.channel_id) {
+        console.log(`Sending a channel ${req.query.channel_id} alarm state of ${response} `);
+    }
+
+    res.send(response);
+})
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 });

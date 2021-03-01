@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {AlarmState, SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
+import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem";
 import GridOfAlarmStateItems from "../Components/GridOfAlarmStateItems";
 import {useParams} from "react-router";
 import {NetworkAccess} from "../APIAccess/NetworkAccess";
@@ -9,8 +9,7 @@ import {useAsync} from "react-async-hook";
 const channelToAlarmStateItem = (channel: serverChannel) => {
     return {
         id: channel.id,
-        name: channel.name,
-        state: AlarmState.NotInAlarm
+        name: channel.name
     }
 }
 
@@ -28,6 +27,6 @@ export const MachinePage = () => {
         setChannelsData(asyncChannels.result);
 
     return (
-        <GridOfAlarmStateItems items={channelsData} redirectString={"/channel/"}/>
+        <GridOfAlarmStateItems items={channelsData} redirectString={"/channel/"} fetchStringGenerator={(item: SingleAlarmStateItem) => `channel_id=${item.id}`}/>
     );
 }

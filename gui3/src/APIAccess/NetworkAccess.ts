@@ -192,4 +192,9 @@ export class NetworkAccess {
         const response = await axios.get<{ name: string, id: number }>(`${this.serverAddress}/typeInformation?type_id=${id}`);
         return response.data;
     }
+
+    async getCurrentState(query: string) {
+        const response = await axios.get<{ state: string }>(`${this.serverAddress}/currentAlarmState?${query}`);
+        return response.data;
+    }
 }

@@ -19,6 +19,6 @@ export const SitePage = () => {
         setMachinesData(asyncMachines.result);
 
     return (
-        <GridOfAlarmStateItems items={machinesData} redirectString={"/machine/"}/>
+        <GridOfAlarmStateItems items={machinesData} redirectString={"/machine/"} fetchStringGenerator={(item: SingleAlarmStateItem) => `machine_id=${item.id}`}/>
     );
 }

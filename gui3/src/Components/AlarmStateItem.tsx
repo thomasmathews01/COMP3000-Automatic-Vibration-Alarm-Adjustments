@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SingleAlarmStateItem} from "../Types/SingleAlarmStateItem"
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Container} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
+import {useAsync} from 'react-async-hook';
 
 const useStyles = makeStyles((theme) => ({
     button1: {
@@ -13,25 +15,35 @@ const useStyles = makeStyles((theme) => ({
     button2: {
         minHeight: "40vh",
         minWidth: "40vh",
-        background: theme.palette.secondary.main,
+        background: theme.palette.warning.main,
+    },
+    button3: {
+        minHeight: "40vh",
+        minWidth: "40vh",
+        background: theme.palette.error.main,
     }
 }));
 
+const getCurrentState = async (fetchString: string) => {
+    const netAccess = new NetworkAccess();
+    return (await netAccess.getCurrentState(fetchString)).state;
+}
 
-const AlarmStateItem = (props: { item: SingleAlarmStateItem, redirectString: string }) => {
+const AlarmStateItem = (props: { item: SingleAlarmStateItem, redirectString: string, stateFetchString: string }) => {
     const classes = useStyles();
     const history = useHistory();
+    const [state, setState] = useState<string | undefined>(undefined);
 
-    const routeToPage = async (redirectString: string, id: number) => {
-        console.log(`redirecting to: ${redirectString} for id = ${id}`);
-        history.push(redirectString + id.toString());
-    }
+    const currentState = useAsync(getCurrentState, [props.stateFetchString]);
+    if (state === undefined && !currentState.loading && !currentState.error && currentState.result)
+        setState(currentState.result);
+
+    const routeToPage = async () => history.push(props.redirectString + props.item.id.toString());
 
     return (
         <Container>
-            <Button className={props.item.state === 1 ? classes.button1 : classes.button2}
-                    onClick={() => routeToPage(props.redirectString, props.item.id)}>
-                {props.item.name}
+            <Button className={state === "none" ? classes.button1 : state === "alert" ? classes.button2 : classes.button3} onClick={routeToPage}>
+                {`${props.item.name}`}
             </Button>
         </Container>
     );

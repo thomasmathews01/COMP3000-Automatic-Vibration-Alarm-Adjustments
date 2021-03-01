@@ -17,6 +17,6 @@ export const SitesPage = () => {
         setSitesData(asyncSites.result);
 
     return (
-        <GridOfAlarmStateItems items={sitesData} redirectString={"/site/"}/>
+        <GridOfAlarmStateItems items={sitesData} redirectString={"/site/"} fetchStringGenerator={(item: SingleAlarmStateItem) => `site_id=${item.id}`}/>
     );
 }
