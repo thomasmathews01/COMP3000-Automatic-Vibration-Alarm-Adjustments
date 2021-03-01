@@ -1,0 +1,8 @@
+[requires]
+range-v3/0.11.0
+gtest/1.10.0
+boost/1.75.0
+nlohmann_json/3.9.1
+
+[generators]
+cmake
