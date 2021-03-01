@@ -26,6 +26,7 @@ export const AddStateForm = (props: { states: State[] }) => {
                     </Grid>
                     <Grid item>
                         <Button disabled={newStateName === "" || !newNameIsUnique()}
+                                variant={"contained"}
                                 onClick={async () => {
                                     await networkAccess.addNewState(newStateName);
                                     updateNewStateName("");

@@ -30,7 +30,7 @@ export const StatesGrid = (props: { states: State[] }) => {
                     </div>
                 </Grid>
                 <Grid item>
-                    <Button disabled={selectedRows.length < 1} onClick={deleteSelectedRows}>Delete Selected</Button>
+                    <Button variant={"contained"} disabled={selectedRows.length < 1} onClick={deleteSelectedRows}>Delete Selected</Button>
                 </Grid>
             </Grid>
 

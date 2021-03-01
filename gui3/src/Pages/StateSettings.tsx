@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {State} from "../Types/StateTypes";
-import {Grid} from "@material-ui/core";
+import {Grid, MenuItem, Select, Typography} from "@material-ui/core";
 import {StatesGrid} from "../Components/StatesGrid";
 import {AddStateForm} from "../Components/AddStatesForm";
 import {NetworkAccess} from "../APIAccess/NetworkAccess";
@@ -13,16 +13,36 @@ export const StateSettingsPage = () => {
         networkAccess.fetchStates().then(newStates => setStates(newStates));
 
     return (
-        <Grid container direction="column">
+        <Grid container direction="column" spacing={2}>
             <Grid item>
-                <div>
-                    <StatesGrid states={states}/>
-                </div>
+                <Grid container direction={"row"}>
+                    <Grid item>
+                        <Typography>Site</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Select>
+                            <MenuItem>Something</MenuItem>
+                            <MenuItem>Something Else</MenuItem>
+                            <MenuItem>Something Else Entirely</MenuItem>
+                        </Select>
+                    </Grid>
+                    <Grid item>
+                        <Typography>Machine</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Select>
+                            <MenuItem>Something</MenuItem>
+                            <MenuItem>Something Else</MenuItem>
+                            <MenuItem>Something Else Entirely</MenuItem>
+                        </Select>
+                    </Grid>
+                </Grid>
             </Grid>
             <Grid item>
-                <div>
-                    <AddStateForm states={states}/>
-                </div>
+                <StatesGrid states={states}/>
+            </Grid>
+            <Grid item>
+                <AddStateForm states={states}/>
             </Grid>
         </Grid>
     );
