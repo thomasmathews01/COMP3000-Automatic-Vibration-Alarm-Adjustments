@@ -8,8 +8,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import axios from 'axios';
 import {useHistory} from "react-router-dom";
+import {NetworkAccess} from "../APIAccess/NetworkAccess";
 
 function Copyright() {
     return (
@@ -46,18 +46,11 @@ export const LoginPage = () => {
     const [password, passwordToggle] = React.useState("admin");
     const history = useHistory();
 
-    const handleLogin = () => {
-        axios.post(`http://localhost:3456/login?username=${username}&password=${password}`, {}).then(response => {
-            if (response && response.data === "Accepted") {
-                console.log("Accepted");
-                history.push("/sites");
-            }
-            else {
-                console.log("Denied");
-            }
-        });
+    const handleLogin = async () => {
+        const networkAccess = new NetworkAccess();
+        if (await networkAccess.login(username, password))
+            history.push("/sites");
 
-        // TODO: I would expect failure to give an exception in most cases, which we need to handle if we are going the async/await route.
         // TODO: This should be handled by a snackbar, or just some user feedback to suggest that they were successful - or not
     };
 

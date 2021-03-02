@@ -12,7 +12,7 @@ export class NetworkAccess {
     serverAddress: string;
 
     constructor(serverAddress?: string) {
-        this.serverAddress = serverAddress ?? `http://localhost:3456`;
+        this.serverAddress = serverAddress ?? `http://localhost:1234`;
     }
 
     getAllSites(): Site[] {
@@ -196,5 +196,11 @@ export class NetworkAccess {
     async getCurrentState(query: string) {
         const response = await axios.get<{ state: string }>(`${this.serverAddress}/currentAlarmState?${query}`);
         return response.data;
+    }
+
+    async login(username: string, password: string) {
+        // TODO: We probably ought to encrypt this somehow.
+        const response = await axios.post(`${this.serverAddress}/login?username=${username}&password=${password}`, {});
+        return response && response.data === "Accepted";
     }
 }
