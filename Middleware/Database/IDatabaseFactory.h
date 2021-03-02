@@ -2,7 +2,7 @@
 #include "Helpers/sqlite3pp.h"
 
 #ifdef WIN32
-constexpr auto default_database_location = "VibrationData.db";
+constexpr auto default_database_location = "C:\\temp\\VibrationData.db";
 #else
 constexpr auto default_database_location = "/Users/thomasmathews/Downloads/VibrationData.db";
 #endif
