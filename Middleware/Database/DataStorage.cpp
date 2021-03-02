@@ -40,13 +40,9 @@ DataStorage::get_data(int channel, int type, time_point_t start, time_point_t fi
 }
 
 std::vector<std::pair<int, std::string>> DataStorage::get_data_types_available_for_channel(int channel_id) const noexcept {
-    const auto statement =
-            "SELECT DISTINCT types.type_id, types.type_name FROM data INNER JOIN types on types.type_id = data.type_id WHERE channel_id = " +
-            std::to_string(channel_id);
+    constexpr auto statement = "SELECT DISTINCT type_id, type_name FROM types";
 
-    //const auto statement = "SELECT DISTINCT type_id, type_name FROM types";
-
-    return get_query_results<std::pair<int, std::string>>(statement.c_str(), database, [](const auto& row)  {
+    return get_query_results<std::pair<int, std::string>>(statement, database, [](const auto& row)  {
         const auto[type_id, type_name] = row.template get_columns<int, const char *>(0, 1);
         return std::make_pair(type_id, type_name);
     });

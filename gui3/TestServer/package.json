@@ -1,7 +1,6 @@
 {
   "name": "TestServer",
   "version": "1.0.0",
-  "dependencies": {},
   "devDependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

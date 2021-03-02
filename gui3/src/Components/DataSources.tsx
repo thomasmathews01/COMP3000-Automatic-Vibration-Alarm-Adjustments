@@ -1,19 +1,7 @@
-import React, {useState} from "react";
+import React from "react";
 import {Grid, IconButton, Typography} from "@material-ui/core";
 import {DataSource, DataSourceSelector} from "./DataSourceSelector";
-import {NetworkAccess} from "../APIAccess/NetworkAccess";
-import {serverChannel, serverType} from "../APIAccess/ServerTypes";
 import {AddCircle} from "@material-ui/icons";
-
-const getServerChannels = async () => {
-    const network = new NetworkAccess();
-    return network.getChannels(1); // TODO: Sane machine policy
-}
-
-const getServerTypes = async () => {
-    const network = new NetworkAccess();
-    return network.fetchGraphTypes();
-}
 
 export interface Props {
     dataSources: DataSource[],
@@ -21,24 +9,6 @@ export interface Props {
 }
 
 export const DataSources = (props: Props) => {
-    const [allChannels, setAllChannels] = useState<serverChannel[]>([]);
-    if (allChannels.length === 0)
-        getServerChannels().then(channels => {
-            setAllChannels(channels);
-            let sources = [...props.dataSources];
-            sources[0].channel = channels[0].id;
-            props.updateSources(sources);
-        });
-
-    const [allTypes, setAllTypes] = useState<serverType[]>([]);
-    if (allTypes.length === 0)
-        getServerTypes().then(types => {
-            setAllTypes(types);
-            let sources = [...props.dataSources];
-            sources[0].type = types[0].id;
-            props.updateSources(sources);
-        });
-
     const updateFn = (idx: number) => (src: DataSource | null) => {
         let oldSources = [...props.dataSources];
         if (src !== null)
@@ -52,14 +22,14 @@ export const DataSources = (props: Props) => {
     const getDataSourceEditor = (src: DataSource, index: number) => {
         return (
             <Grid item>
-                <DataSourceSelector source={src} updateSourceFn={updateFn(index)} allChannels={allChannels} allTypes={allTypes}/>
+                <DataSourceSelector source={src} updateSourceFn={updateFn(index)}/>
             </Grid>
         );
     }
 
     const addDataSource = () => {
         let oldSources = props.dataSources;
-        oldSources.push({channel: allChannels[0].id, type: allTypes[0].id});
+        oldSources.push({site: -1, machine: -1, channel: -1, type: -1});
         props.updateSources([...oldSources]);
     }
 

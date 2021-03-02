@@ -9,7 +9,7 @@ export const CustomDataDisplayConfigurationPage = () => {
         startTimeEpochSeconds: 0,
         endTimeEpochSeconds: 100,
         dataSources: [
-            {channel: 1, type: 1}
+            {site: 1, machine: 1, channel: 1, type: 1}
         ]
     });
 

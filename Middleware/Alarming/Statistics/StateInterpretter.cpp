@@ -25,7 +25,7 @@ auto nodes_in_time_range(time_point_t start, time_point_t end, const std::vector
 	const auto first = std::lower_bound(time_node_map.cbegin(), time_node_map.cend(), start, time_comp);
 	const auto last = std::lower_bound(time_node_map.cbegin(), time_node_map.cend(), end, time_comp);
 
-	return ranges::subrange(first, last);
+	return std::vector<std::pair<time_point_t, int>>(first, last);
 }
 
 std::vector<std::map<int, int>> StateInterpretter::get_state_mappings(const std::vector<state_change_t>& changes, const std::vector<std::pair<time_point_t, int>>& time_node_map) noexcept {
@@ -33,9 +33,11 @@ std::vector<std::map<int, int>> StateInterpretter::get_state_mappings(const std:
 	const auto node_count = ranges::max(time_node_map | ranges::views::values);
 	std::vector<std::map<int, int>> state_interpretation(node_count + 1);
 
-	for (const auto& state_period : convert_state_changes_to_state_periods(changes))
-		for (const auto node_index : nodes_in_time_range(state_period.start, state_period.end, time_node_map) | ranges::views::values)
+	for (const auto& state_period : convert_state_changes_to_state_periods(changes)) {
+		const auto nodes = nodes_in_time_range(state_period.start, state_period.end, time_node_map);
+		for (const auto node_index : nodes | ranges::views::values)
 			insert_or_increment_state_id(state_interpretation.at(node_index), state_period.state_id);
+	}
 
 	return state_interpretation;
 }

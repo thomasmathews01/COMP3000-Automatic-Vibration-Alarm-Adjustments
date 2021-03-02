@@ -19,7 +19,7 @@ export class NetworkAccess {
         return [
             {id: 0, name: "Highbury"},
             {id: 1, name: "Northanger"}
-        ];
+        ]; // TODO: What the fuck?
     }
 
     getAllMachinesForSite(site: Site): Machine[] {
@@ -29,15 +29,16 @@ export class NetworkAccess {
         ];
     }
 
-    getAllAlarmSettingsForMachine(machine: Machine): AlarmSettings[] {
+    async getAllAlarmSettingsForMachine(machine: Machine): Promise<AlarmSettings[]> {
         const settings: AlarmSettings[] = [];
-        const channels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-        const types = ["RMS", "PkToPk", "Order 1"];
+        const channels = await this.getChannels(machine.id);
+        const types = await this.fetchGraphTypes();
+        const typeNames = types.map(type => type.name);
 
-        channels.forEach(channelNumber => {
-            types.forEach(typeString => {
+        channels.forEach(channel => {
+            typeNames.forEach(typeString => {
                 settings.push({
-                    channelName: `Channel ${channelNumber}`,
+                    channelName: channel.name,
                     typeName: typeString,
                     alarmMode: AlarmMode.StateBasedAuto
                 })
@@ -48,8 +49,9 @@ export class NetworkAccess {
     }
 
     UpdateAlarmSettingsForMachine(machine: Machine, updatedSettings: AlarmSettings): void {
-
+        // TODO: For goodness sakes!!
     }
+
 
     GetAllAlarmLogEntries(): AlarmLogEntry[] {
         return [
@@ -103,7 +105,7 @@ export class NetworkAccess {
 
     async fetchGraphTypes(): Promise<serverType[]> {
         try {
-            const resp = await axios.get<{ types: serverType[] }>(`${this.serverAddress}/dataTypes?channel=${1}`); // TODO: Get using the channel ...
+            const resp = await axios.get<{ types: serverType[] }>(`${this.serverAddress}/dataTypes`);
 
             return resp.data.types;
         } catch (exception) {
@@ -159,6 +161,20 @@ export class NetworkAccess {
         }
     };
 
+
+    getBasicSiteInformation = async () => {
+        try {
+            const response = await axios.get<{ sites: serverSite[] }>(`${this.serverAddress}/sites`);
+            if (response.status !== 200)
+                return [];
+
+            return response.data.sites; // We assume that if we got a response it was probably the correct response.
+        } catch (exception) {
+            console.log(exception.toString());
+            return [];
+        }
+    };
+
     async addNewState(newStateName: string) {
         try {
             const response = await axios.post(`${this.serverAddress}/states?name=${newStateName}`, {});
@@ -170,16 +186,16 @@ export class NetworkAccess {
     }
 
     async issueStateUpdate(leftBound: number, rightBound: number, stateID: number) { // TODO: get this to work with multiple states.
-        await axios.post(`${this.serverAddress}/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${1}&stateId=${stateID}`)
+        await axios.post(`${this.serverAddress}/stateUpdate?startTime=${leftBound}&endTime=${rightBound}&machine=${21}&stateId=${stateID}`)
     }
 
-    async getEarliestDataTime() { // TODO: get this to work with multiple states.
-        const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/earliestDataTime?machine=1`)
+    async getEarliestDataTime() { // TODO: get this to work with multiple machines.
+        const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/earliestDataTime?machine=21`)
         return response.data.secondsSinceEpoch;
     }
 
-    async getLatestDataTime() { // TODO: get this to work with multiple states.
-        const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/latestDataTime?machine=1`)
+    async getLatestDataTime() { // TODO: get this to work with multiple machines.
+        const response = await axios.get<{ secondsSinceEpoch: number }>(`${this.serverAddress}/latestDataTime?machine=21`)
         return response.data.secondsSinceEpoch
     }
 

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const {json, urlencoded} = require("body-parser");
 
-const port = 3456;
+const port = 1234;
 
 const app = express();
 app.use(cors());
@@ -157,9 +157,7 @@ app.get('/dataTypes', (req, res) => {
         {id: 10, name: "INTRAHARMONIC"},
     ];
 
-    if (req.query.channel !== undefined) {
-        res.send(JSON.stringify({types: typeInformation}));
-    }
+    res.send(JSON.stringify({types: typeInformation}));
 });
 
 app.get('/data', async (req, res) => {

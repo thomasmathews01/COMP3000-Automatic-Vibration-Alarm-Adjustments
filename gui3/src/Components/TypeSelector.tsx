@@ -1,14 +1,13 @@
 import {MenuItem, Select} from "@material-ui/core";
 import React from "react";
-import {serverType} from "../APIAccess/ServerTypes";
 
 export interface Props {
     updateFn: (newTypeID: number) => void,
     selectedType: number,
-    types: serverType[]
+    types: { id: number, name: string }[]
 }
 
-const getMenuItemFromType = (type: serverType) => {
+const getMenuItemFromType = (type: { id: number, name: string }) => {
     return (
         <MenuItem value={type.id}>{type.name}</MenuItem>
     );

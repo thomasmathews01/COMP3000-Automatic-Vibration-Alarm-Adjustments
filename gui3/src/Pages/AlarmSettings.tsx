@@ -44,12 +44,12 @@ export const AlarmSettingsPage = () => {
         setAlarmSettings([]);
     }
 
-    const updateCurrentMachineIndex = (newIndex: number) => {
+    const updateCurrentMachineIndex = async (newIndex: number) => {
         if (newIndex === selectedMachineIndex)
             return; // Nothing to do.
 
         setSelectedMachineIndex(newIndex);
-        setAlarmSettings(networkAccess.getAllAlarmSettingsForMachine(machines[newIndex]));
+        setAlarmSettings(await networkAccess.getAllAlarmSettingsForMachine(machines[newIndex]));
     }
 
     return (
@@ -68,7 +68,7 @@ export const AlarmSettingsPage = () => {
             <Grid item xs={4} md={4}>
                 {
                     machines.map((machine, index) => (
-                        <ListItem button selected={selectedMachineIndex === index} onClick={() => updateCurrentMachineIndex(index)}>
+                        <ListItem button selected={selectedMachineIndex === index} onClick={async () => await updateCurrentMachineIndex(index)}>
                             <ListItemText primary={machine.name}/>
                         </ListItem>
                     ))

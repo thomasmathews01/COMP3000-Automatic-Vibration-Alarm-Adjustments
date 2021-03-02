@@ -3,7 +3,6 @@
 #include <array>
 #include <memory>
 #include <random>
-#include <execution>
 #include <range/v3/all.hpp>
 #include <STLExtensions.h>
 
@@ -71,7 +70,7 @@ public:
 		const auto distance_from_point = [&point](const som_point_t& other) { return STLExtensions::semi_euclidean_distance<float, FeatureDims>(point, other); };
 		const auto closer_to_point = [&point, distance_from_point](const auto& first, const auto& second) { return distance_from_point(first) < distance_from_point(second); };
 
-		const auto closest_element = std::min_element(std::execution::par_unseq, nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
+		const auto closest_element = std::min_element(nodes->cbegin(), nodes->cend(), closer_to_point); // CPU parallel and vectorised search for closest node.
 
 		return point_t(std::distance(nodes->cbegin(), closest_element));
 	}
@@ -105,7 +104,7 @@ public:
 	constexpr void update_net_based_on_bmu(const point_t& bmu, const som_point_t& training_point, const float learning_weight, const int iteration_number, const float neighbourhood_size) const noexcept {
 		auto points = points_within_distance(bmu, neighbourhood_size);
 
-		std::for_each(std::execution::par_unseq, points.begin(), points.end(), [&](const int unit) {
+		std::for_each(points.begin(), points.end(), [&](const int unit) {
 			std::transform(nodes->at(unit).cbegin(), nodes->at(unit).cend(), training_point.cbegin(), nodes->at(unit).begin(), pull_together(learning_weight));
 		});
 	}
