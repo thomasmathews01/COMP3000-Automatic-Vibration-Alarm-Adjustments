@@ -1,6 +1,6 @@
 file(GLOB Alarming_SRC CONFIGURE_DEPENDS "Calculators/*.cpp" "Statistics/*.cpp" "*.cpp")
 
-add_library(Alarming ${Alarming_SRC} Statistics/IStatsCalcFactory.h Statistics/StatsCalcFactory.cpp Statistics/StatsCalcFactory.h Statistics/SOMLearningFunctions.h Statistics/SOMStateDetector.cpp Statistics/SOMStateDetector.h Statistics/LearningModel.h Statistics/MLDataAggregator.cpp Statistics/MLDataAggregator.h Statistics/StateInterpretter.cpp Statistics/StateInterpretter.h)
+add_library(Alarming ${Alarming_SRC} Statistics/IStatsCalcFactory.h Statistics/StatsCalcFactory.cpp Statistics/StatsCalcFactory.h Statistics/SOMLearningFunctions.h Statistics/SOMStateDetector.cpp Statistics/SOMStateDetector.h Statistics/MLDataAggregator.cpp Statistics/MLDataAggregator.h Statistics/StateInterpretter.cpp Statistics/StateInterpretter.h)
 
 if (WIN32)
     add_compile_definitions(NOMINMAX)
