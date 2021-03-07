@@ -5,3 +5,10 @@ obj/
 Debug/
 Release/
 packages/
+gui3/node_modules/
+gui3/testserver/node_modules
+cmake-build-debug/
+cmake-build-release/
+gui3/.eslintcache
+gui3/.idea/workspace.xml
+gui3/react-app-env.d.ts
