@@ -1,6 +1,9 @@
 #include "StateStorage.h"
 #include <algorithm>
+#include <range/v3/all.hpp>
 #include "database_statements.h"
+
+using namespace ranges;
 
 namespace {
     int seconds_since_epoch(const time_point_t t) {
@@ -10,16 +13,6 @@ namespace {
     std::string seconds_since_epoch_str(const time_point_t t) {
         return std::to_string(seconds_since_epoch(t));
     }
-
-    template<class T, class F>
-    std::vector<T> get_query_results(const char *statement, const std::shared_ptr<sqlite3pp::database>& database, F&& func) {
-        std::vector<T> result;
-
-        auto query_results = sqlite3pp::query(*database, statement);
-        std::transform(query_results.begin(), query_results.end(), std::back_inserter(result), func);
-
-        return result;
-    }
 }
 
 std::optional<time_point_t> StateStorage::get_time_of_last_state_change_before(const time_point_t& time, const int machine_id) {
@@ -27,12 +20,10 @@ std::optional<time_point_t> StateStorage::get_time_of_last_state_change_before(c
                            " WHERE machine_id = " + std::to_string(machine_id) +
                            " AND time_since_epoch < " + seconds_since_epoch_str(time);
 
-    for (const auto& row : sqlite3pp::query(*database, statement.c_str())) {
-        const auto[seconds_since_epoch] = row.template get_columns<int>(0);
-        return time_point_t(seconds(seconds_since_epoch));
-    }
+    const auto result = database->execute(statement);
+    const auto seconds_since_epoch = result.vector<int>().front();
 
-    return std::nullopt;
+	return time_point_t(seconds(seconds_since_epoch));
 }
 
 void StateStorage::add_new_state_period(int machine_id, state_period_t state_period) {
@@ -41,36 +32,40 @@ void StateStorage::add_new_state_period(int machine_id, state_period_t state_per
     if (!state_when_period_ends.has_value())
         return;
 
-    sqlite3pp::command cmd(*database, "DELETE FROM state_changes where time_since_epoch BETWEEN :start AND :end");
-
-    cmd.bind(":start", seconds_since_epoch(state_period.start));
-    cmd.bind(":end", seconds_since_epoch(state_period.end));
-
-    cmd.execute();
+    database->execute("DELETE FROM state_changes where time_since_epoch BETWEEN $1 and $2",
+					  seconds_since_epoch(state_period.start),
+					  seconds_since_epoch(state_period.end));
 
     add_new_state_changes_for_machine({state_change_t(state_period.state_id, state_period.start),
                                        state_change_t(*state_when_period_ends, state_period.end)}, machine_id);
 }
 
 std::vector<state_change_t> StateStorage::get_state_changes_for_machine(int machine_id) {
-    const auto statement =
-            "SELECT new_state_id,time_since_epoch FROM state_changes WHERE machine_id = " + std::to_string(machine_id);
+	const auto statement =
+		"SELECT new_state_id,time_since_epoch FROM state_changes WHERE machine_id = " + std::to_string(machine_id);
 
-    return get_query_results<state_change_t>(statement.c_str(), database, [](const auto& row) {
-        const auto[state, time_seconds] = row.template get_columns<int, int>(0, 1);
+	const auto result = database->execute(statement);
+	const auto result_values = result.vector<std::tuple<int, int>>();
 
-        return state_change_t(state, time_point_t(seconds(time_seconds)));
-    });
+	std::vector<state_change_t> state_changes;
+	state_changes.reserve(result_values.size());
+
+	for (const auto[state, time_seconds] : result_values)
+		state_changes.emplace_back(state, time_point_t(seconds(time_seconds)));
+
+	return state_changes;
 }
-void StateStorage::add_state(int machine_id, const state_t& state) {
 
+void StateStorage::add_state(int machine_id, const state_t& state) {
+	//TODO: Implement
 }
 
 void StateStorage::remove_state(int machine_id, int state_id) {
-
+	//TODO: Implement
 }
 
 std::vector<state_t> StateStorage::get_states_for_machine(int machine_id) {
+	//TODO: Implement
     return std::vector<state_t>();
 }
 
@@ -84,22 +79,11 @@ std::optional<int> StateStorage::get_state_at_time(const time_point_t& time, con
     const auto statement = "SELECT new_state_id from state_changes where time_since_epoch = " +
                            std::to_string(final_state_time_seconds);
 
-    for (const auto& row : sqlite3pp::query(*database, statement.c_str())) {
-        const auto[state_id] = row.template get_columns<int>(0);
-        return state_id;
-    }
-
-    return std::nullopt;
+    const auto select_result = database->execute(statement);
+	return select_result.vector<int>().front();
 }
 
 void StateStorage::add_new_state_changes_for_machine(const std::vector<state_change_t>& changes, const int machine_id) {
-    for (const auto& change : changes) {
-        sqlite3pp::command cmd(*database, add_new_state_change);
-
-        cmd.bind(":machine", machine_id);
-        cmd.bind(":state", change.new_state_id);
-        cmd.bind(":time", seconds_since_epoch(change.change_time));
-
-        cmd.execute();
-    }
+    for (const auto& change : changes)
+		database->execute(add_new_state_change, machine_id, change.new_state_id, seconds_since_epoch(change.change_time));
 }

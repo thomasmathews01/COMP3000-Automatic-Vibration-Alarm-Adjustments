@@ -20,5 +20,5 @@ private:
     std::optional<int> get_state_at_time(const time_point_t& time, int machine_id);
     std::optional<time_point_t> get_time_of_last_state_change_before(const time_point_t& time, int machine_id);
 
-    const std::shared_ptr<sqlite3pp::database> database; // This is a shared pointer for testing purposes, but should never be accessed by anyone other than this class, with the mutex, unless they take ownership whilst they use it, and we can't access it in that period.
+    const std::shared_ptr<tao::pq::connection> database; // This is a shared pointer for testing purposes, but should never be accessed by anyone other than this class, with the mutex, unless they take ownership whilst they use it, and we can't access it in that period.
 };

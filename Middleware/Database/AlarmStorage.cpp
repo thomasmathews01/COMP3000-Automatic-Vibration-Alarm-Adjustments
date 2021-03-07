@@ -10,17 +10,6 @@ namespace {
     std::string seconds_since_epoch_str(const time_point_t t) {
         return std::to_string(seconds_since_epoch(t));
     }
-
-    template<class T, class F>
-    std::vector<T>
-    get_query_results(const char *statement, const std::shared_ptr<sqlite3pp::database>& database, F&& func) {
-        std::vector<T> result;
-
-        auto query_results = sqlite3pp::query(*database, statement);
-        std::transform(query_results.begin(), query_results.end(), std::back_inserter(result), func);
-
-        return result;
-    }
 }
 
 std::vector<alarm_settings_t> AlarmStorage::get_alarm_settings_for_machine(int machine_id) {
@@ -30,72 +19,53 @@ std::vector<alarm_settings_t> AlarmStorage::get_alarm_settings_for_machine(int m
             "FROM alarm_settings inner join channels on channels.channel_id = alarm_settings.channel_id "
             "WHERE channels.machine_id = " + std::to_string(machine_id);
 
-    return get_query_results<alarm_settings_t>(statement.c_str(), database, [](const auto& row) {
-        const auto[channel, type, severity, threshold, threshold_type] = row.template get_columns<int, int, int, float, int>(
-                0, 1, 2, 3, 4);
-        const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
-        const auto severity_enum = static_cast<alarmSeverity>(severity);
-        const auto threshold_value =
-                threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
+    const auto query_response = database->execute(statement);
+    const auto result_values = query_response.vector<std::tuple<int, int, int, float, int>>();
 
-        return alarm_settings_t(channel, type, severity_enum, threshold_enum, threshold_value);
-    });
+    std::vector<alarm_settings_t> alarm_settings;
+    alarm_settings.reserve(result_values.size());
+
+    for (const auto[channel, type, severity, threshold, threshold_type] : result_values) {
+		const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
+		const auto severity_enum = static_cast<alarmSeverity>(severity);
+		const auto threshold_value = threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
+
+		alarm_settings.emplace_back(channel, type, severity_enum, threshold_enum, threshold_value);
+    }
+
+	return alarm_settings;
 }
 
 bool AlarmStorage::update_alarm_setting(const alarm_settings_t& new_setting) {
-    
+	const auto result = database->execute(modify_alarm_settings, static_cast<int>(new_setting.threshold), static_cast<int>(*new_setting.customLevel), new_setting.channel_id, new_setting.type_id, static_cast<int>(new_setting.severity));
 
-    sqlite3pp::command cmd(*database, modify_alarm_settings);
-
-    cmd.bind(":type", new_setting.type_id);
-    cmd.bind(":channel", new_setting.channel_id);
-    cmd.bind(":severity", static_cast<int>(new_setting.severity));
-    cmd.bind(":threshold_type", static_cast<int>(new_setting.threshold));
-    cmd.bind(":fixed_threshold", new_setting.customLevel ? static_cast<int>(*new_setting.customLevel) : 0);
-
-    return cmd.execute();
+	return result.rows_affected() > 0;
 }
 
 std::vector<alarm_level_history_point> AlarmStorage::get_alarm_level_history(const alarm_settings_t& associated_alarm) {
-    
-
     const auto statement = "SELECT level, time_since_epoch FROM alarm_levels WHERE channel_id = " +
                            std::to_string(associated_alarm.channel_id) +
                            " AND type_id = " + std::to_string(associated_alarm.type_id) + " AND alarm_severity = " +
                            std::to_string(static_cast<int>(associated_alarm.severity));
+    const auto results = database->execute(statement);
+    const auto result_values = results.vector<std::tuple<double, int>>();
 
-    return get_query_results<alarm_level_history_point>(statement.c_str(), database, [](const auto& row) {
-        const auto[level, seconds_since_epoch] = row.template get_columns<double, int>(0, 1);
+    std::vector<alarm_level_history_point> history;
 
-        return alarm_level_history_point(time_point_t(seconds(seconds_since_epoch)), level);
-    });
+    for (const auto[level, seconds_since_epoch] : result_values)
+    	history.emplace_back(time_point_t(seconds(seconds_since_epoch)), level);
+
+	return history;
 }
 
 void AlarmStorage::add_alarm_level_history_item(const time_point_t& occurence, const alarm_settings_t& associated_alarm,
                                             double new_level) {
-    
-
-    sqlite3pp::command cmd(*database, add_alarm_level_history_point);
-
-    cmd.bind(":type", associated_alarm.type_id);
-    cmd.bind(":channel", associated_alarm.channel_id);
-    cmd.bind(":severity", static_cast<int>(associated_alarm.severity));
-    cmd.bind(":level", new_level);
-    cmd.bind(":time_since_epoch", seconds_since_epoch(occurence));
-
-    cmd.execute();
+	database->execute(add_alarm_level_history_point, associated_alarm.channel_id, associated_alarm.type_id,
+									   static_cast<int>(associated_alarm.severity), new_level, seconds_since_epoch(occurence));
 }
 
 void AlarmStorage::add_alarm_activation(const alarm_activation_t& activation) {
-    sqlite3pp::command cmd(*database, add_alarm_activation_change);
-
-    cmd.bind(":type", activation.type_id);
-    cmd.bind(":channel", activation.channel_id);
-    cmd.bind(":severity", static_cast<int>(activation.severity));
-    cmd.bind(":became_active", activation.severity != alarmSeverity::none);
-    cmd.bind(":time_since_epoch", seconds_since_epoch(activation.activation_time));
-
-    cmd.execute();
+	database->execute(add_alarm_activation_change, activation.channel_id, activation.type_id, static_cast<int>(activation.severity), activation.severity != alarmSeverity::none, seconds_since_epoch(activation.activation_time));
 }
 
 std::vector<alarm_activation_t> AlarmStorage::get_activations_for_machine(int machine_id) {
@@ -105,65 +75,77 @@ std::vector<alarm_activation_t> AlarmStorage::get_activations_for_machine(int ma
             "WHERE channels.machine_id = " + std::to_string(machine_id) +
             " ORDER BY alarm_activation_changes.time_since_epoch";
 
-    return get_query_results<alarm_activation_t>(statement.c_str(), database, [](const auto& row) {
-        const auto[type, channel, severity, became_active, time_since_epoch] = row.template get_columns<int, int, int, bool, int>(
-                0, 1, 2, 3, 4);
+    std::vector<alarm_activation_t> alarm_activations;
 
-        return alarm_activation_t(channel, type, static_cast<alarmSeverity>(severity),
-                                  time_point_t(seconds(time_since_epoch)), became_active);
-    });
+    const auto results = database->execute(statement);
+    const auto result_values = results.vector<std::tuple<int, int, int, bool, int>>();
+    alarm_activations.reserve(result_values.size());
+
+    for (const auto[type, channel, severity, became_active, time_since_epoch] : result_values)
+    	alarm_activations.emplace_back(channel, type, static_cast<alarmSeverity>(severity), time_point_t(seconds(time_since_epoch)), became_active);
+
+
+	return alarm_activations;
 }
 
 alarm_state_t AlarmStorage::get_alarm_state_of_site(const site& site) {
-    return alarm_state_t(std::nullopt);
+    return alarm_state_t(std::nullopt); // TODO: Implement
 }
 
 alarm_state_t AlarmStorage::get_alarm_state_of_machine(const machine& machine) {
-    return alarm_state_t(std::nullopt);
+    return alarm_state_t(std::nullopt); // TODO: Implement
 }
 
 alarm_state_t AlarmStorage::get_alarm_state_of_channel(const channel& channel) {
-    return alarm_state_t(std::nullopt);
+    return alarm_state_t(std::nullopt); // TODO: Implement
 }
 
 alarm_state_t AlarmStorage::get_alarm_state_of_alarm(const alarm_settings_t& alarm) {
-    return alarm_state_t(std::nullopt);
+    return alarm_state_t(std::nullopt); // TODO: Implement
 }
 
 std::vector<alarm_settings_t> AlarmStorage::get_all_alarm_settings() {
-    
     const auto statement = "SELECT alarm_settings.channel_id, alarm_settings.type_id, alarm_severity, custom_fixed_threshold, alarm_threshold_type "
                            "FROM alarm_settings";
 
-    return get_query_results<alarm_settings_t>(statement, database, [](const auto& row) {
-        const auto[channel, type, severity, threshold, threshold_type] = row.template get_columns<int, int, int, float, int>(
-                0, 1, 2, 3, 4);
-        const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
-        const auto severity_enum = static_cast<alarmSeverity>(severity);
-        const auto threshold_value =
-                threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
+    const auto result = database->execute(statement);
+    const auto result_values = result.vector<std::tuple<int, int, int, float, int>>();
 
-        return alarm_settings_t(channel, type, severity_enum, threshold_enum, threshold_value);
-    });
+    std::vector<alarm_settings_t> settings;
+
+    for(const auto[channel, type, severity, threshold, threshold_type] : result_values) {
+		const auto threshold_enum = static_cast<alarmThreshold>(threshold_type);
+		const auto severity_enum = static_cast<alarmSeverity>(severity);
+		const auto threshold_value =
+			threshold_enum == alarmThreshold::Custom ? std::make_optional(threshold) : std::nullopt;
+
+		settings.emplace_back(channel, type, severity_enum, threshold_enum, threshold_value);
+    }
+
+	return settings;
 }
 
 alarm_settings_t AlarmStorage::get_updated_alarm_settings(const alarm_settings_t& previous_settings) {
-    
     const auto statement = "SELECT custom_fixed_threshold, alarm_threshold_type"
                            " FROM alarm_settings"
                            " WHERE channel_id = " + std::to_string(previous_settings.channel_id) +
                            " AND type_id = " + std::to_string(previous_settings.type_id) +
                            " AND alarm_severity = " + std::to_string(static_cast<int>(previous_settings.severity));
 
-    auto query_results = sqlite3pp::query(*database, statement.c_str());
-    // TODO: What if we don't find any results? Should probably check and at least return an optional. We don't want async exception throwing, this code needs to be fast and non blocking as much as possible.
+    const auto results = database->execute(statement);
+    const auto result_values = results.vector<std::tuple<float, int>>();
 
-    const auto first_row = query_results.begin().operator*();
-    const auto[threshold, threshold_type] = first_row.get_columns<float, int>(0, 1);
-    const auto threshold_type_enum = static_cast<alarmThreshold>(threshold_type);
+	if (!result_values.empty())
+	{
+		const auto[threshold, threshold_type] = result_values.front();
 
-    return alarm_settings_t(previous_settings.channel_id, previous_settings.type_id, previous_settings.severity,
-                            threshold_type_enum,
-                            threshold_type_enum == alarmThreshold::Custom ? std::make_optional(threshold)
-                                                                          : std::nullopt);
+		const auto threshold_type_enum = static_cast<alarmThreshold>(threshold_type);
+
+		return alarm_settings_t(previous_settings.channel_id, previous_settings.type_id, previous_settings.severity,
+								threshold_type_enum,
+								threshold_type_enum == alarmThreshold::Custom ? std::make_optional(threshold)
+																			  : std::nullopt);
+	}
+
+	throw std::runtime_error("Something has gone terribly wrong.");
 }

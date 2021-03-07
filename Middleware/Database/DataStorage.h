@@ -20,6 +20,6 @@ public:
     [[nodiscard]] time_point_t get_latest_data_point_for_machine(int machine_id) const noexcept final;
 
 private:
-    const std::shared_ptr<sqlite3pp::database> database; // This is a shared pointer for testing purposes, but should never be accessed by anyone other than this class, with the mutex, unless they take ownership whilst they use it, and we can't access it in that period.
+    const std::shared_ptr<tao::pq::connection> database; // This is a shared pointer for testing purposes, but should never be accessed by anyone other than this class, with the mutex, unless they take ownership whilst they use it, and we can't access it in that period.
     const std::shared_ptr<IClock> clock;
 };

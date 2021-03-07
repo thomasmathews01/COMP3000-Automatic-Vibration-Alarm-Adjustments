@@ -12,39 +12,42 @@ namespace {
     std::string seconds_since_epoch_str(const time_point_t t) noexcept {
         return std::to_string(seconds_since_epoch(t));
     }
-
-    template<class T, class F>
-    std::vector<T> get_query_results(const char *statement, const std::shared_ptr<sqlite3pp::database>& database, F&& func) noexcept {
-        std::vector<T> result;
-
-        auto query_results = sqlite3pp::query(*database, statement);
-        std::transform(query_results.begin(), query_results.end(), std::back_inserter(result), func);
-
-        return result;
-    }
 }
 
 std::vector<site> ConfigStorage::get_site_data() const noexcept {
-    return get_query_results<site>("SELECT site_id, site_name from SITES", database, [](const auto& row) {
-        const auto[id_number, name_string] = row.template get_columns<int, const char *>(0, 1);
-        return site(id_number, name_string);
-    });
+	 const auto result = database->execute("SELECT site_id, site_name from SITES");
+	 const auto result_values = result.vector<std::tuple<int, std::string>>();
+
+	 std::vector<site> sites;
+
+	 for (const auto[id_number, name_string] : result_values) {
+	 	sites.emplace_back(id_number, name_string);
+	 }
+
+	 return sites;
 }
 
 std::vector<machine> ConfigStorage::get_machines_for_site(const site& site) const noexcept {
-    return get_query_results<machine>(find_machine_for_site(site.id).c_str(), database, [](const auto& row) {
-        const auto[id, name] = row.template get_columns<int, const char *>(0, 1);
+	const auto result = database->execute(find_machine_for_site(site.id));
+	const auto result_values = result.vector<std::tuple<int, std::string>>();
 
-        return machine(id, name);
-    });
+	std::vector<machine> machines;
+	for (const auto[id, name] : result_values) {
+		machines.emplace_back(id, name);
+	}
+
+	return machines;
 }
 
 std::vector<channel> ConfigStorage::get_channel_information_for_machine(const machine& machine) const noexcept {
-    return get_query_results<channel>(find_channels_for_machine(machine.id).c_str(), database, [](const auto& row) {
-        const auto[id, name, units] = row.template get_columns<int, const char *, const char *>(0, 1, 2);
+	const auto result = database->execute(find_channels_for_machine(machine.id));
+	const auto result_values = result.vector<std::tuple<int, std::string, std::string>>();
 
-        return channel(id, name, units);
-    });
+	std::vector<channel> channels;
+	for (const auto[id, name, units] : result_values)
+		channels.emplace_back(id, name, units);
+
+	return channels;
 }
 
 std::vector<channel> ConfigStorage::get_all_channels() const noexcept {
@@ -60,17 +63,24 @@ std::vector<channel> ConfigStorage::get_all_channels() const noexcept {
 int ConfigStorage::get_machine_id_from_channel_id(int channel_id) const noexcept {
     const auto selection_string = "SELECT machine_id from channels where channel_id = " + std::to_string(channel_id);
 
-    for (const auto& row : sqlite3pp::query(*database, selection_string.c_str())) {
-        const auto[machine_id] = row.template get_columns<int>(0);
-        return machine_id;
-    }
+    const auto result = database->execute(selection_string);
+    const auto result_values = result.vector<int>();
 
-    return -1;
+    if (!result_values.empty())
+    	return result_values.front();
+
+	return -1;
 }
 
 std::vector<data_type> ConfigStorage::get_all_types() const noexcept {
-	return get_query_results<data_type>("SELECT types.type_id, types.type_name FROM types", database, [](const auto& row) {
-		const auto[id_number, name_string] = row.template get_columns<int, const char *>(0, 1);
-		return data_type(id_number, name_string);
-	});
+	const auto result = database->execute("SELECT types.type_id, types.type_name FROM types");
+	const auto result_values = result.vector<std::tuple<int, std::string>>();
+
+	std::vector<data_type> data_types;
+
+	for (const auto[id_number, name_string] : result_values) {
+		data_types.emplace_back(id_number, name_string);
+	}
+
+	return data_types;
 }

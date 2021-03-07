@@ -1,5 +1,6 @@
 [requires]
 sqlite3/3.33.0
+taocpp-taopq/20200222
 spdlog/1.8.1
 rapidjson/cci.20200410
 sqlitecpp/3.1.1

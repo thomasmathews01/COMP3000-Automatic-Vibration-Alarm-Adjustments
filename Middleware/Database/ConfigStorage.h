@@ -15,5 +15,5 @@ public:
 	[[nodiscard]] std::vector<data_type> get_all_types() const noexcept final;
 
 private:
-    const std::shared_ptr<sqlite3pp::database> database;
+    const std::shared_ptr<tao::pq::connection> database;
 };
