@@ -1,0 +1,12 @@
+docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:2.1.0-pg13
+docker cp sqlite_exports.tgz timescaledb:/sqlite_exports.tgz
+docker exec -it timescaledb /bin/bash
+tar -xf sqlite_statements.tgz
+cd sqlite_extraction
+psql -U postgres < create_things.sql
+psql -U postgres
+\COPY sites from sites.csv 
+\COPY machines from machines.csv 
+\COPY types from types.csv 
+\COPY channels from channels.csv 
+\COPY data from data.csv 
