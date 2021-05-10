@@ -1,0 +1,72 @@
+version: '3.3'
+
+services:
+  db:
+      build: ./COMP3000-Database/db
+      container_name: comp3000-timescale
+      ports:
+        - "5432:5432"
+      hostname: "comp3000timescale"
+      networks:
+        - "internal"
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_DB=postgres
+      restart: unless-stopped
+      volumes:
+        - ./COMP3000-Database/data:/data:ro
+  state-detector:
+      build: ./COMP3000-State-Detection
+      container_name: comp3000-state-detector
+      environment:
+        - DATABASE_HOST=comp3000timescale
+        - DATABASE_PORT=5432
+        - DATABASE_USERNAME=postgres
+        - DATABASE_PASSWORD=password
+        - MACHINE_LEARNING_HOST=18.168.206.169
+        - MACHINE_LEARNING_PORT=8080
+      restart: unless-stopped
+      networks:
+        - "internal"
+      depends_on:
+        - "db"
+  alarming:
+      build: ./COMP3000-Alarming
+      container_name: comp3000-alarming
+      environment:
+        - DATABASE_NAME=postgres
+        - DATABASE_HOST=comp3000timescale
+        - DATABASE_PORT=5432
+        - DATABASE_USER=postgres
+        - DATABASE_PASSWORD=password
+      restart: unless-stopped
+      networks:
+        - "internal"
+      depends_on:
+        - "db"
+  api:
+      build: ./COMP3000-API
+      container_name: comp3000-api
+      networks:
+        - "internal"
+      ports:
+        - "1234:1234"
+      depends_on:
+        - "db"
+      environment:
+        - DATABASE_NAME=postgres
+        - DATABASE_HOST=comp3000timescale
+        - DATABASE_PORT=5432
+        - DATABASE_USERNAME=postgres
+        - DATABASE_PASSWORD=password
+      restart: unless-stopped
+  web-app:
+      build: ./COMP3000-Web-Application
+      container_name: comp3000-web-app
+      ports:
+      - "9876:80"
+      depends_on:
+        - "api"
+networks:
+  internal:

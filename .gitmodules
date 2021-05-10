@@ -1,0 +1,15 @@
+[submodule "COMP3000-Database"]
+	path = COMP3000-Database
+	url = https://github.com/thomasmathews01/COMP3000-Database.git
+[submodule "COMP3000-State-Detection"]
+	path = COMP3000-State-Detection
+	url = https://github.com/thomasmathews01/COMP3000-State-Detection.git
+[submodule "COMP3000-Alarming"]
+	path = COMP3000-Alarming
+	url = https://github.com/thomasmathews01/COMP3000-Alarming.git
+[submodule "COMP3000-Web-Application"]
+	path = COMP3000-Web-Application
+	url = https://github.com/thomasmathews01/COMP3000-Web-Application.git
+[submodule "COMP3000-API"]
+	path = COMP3000-API
+	url = https://github.com/thomasmathews01/COMP3000-API.git
