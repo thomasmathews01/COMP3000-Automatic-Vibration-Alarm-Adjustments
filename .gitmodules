@@ -13,3 +13,6 @@
 [submodule "COMP3000-API"]
 	path = COMP3000-API
 	url = https://github.com/thomasmathews01/COMP3000-API.git
+[submodule "COMP3000-Machine-Learning-Server"]
+	path = COMP3000-Machine-Learning-Server
+	url = https://github.com/thomasmathews01/COMP3000-Machine-Learning-Server.git
